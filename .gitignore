@@ -1,1 +1,6 @@
-target/
+**/.project
+**/.classpath
+generator/target/
+image-builder/target/
+**/.settings/
+**/.bpmn/
