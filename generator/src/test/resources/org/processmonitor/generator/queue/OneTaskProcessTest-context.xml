@@ -56,4 +56,17 @@
 		
 	<bean id="mergeImages" class="org.processmonitor.activiti.diagram.MergeImages" />
 
+
+	<!-- Queue helper configuration -->
+	<bean id="fifoTaskQueueHelper" class="org.processmonitor.generator.queue.FifoTaskQueueHelper">
+		<property name="runtimeService" ref="runtimeService"/>
+		<property name="taskService" ref="taskService"/>
+		<property name="levelLimits">
+			<list>
+				<value>5</value>
+				<value>10</value>
+				<value>15</value>
+			</list>
+		</property>
+	</bean>
 </beans>
