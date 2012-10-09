@@ -36,7 +36,8 @@ public class HighlightNodeDiagramLayer extends AbstractProcessDiagramLayerGenera
 	public byte[] generateLayer(String imageType, Map<String, Object> params) {
 
 		// get parameters
-		String processDefinitionId = (String) params.get( PROCESS_DEFINITION_ID );
+		final String processDefinitionKey = (String) params.get( PROCESS_DEFINITION_ID );
+		final String processDefinitionId  = repositoryService.createProcessDefinitionQuery().processDefinitionKey( processDefinitionKey ).singleResult().getId();
 	    @SuppressWarnings("unchecked")
 		List<String> highLightedActivities = (List<String>) params.get( HIGHLIGHTED_ACTIVITIES );
 

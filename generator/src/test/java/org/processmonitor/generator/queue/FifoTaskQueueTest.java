@@ -23,7 +23,7 @@ public class FifoTaskQueueTest {
 
 	private Logger log = Logger.getLogger(getClass().getName());
 
-	private static String ONETASK_PROCESS_KEY = "process1";
+	private static String ONETASK_PROCESS_KEY = "onetaskprocess";
 
 
 	@Autowired 

@@ -68,7 +68,7 @@ public class SimpleProcessDiagramGeneratorTest {
 		// prepare params
 		Map<String, Object> params = new Hashtable<String, Object>();
 		
-		String id = repositoryService.createProcessDefinitionQuery().processDefinitionKey( FINANCIALREPORT_PROCESS_KEY ).singleResult().getId();
+		String id = FINANCIALREPORT_PROCESS_KEY;
 		params.put( "processDefinitionId", id);
 		List<String> highlightedActivities = new ArrayList<String>();
 	    highlightedActivities.add("writeReportTask");

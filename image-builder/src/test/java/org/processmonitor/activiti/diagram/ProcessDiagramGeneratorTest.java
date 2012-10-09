@@ -1,7 +1,10 @@
 package org.processmonitor.activiti.diagram;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -11,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.test.PluggableActivitiTestCase;
@@ -50,8 +55,8 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	}
 	
 	@Ignore("Generator provides platform dependent images (fonts) see http://forums.activiti.org/en/viewtopic.php?f=6&t=4647&start=0")
-	public void ignoreTestGenerateProcessDefinition() throws IOException {
-	    String id = repositoryService.createProcessDefinitionQuery().processDefinitionKey( FINANCIALREPORT_PROCESS_KEY ).singleResult().getId();
+	public void testGenerateProcessDefinition() throws IOException {
+	    String id = FINANCIALREPORT_PROCESS_KEY;
 	    DiagramLayerGenerator generator = new BasicProcessDiagramGenerator( (RepositoryServiceImpl) repositoryService );
 	    Map<String, Object> params = new HashMap<String, Object>();
 	    params.put(AbstractProcessDiagramLayerGenerator.PROCESS_DEFINITION_ID, id);
@@ -61,7 +66,7 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	}
 	
 	public void testOneNodeHighlight() throws IOException {
-	    String id = repositoryService.createProcessDefinitionQuery().processDefinitionKey( FINANCIALREPORT_PROCESS_KEY ).singleResult().getId();
+	    String id = FINANCIALREPORT_PROCESS_KEY;
 	    DiagramLayerGenerator generator = new HighlightNodeDiagramLayer( (RepositoryServiceImpl) repositoryService );
 	    Map<String, Object> params = new HashMap<String, Object>();
 	    params.put( HighlightNodeDiagramLayer.PROCESS_DEFINITION_ID, id);
@@ -73,6 +78,68 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	    assertTrue( isEqual(expectedStream, generator.generateLayer("png", params)));	    
 	}
 	
+	public void testMergeLayers() throws IOException {
+	    DiagramLayerGenerator generator = new MergeLayersGenerator();
+	    Map<String, Object> params = new HashMap<String, Object>();
+	    params.put( "img1", getBytes("src/test/resources/org/processmonitor/activiti/diagram/MergeLayerGenerator.testMergeLayers1.png"));
+	    params.put( "img2", getBytes("src/test/resources/org/processmonitor/activiti/diagram/MergeLayerGenerator.testMergeLayers2.png"));
+	    
+	    InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/activiti/diagram/MergeLayerGenerator.testMergeLayers.png" );  
+	 	assertTrue( isEqual(expectedStream, generator.generateLayer("png", params)));
+	}
+	
+	/**
+	 * get byte[] from fileName
+	 * @param string
+	 * @return
+	 */
+	private Object getBytes(String fileName) {
+	    //create file object
+	    File file = new File( fileName );
+	      FileInputStream fin = null;
+		 try
+		    {
+		      //create FileInputStream object
+			 fin = new FileInputStream(fileName);
+		     
+		      /*
+		       * Create byte array large enough to hold the content of the file.
+		       * Use File.length to determine size of the file in bytes.
+		       */
+		     
+		     
+		       byte fileContent[] = new byte[(int)file.length()];
+		     
+		       /*
+		        * To read content of the file in byte array, use
+		        * int read(byte[] byteArray) method of java FileInputStream class.
+		        *
+		        */
+		       fin.read(fileContent);
+		     
+		       return fileContent;
+		    }
+		    catch(FileNotFoundException e)
+		    {
+		      System.out.println("File not found" + e);
+		    }
+		    catch(IOException ioe)
+		    {
+		      System.out.println("Exception while reading the file " + ioe);
+		    } finally {
+		    	if (fin != null) {
+		    		try {
+						fin.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+		    	}
+		    		
+		    }
+		 	return null;
+		 }
+	
+
 	@Ignore("Generator provides platform dependent images (fonts) see http://forums.activiti.org/en/viewtopic.php?f=6&t=4647&start=0")
 	public void ignoreTestOneNodeCount() throws IOException {
 	    String id = repositoryService.createProcessDefinitionQuery().processDefinitionKey( FINANCIALREPORT_PROCESS_KEY ).singleResult().getId();
@@ -94,16 +161,15 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 		
 		try {
 			//generate process diagram
-		    String id = repositoryService.createProcessDefinitionQuery().processDefinitionKey( FINANCIALREPORT_PROCESS_KEY ).singleResult().getId();
 		    DiagramLayerGenerator generator = new BasicProcessDiagramGenerator( (RepositoryServiceImpl) repositoryService );
 		    Map<String, Object> params = new HashMap<String, Object>();
-		    params.put(AbstractProcessDiagramLayerGenerator.PROCESS_DEFINITION_ID, id);
+		    params.put(AbstractProcessDiagramLayerGenerator.PROCESS_DEFINITION_ID, FINANCIALREPORT_PROCESS_KEY);
 		    isLayers[0] = generator.generateLayer("png", params);
 		    
 		    // highlight one node layer
 		    generator = new HighlightNodeDiagramLayer( (RepositoryServiceImpl) repositoryService );
 		    params.clear();
-		    params.put( HighlightNodeDiagramLayer.PROCESS_DEFINITION_ID, id);
+		    params.put( HighlightNodeDiagramLayer.PROCESS_DEFINITION_ID, FINANCIALREPORT_PROCESS_KEY);
 		    List<String> highlightedActivities = new ArrayList<String>();
 		    highlightedActivities.add("writeReportTask");
 		    params.put( HighlightNodeDiagramLayer.HIGHLIGHTED_ACTIVITIES, highlightedActivities);
@@ -112,7 +178,7 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 		    //write string into one node
 		    generator = new WriteNodeDescriptionDiagramLayer( (RepositoryServiceImpl) repositoryService );
 		    params.clear();
-		    params.put( WriteNodeDescriptionDiagramLayer.PROCESS_DEFINITION_ID, id);
+		    params.put( WriteNodeDescriptionDiagramLayer.PROCESS_DEFINITION_ID, FINANCIALREPORT_PROCESS_KEY);
 		    params.put( "writeReportTask", 5);
 		    isLayers[2] = generator.generateLayer("png", params);
 		    

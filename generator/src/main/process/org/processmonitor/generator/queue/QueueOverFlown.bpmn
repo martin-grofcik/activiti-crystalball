@@ -22,7 +22,7 @@
 	    highLightedActivities = new ArrayList<String>();
 	    highLightedActivities.add( taskDefinitionKey );
 	    
-	    reportFileName="/home/matej/image.png";
+	    reportFileName="target/image.png";
 ]]></script>
     </scriptTask>
     <sequenceFlow id="flow4" name="" sourceRef="startevent1" targetRef="scripttask1"></sequenceFlow>

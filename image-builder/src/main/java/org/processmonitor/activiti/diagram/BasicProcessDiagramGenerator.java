@@ -36,7 +36,8 @@ public class BasicProcessDiagramGenerator extends AbstractProcessDiagramLayerGen
 	public byte[] generateLayer(String imageType, Map<String, Object> params) {
 		
 		// get process definition entity
-		String processDefinitionId = (String) params.get( PROCESS_DEFINITION_ID );
+		final String processDefinitionKey = (String) params.get( PROCESS_DEFINITION_ID );
+		final String processDefinitionId  = repositoryService.createProcessDefinitionQuery().processDefinitionKey( processDefinitionKey ).singleResult().getId();
 	    ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ( ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition( processDefinitionId ));
 
 	    // convert image to byte[]

@@ -1,6 +1,5 @@
 package org.processmonitor.activiti.diagram;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -50,8 +49,6 @@ public class MergeImages {
 				BufferedImage.TYPE_INT_ARGB);
 
 		Graphics g = image.getGraphics();
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, image.getWidth(), image.getHeight());
 
 		for (int i = 0; i < layers.length; i++) {
 			g.drawImage(layers[i], 0, 0, null);
