@@ -42,6 +42,8 @@ public class FifoTaskQueueTest {
 	  repositoryService.createDeployment()
 	    .addClasspathResource("org/processmonitor/generator/queue/OneTaskProcess.bpmn")
 	    .addClasspathResource("org/processmonitor/generator/queue/OneTaskProcess.png")
+	    .addClasspathResource("org/processmonitor/generator/SimpleProcessDiagramGenerator.bpmn")
+	    .addClasspathResource("org/processmonitor/generator/SimpleProcessDiagramGenerator.png")
 	    .addClasspathResource("org/processmonitor/generator/queue/QueueOverFlown.bpmn")
 	    .addClasspathResource("org/processmonitor/generator/queue/QueueOverFlown.png")
 	    .deploy();

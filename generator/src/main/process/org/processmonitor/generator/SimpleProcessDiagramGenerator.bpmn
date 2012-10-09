@@ -21,6 +21,7 @@
     <parallelGateway id="parallelgateway1" name="Parallel Gateway"></parallelGateway>
     <parallelGateway id="parallelgateway2" name="Parallel Gateway"></parallelGateway>
     <serviceTask id="servicetask3" name="Highlight nodes" activiti:expression="#{highlightNodeDiagramLayerBean.generateLayer( 'png', highlightParams)}" activiti:resultVariableName="highlightLayer"></serviceTask>
+    <serviceTask id="servicetask4" name="Write counts" activiti:expression="#{writeCountLayerBean.generateLayer( 'png', writeCountParams)}" activiti:resultVariableName="countLayer"></serviceTask>
     <sequenceFlow id="flow1" name="" sourceRef="startevent1" targetRef="scripttask1"></sequenceFlow>
     <sequenceFlow id="flow4" name="" sourceRef="scripttask1" targetRef="parallelgateway1"></sequenceFlow>
     <sequenceFlow id="flow5" name="" sourceRef="servicetask1" targetRef="parallelgateway2"></sequenceFlow>
@@ -29,7 +30,6 @@
     <sequenceFlow id="flow8" name="" sourceRef="parallelgateway1" targetRef="servicetask3"></sequenceFlow>
     <sequenceFlow id="flow9" name="" sourceRef="servicetask3" targetRef="parallelgateway2"></sequenceFlow>
     <sequenceFlow id="flow10" name="" sourceRef="parallelgateway2" targetRef="servicetask2"></sequenceFlow>
-    <serviceTask id="servicetask4" name="Write counts" activiti:expression="#{writeCountLayerBean.generateLayer( 'png', writeCountParams)}" activiti:resultVariableName="countLayer"></serviceTask>
     <sequenceFlow id="flow11" name="" sourceRef="parallelgateway1" targetRef="servicetask4"></sequenceFlow>
     <sequenceFlow id="flow12" name="" sourceRef="servicetask4" targetRef="parallelgateway2"></sequenceFlow>
   </process>
@@ -95,9 +95,6 @@
       <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
         <omgdi:waypoint x="374" y="361"></omgdi:waypoint>
         <omgdi:waypoint x="342" y="399"></omgdi:waypoint>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14" width="100" x="10" y="0"></omgdc:Bounds>
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
         <omgdi:waypoint x="427" y="192"></omgdi:waypoint>
