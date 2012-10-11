@@ -4,7 +4,7 @@
     <startEvent id="startevent1" name="Start"></startEvent>
     <userTask id="usertask1" name="User Task">
       <extensionElements>
-        <activiti:taskListener event="create" expression="${fifoTaskQueueHelper.addTask( execution.processDefinition.key, task.taskDefinitionKey, 'ttt')}"></activiti:taskListener>
+        <activiti:taskListener event="create" expression="${fifoTaskQueueHelper.addTask( execution.processDefinition.key, task.taskDefinitionKey, 'simpleDesc')}"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <endEvent id="endevent1" name="End"></endEvent>
