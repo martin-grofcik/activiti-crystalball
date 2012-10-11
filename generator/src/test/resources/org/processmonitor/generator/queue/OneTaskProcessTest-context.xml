@@ -54,8 +54,7 @@
 		<property name="repositoryService" ref="repositoryService" />
 	</bean>
 		
-	<bean id="mergeImages" class="org.processmonitor.activiti.diagram.MergeImages" />
-
+	<bean id="mergeImages" class="org.processmonitor.activiti.diagram.MergeLayersGenerator" />
 
 	<!-- Queue helper configuration -->
 	<bean id="fifoTaskQueueHelper" class="org.processmonitor.generator.queue.FifoTaskQueueHelper">

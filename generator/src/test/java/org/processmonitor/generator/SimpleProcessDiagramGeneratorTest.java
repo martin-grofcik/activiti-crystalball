@@ -23,8 +23,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration("classpath*:/org/processmonitor/generator/SimpleProcessDiagramGeneratorTest-context.xml")
 public class SimpleProcessDiagramGeneratorTest {
 
-	private Logger log = Logger.getLogger(getClass().getName());
-
 	private static String FINANCIALREPORT_PROCESS_KEY = "financialReport";
 	private static String GENERATOR_PROCESS_KEY = "generateProcessDiagram";
 
@@ -37,22 +35,9 @@ public class SimpleProcessDiagramGeneratorTest {
 	@Autowired
 	private RuntimeService runtimeService;
 
-	private List<String> processInstanceIds;
-	
 	@Before
 	public void before() {
-	  repositoryService.createDeployment()
-	    .addClasspathResource("org/activiti/examples/bpmn/usertask/FinancialReportProcess.bpmn20.xml")
-	    .addClasspathResource("org/activiti/examples/bpmn/usertask/FinancialReportProcess.png")
-	    .addClasspathResource("org/processmonitor/generator/SimpleProcessDiagramGenerator.bpmn")
-	    .addClasspathResource("org/processmonitor/generator/SimpleProcessDiagramGenerator.png")
-	    .deploy();
-		processInstanceIds = new ArrayList<String>();
 
-		for (int i = 0; i < 4; i++) {
-			processInstanceIds.add(runtimeService.startProcessInstanceByKey(
-					FINANCIALREPORT_PROCESS_KEY, "BUSINESS-KEY-" + i).getId());
-		}
 	}
 
 	@After
@@ -80,7 +65,7 @@ public class SimpleProcessDiagramGeneratorTest {
 	    params.put( "reportFileName", "target/reportfile.png");
 	    
 	    // start process
-		String generatorProcessInstanceId = runtimeService.startProcessInstanceByKey(
+		runtimeService.startProcessInstanceByKey(
 				GENERATOR_PROCESS_KEY, "GENERATOR-KEY-1", params).getId();
 	    
 	}

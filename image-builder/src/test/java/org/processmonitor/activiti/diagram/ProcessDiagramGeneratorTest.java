@@ -1,6 +1,5 @@
 package org.processmonitor.activiti.diagram;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,8 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.test.PluggableActivitiTestCase;
@@ -141,63 +138,20 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	
 
 	@Ignore("Generator provides platform dependent images (fonts) see http://forums.activiti.org/en/viewtopic.php?f=6&t=4647&start=0")
-	public void ignoreTestOneNodeCount() throws IOException {
-	    String id = repositoryService.createProcessDefinitionQuery().processDefinitionKey( FINANCIALREPORT_PROCESS_KEY ).singleResult().getId();
+	public void testOneNodeCount() throws IOException {
+	    String id = FINANCIALREPORT_PROCESS_KEY;
 	    DiagramLayerGenerator generator = new WriteNodeDescriptionDiagramLayer( (RepositoryServiceImpl) repositoryService );
 	    Map<String, Object> params = new HashMap<String, Object>();
 	    params.put( WriteNodeDescriptionDiagramLayer.PROCESS_DEFINITION_ID, id);
 	    params.put( "writeReportTask", 5);
 	    
-	    InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/activiti/diagram/WriteCountLayerGeneratorTest.oneNumber.png" );   
+	    InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/activiti/diagram/WriteCountLayerGeneratorTest.oneNumber.png" );
+
 	    assertTrue( isEqual(expectedStream, generator.generateLayer("png", params)));
 	    
 	}
-	
-	@Ignore("Generator provides platform dependent images (fonts) see http://forums.activiti.org/en/viewtopic.php?f=6&t=4647&start=0")
-	public void ignoreTestProcessDiagramMerge() throws IOException {
-		byte[][] isLayers = new byte[3][];
-		InputStream producedStream = null;
-		InputStream expectedStream = null;
-		
-		try {
-			//generate process diagram
-		    DiagramLayerGenerator generator = new BasicProcessDiagramGenerator( (RepositoryServiceImpl) repositoryService );
-		    Map<String, Object> params = new HashMap<String, Object>();
-		    params.put(AbstractProcessDiagramLayerGenerator.PROCESS_DEFINITION_ID, FINANCIALREPORT_PROCESS_KEY);
-		    isLayers[0] = generator.generateLayer("png", params);
-		    
-		    // highlight one node layer
-		    generator = new HighlightNodeDiagramLayer( (RepositoryServiceImpl) repositoryService );
-		    params.clear();
-		    params.put( HighlightNodeDiagramLayer.PROCESS_DEFINITION_ID, FINANCIALREPORT_PROCESS_KEY);
-		    List<String> highlightedActivities = new ArrayList<String>();
-		    highlightedActivities.add("writeReportTask");
-		    params.put( HighlightNodeDiagramLayer.HIGHLIGHTED_ACTIVITIES, highlightedActivities);
-		    isLayers[1] = generator.generateLayer("png",params);
-		    
-		    //write string into one node
-		    generator = new WriteNodeDescriptionDiagramLayer( (RepositoryServiceImpl) repositoryService );
-		    params.clear();
-		    params.put( WriteNodeDescriptionDiagramLayer.PROCESS_DEFINITION_ID, FINANCIALREPORT_PROCESS_KEY);
-		    params.put( "writeReportTask", 5);
-		    isLayers[2] = generator.generateLayer("png", params);
-		    
-		    // merge layers into process diagram and compare to expected results
-		    (new MergeImages()).merge("target/test-classes/tmpProcessDiagramMerge.png", "png", isLayers);
-		    expectedStream = new FileInputStream("src/test/resources/org/processmonitor/activiti/diagram/mergedProcessDiagram.png" );		    
-		    producedStream = new FileInputStream("target/test-classes/tmpProcessDiagramMerge.png" );
-		    
-		    //assertTrue( isEqual(expectedStream, producedStream ));
-		} finally 
-		{
-			if (expectedStream != null)
-				expectedStream.close();
-			if ( producedStream != null)
-				producedStream.close();
-		}
-	}
 
-	  static boolean isEqual(InputStream stream1, byte[] byteArray)
+	static boolean isEqual(InputStream stream1, byte[] byteArray)
 	          throws IOException {
 
 		  ByteArrayInputStream stream2 = new ByteArrayInputStream( byteArray);
@@ -236,49 +190,4 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	      }
 	  }
 
-		
-	
-/**	  public void testQueryByProcessDefinitions() throws IOException {
-		    String id = repositoryService.createProcessDefinitionQuery().processDefinitionKey( FINANCIALREPORT_PROCESS_KEY ).singleResult().getId();
-		    
-		    ReadOnlyProcessDefinition processDefinition = ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition(id);
-		    List<String> highlightedActivities = new ArrayList();
-		    for ( PvmActivity activiti : processDefinition.getActivities() )
-		    {
-			    long count = runtimeService.createExecutionQuery().processDefinitionKey( FINANCIALREPORT_PROCESS_KEY ).activityId(activiti.getId()).count();
-		    	if ( count >0 )
-		    		highlightedActivities.add(activiti.getId());
-			    List<Execution> executions = runtimeService.createExecutionQuery().processDefinitionKey( FINANCIALREPORT_PROCESS_KEY ).activityId(activiti.getId()).list();
-			    for ( Execution execution : executions)
-			    {
-			    	ExecutionEntity eE = (ExecutionEntity) execution;
-			    	
-			    }
-			    
-		    }
-		    
-		    ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ( ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition( id ));
-		    InputStream in = null;
-	        FileOutputStream out = null;
-		    
-		    try {
-		    	//ProcessDiagramGenerator processDiagramGenerator = new ProcessDiagramGenerator();
-	            in = new ProcessMonitorDiagramGenerator().generateDiagram( pde, "png", highlightedActivities);
-	            //in = ProcessDiagramGenerator.generatePngDiagram( pde);
-	            out = new FileOutputStream("c:/tools/example.png");
-	            int c;
-
-	            while ((c = in.read()) != -1) {
-	                out.write((byte)c);
-	            }
-	        } finally {
-	            if (in != null) {
-	                in.close();
-	            }
-	            if (out != null) {
-	                out.close();
-	            }
-	        }
-	  }
-*/
 }

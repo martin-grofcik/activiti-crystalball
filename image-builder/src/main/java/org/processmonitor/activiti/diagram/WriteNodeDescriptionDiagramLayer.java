@@ -131,6 +131,4 @@ public class WriteNodeDescriptionDiagramLayer extends AbstractProcessDiagramLaye
 		    
 		    return new ProcessDiagramCanvas(maxX + 10, maxY + 10, minX, minY);
 		  }
-
-
 }
