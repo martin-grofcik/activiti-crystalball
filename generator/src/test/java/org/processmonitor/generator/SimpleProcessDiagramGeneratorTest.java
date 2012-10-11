@@ -81,7 +81,7 @@ public class SimpleProcessDiagramGeneratorTest {
 		runtimeService.startProcessInstanceByKey(
 				GENERATOR_PROCESS_KEY, "GENERATOR-KEY-1", params).getId();
 	    //check outputs
-		InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/generator/SimpleProcessDiagramGeneratorTest.png" );   
+		InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/generator/SimpleProcessDiagramGeneratorTestExpected.png" );   
 		InputStream generatedStream = new FileInputStream("target/SimpleProcessDiagramGeneratorTest.png");   
 	    assertTrue( isEqual(expectedStream, generatedStream));	    	
 	}
