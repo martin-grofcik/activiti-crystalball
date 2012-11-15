@@ -1,10 +1,5 @@
 package org.processmonitor.generator.usertasksimulator;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
