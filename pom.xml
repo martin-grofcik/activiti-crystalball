@@ -17,6 +17,7 @@
   </properties>
 
   <modules>
+     <module>simulator</module>
      <module>generator</module>
      <module>image-builder</module>
   </modules>
