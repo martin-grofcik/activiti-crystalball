@@ -32,6 +32,12 @@
 
 		<dependency>
 			<groupId>org.processmonitor</groupId>
+			<artifactId>simulator</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.processmonitor</groupId>
 			<artifactId>image-builder</artifactId>
 			<version>${project.version}</version>
 		</dependency>

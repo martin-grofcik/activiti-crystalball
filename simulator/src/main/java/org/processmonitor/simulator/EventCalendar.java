@@ -22,8 +22,7 @@ public class EventCalendar {
 		if (minIndex == null)
 			return null;
 		
-		SimulationEvent minEvent = eventList.get( minIndex );
-		eventList.remove( minIndex );
+		SimulationEvent minEvent = eventList.remove( (int) minIndex );
 		if (eventList.isEmpty()) { 
 			minIndex = null;
 		} else {

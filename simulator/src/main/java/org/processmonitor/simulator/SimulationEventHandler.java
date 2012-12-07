@@ -3,10 +3,10 @@ package org.processmonitor.simulator;
 public interface SimulationEventHandler {
 
 	/**
-	 * execute event in the handler
+	 * execute event in the context
 	 * @param event
-	 * @param eventCalendar
+	 * @param context
 	 */
-	void handle(SimulationEvent event, EventCalendar eventCalendar);
+	void handle(SimulationEvent event, SimulationContext context);
 
 }
