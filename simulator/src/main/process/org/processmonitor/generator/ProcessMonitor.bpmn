@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="processmonitor" name="Process monitor">
+    <documentation>monitor process states and generate simple reports.
+Ready to server h2 file DB.
+
+Questions to answer:
+1. Is it possible with the current settings to finish all running process instances?
+
+Input variables:
+runningDatabase - path to the H2 db file - running process engine. It is copied into simulation
+tempDir</documentation>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <scriptTask id="scripttask1" name="Init simulation" scriptFormat="groovy">
+      <script><![CDATA[// create copy of the running process engine database and set system property to this file
+import org.apache.commons.io.*;
+FileUtils.copyFile( FileUtils.getFile(runningDatabaseFile), FileUtils.getFile( tempDir+"/simulationRunDB"+Thread.currentThread().getId()+".h2.db"))
+System.setProperty("_SIM_DB_PATH", tempDir+"/simulationRunDB"+Thread.currentThread().getId())]]></script>
+    </scriptTask>
+    <scriptTask id="scripttask2" name="Simulation run" scriptFormat="groovy">
+      <script><![CDATA[	import org.springframework.context.support.ClassPathXmlApplicationContext;
+	import org.processmonitor.simulator.*;
+	
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/processmonitor/simulator/SimEngine-h2-context.xml")
+		SimulationRun simRun = appContext.getBean(SimulationRun.class)
+		resultEventList = simRun.execute(new Date(), null)
+
+		appContext.close()]]></script>
+    </scriptTask>
+    <scriptTask id="prepareDataTask" name="Get unfinished tasks" scriptFormat="groovy">
+      <script><![CDATA[import org.processmonitor.simulator.*
+ unfinishedTaskProcesses = SimulationResultsPostProcessor.groupProcessDefinitionKey( SimulationResultsPostProcessor.getEventType("unfinished_task", resultEventList));]]></script>
+    </scriptTask>
+    <callActivity id="generatereport" name="Generate reports" calledElement="simResultProcessDiagramGenerator">
+      <extensionElements>
+        <activiti:in source="tempDir" target="tempDir"></activiti:in>
+        <activiti:in source="eventList" target="eventList"></activiti:in>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="true" activiti:collection="unfinishedTaskProcesses" activiti:elementVariable="eventList"></multiInstanceLoopCharacteristics>
+    </callActivity>
+    <sequenceFlow id="flow1" name="" sourceRef="startevent1" targetRef="scripttask1"></sequenceFlow>
+    <sequenceFlow id="flow2" name="" sourceRef="scripttask1" targetRef="scripttask2"></sequenceFlow>
+    <sequenceFlow id="flow6" name="" sourceRef="scripttask2" targetRef="prepareDataTask"></sequenceFlow>
+    <sequenceFlow id="flow7" name="" sourceRef="prepareDataTask" targetRef="generatereport"></sequenceFlow>
+    <sequenceFlow id="flow8" name="" sourceRef="generatereport" targetRef="endevent1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_processmonitor">
+    <bpmndi:BPMNPlane bpmnElement="processmonitor" id="BPMNPlane_processmonitor">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35" width="35" x="80" y="150"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35" width="35" x="810" y="150"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask1" id="BPMNShape_scripttask1">
+        <omgdc:Bounds height="55" width="105" x="160" y="140"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask2" id="BPMNShape_scripttask2">
+        <omgdc:Bounds height="55" width="105" x="320" y="140"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="prepareDataTask" id="BPMNShape_prepareDataTask">
+        <omgdc:Bounds height="55" width="105" x="480" y="140"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="generatereport" id="BPMNShape_generatereport">
+        <omgdc:Bounds height="55" width="105" x="646" y="140"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="115" y="167"></omgdi:waypoint>
+        <omgdi:waypoint x="160" y="167"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="265" y="167"></omgdi:waypoint>
+        <omgdi:waypoint x="320" y="167"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="425" y="167"></omgdi:waypoint>
+        <omgdi:waypoint x="480" y="167"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="585" y="167"></omgdi:waypoint>
+        <omgdi:waypoint x="646" y="167"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="751" y="167"></omgdi:waypoint>
+        <omgdi:waypoint x="810" y="167"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

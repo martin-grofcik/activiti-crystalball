@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:activiti="http://www.activiti.org/schema/spring/components"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.activiti.org/schema/spring/components http://www.activiti.org/schema/spring/components/activiti.xsd">
+	<!-- *************************************** -->
+	<!--   SIMULATOR                             -->
+	<!-- *************************************** -->
+	<bean id="simulationRun" class="org.processmonitor.simulator.SimulationRun">
+		<constructor-arg>
+			<bean class="org.processmonitor.simulator.impl.PriorityOneTaskUserSimulatorImpl">
+	       		<property name="identityService" ref="simIdentityService"/>
+	       		<property name="taskService" ref="simTaskService"/>
+	       		<property name="userTaskExecutor" ref="userTaskExecutor"/>
+			</bean>
+		</constructor-arg>
+		<constructor-arg>
+			<bean class="org.processmonitor.simulator.SimulationContext">
+	       		<property name="runtimeService" ref="simRuntimeService"/>
+	       		<property name="taskService" ref="simTaskService"/>
+	       		<!-- simulation run audit is logged into simEngine history log -->
+	       		<property name="historyService" ref="simHistoryService"/>
+			</bean>
+		</constructor-arg>
+		<constructor-arg>
+			<map>
+				<entry key="COMPLETE" value-ref="completeEventHandler"/>
+			</map>
+		</constructor-arg>
+		<constructor-arg>
+			<list>
+				<bean class="org.processmonitor.simulator.UnfinishedUserTasksEvaluator">
+					<property name="repositoryService" ref="simRepositoryService" />
+					<property name="type" value="unfinished_task" />
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	<!--   simulation event handlers              -->
+	<bean id="completeEventHandler" class="org.processmonitor.simulator.impl.CompleteEventHandler" />
+
+	<!--  User tasks executors                    -->
+    <bean id="userTaskExecutor" class="org.processmonitor.simulator.executor.impl.TaskInstanceHistoryExecutor">
+    	<!-- only history service should point to running engine  -->
+    	<property name="historyService" ref="historyService"/>
+       	<property name="backUpExecutor" ref="backUpTaskExecutor"/>
+    </bean>
+       
+    <bean id="backUpTaskExecutor" class="org.processmonitor.simulator.executor.impl.ConstantUserTaskExecutor">
+     		<constructor-arg value="1000"/>
+    </bean>
+</beans>
