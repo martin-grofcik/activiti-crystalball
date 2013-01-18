@@ -55,9 +55,12 @@ public class ProcessInstancesGenerator {
 			List<String> highLightedActivities, Map<String, String> counts) {
 		ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ( ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition( processDefinitionId ));
 	    List<ActivityImpl> activities = pde.getActivities();
+	    // iterate through all activities
 	    for( ActivityImpl activity : activities) {
+	    	// get count of  executions for activity in the given process
 	    	long count = runtimeService.createExecutionQuery().processDefinitionId(processDefinitionId).activityId( activity.getId() ).count();
 	    	if ( count > 0 ) {
+	    		// store count in the diagram generator data structures
 	    		highLightedActivities.add(activity.getId());
 	    		counts.put(activity.getId(), Long.toString(count));
 	    	}
