@@ -16,7 +16,7 @@ public abstract class AbstractProcessDiagramLayerGenerator implements DiagramLay
 
 	public static String PROCESS_DEFINITION_ID = "processDefinitionId";
 	protected RepositoryServiceImpl repositoryService;
-	protected Logger log = Logger.getLogger(getClass().getName());
+	protected static Logger log = Logger.getLogger(AbstractProcessDiagramLayerGenerator.class.getName());
 
 	public AbstractProcessDiagramLayerGenerator() {
 		super();
