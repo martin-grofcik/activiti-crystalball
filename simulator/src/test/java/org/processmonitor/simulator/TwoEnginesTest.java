@@ -8,8 +8,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
@@ -20,13 +18,8 @@ import org.activiti.engine.task.Task;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath*:/org/processmonitor/simulator/SimpleProcessDiagramGeneratorTest-context.xml")
 public class TwoEnginesTest {
 	
 	private static final String tempDir = "target";
@@ -34,14 +27,12 @@ public class TwoEnginesTest {
 	
 	private static String MONITOR_PROCESS_KEY = "two-engines";
 
-	@Resource(name="generatorProcessEngine")
-	private ProcessEngine processEngine;
+	ClassPathXmlApplicationContext generatorAppContext = new ClassPathXmlApplicationContext("org/processmonitor/simulator/LiveEngine-context.xml");
+	private ProcessEngine processEngine = (ProcessEngine) generatorAppContext.getBean("generatorProcessEngine");
 		
-	@Resource(name="generatorRepositoryService")
-	private RepositoryService repositoryService;
+	private RepositoryService repositoryService = (RepositoryService) generatorAppContext.getBean("generatorRepositoryService");
 
-	@Resource(name="generatorRuntimeService")
-	private RuntimeService runtimeService;
+	private RuntimeService runtimeService = (RuntimeService) generatorAppContext.getBean("generatorRuntimeService");
 
 	@Before
 	public void before() throws Exception {
