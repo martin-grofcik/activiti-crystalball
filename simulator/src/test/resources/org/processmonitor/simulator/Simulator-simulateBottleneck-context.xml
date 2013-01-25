@@ -28,6 +28,7 @@
 		<constructor-arg>
 			<map>
 				<entry key="COMPLETE" value-ref="completeEventHandler"/>
+				<entry key="START_PROCESS" value-ref="startProcessEventHandler"/>
 			</map>
 		</constructor-arg>
 		<constructor-arg>
@@ -39,15 +40,29 @@
 			</list>
 		</constructor-arg>
 	</bean>
-					
+	
 	<!--   simulation event handlers              -->
 	<bean id="completeEventHandler" class="org.processmonitor.simulator.impl.CompleteEventHandler"/>
-
+	
+	<bean id="startProcessEventHandler" class="org.processmonitor.simulator.impl.StartProcessEventHandler">
+	 		<property name="period" value="3600000" /> <!-- start new process each HOUR -->
+	 		<property name="eventType" value="START_PROCESS" /> 
+	 		<property name="processToStartKey" value="parallelusertaskprocess" />	 		
+	</bean>
+	
 	<!--  User tasks executors                    -->
-    <bean id="userTaskExecutor" class="org.processmonitor.simulator.executor.impl.TaskInstanceHistoryExecutor">
-    	<!-- only history service should point to running engine  -->
-    	<property name="historyService" ref="historyService"/>
+    <bean id="userTaskExecutor" class="org.processmonitor.simulator.executor.impl.ConstantUserMapTaskExecutor">
        	<property name="backUpExecutor" ref="backUpTaskExecutor"/>
+       	<property name="userExecutionMap">
+       		<map key-type="java.lang.String" value-type="java.lang.Integer">
+       			<entry key="user1" value="1800000" /> <!-- user1 will work on one task 0.5 hour -->
+       			<entry key="user2" value="3600000" /> <!-- user2 will work on one task 1 hour -->
+       			<entry key="user3" value="2400000" /> <!-- user3 will work on one task 40 mins -->
+       			<entry key="user4" value="3000000" /> <!-- user4 will work on one task 50 mins -->
+       			<entry key="user5" value="3000000" /> <!-- user5 will work on one task 50 mins -->
+       		</map>
+       	</property>
+       	
     </bean>
        
     <bean id="backUpTaskExecutor" class="org.processmonitor.simulator.executor.impl.ConstantUserTaskExecutor">

@@ -6,8 +6,6 @@ import java.io.File;
 import java.util.Hashtable;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
@@ -15,29 +13,32 @@ import org.activiti.engine.repository.Deployment;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 // uses exactly the same configuration as previous monitor
-@ContextConfiguration("classpath*:/org/processmonitor/simulator/SimpleProcessDiagramGeneratorTest-context.xml")
 public class SimulatorProcessMonitorTest {
 
 	private static String MONITOR_PROCESS_KEY = "processmonitor";
 
-	@Resource(name="generatorProcessEngine")
+	private ApplicationContext appContext;
+	
 	private ProcessEngine processEngine;
-		
-	@Resource(name="generatorRepositoryService")
+
 	private RepositoryService repositoryService;
 
-	@Resource(name="generatorRuntimeService")
 	private RuntimeService runtimeService;
 
 	@Before
 	public void before() {
+		System.setProperty("liveDB", "target/BasicSimulation");
+		appContext = new ClassPathXmlApplicationContext("/org/processmonitor/simulator/SimpleProcessDiagramGeneratorTest-context.xml");
+		processEngine = (ProcessEngine) appContext.getBean("generatorProcessEngine");
+		repositoryService = (RepositoryService) appContext.getBean("generatorRepositoryService");
+		runtimeService = (RuntimeService) appContext.getBean("generatorRuntimeService");
+		
 		// deploy processes needed for generating reports
 	  repositoryService.createDeployment()
 	    .addClasspathResource("org/processmonitor/generator/SimpleProcessDiagramGenerator.bpmn")
@@ -52,8 +53,14 @@ public class SimulatorProcessMonitorTest {
       repositoryService.deleteDeployment(deployment.getId(), true);
     }
     processEngine.close();
+    appContext = null;
   }
 
+	/**
+	 * TODO:migrate to non process execution
+	 * @throws Throwable
+	 */
+	@Ignore
 	@Test
 	public void testProcessRun() throws Throwable {
 		// prepare params

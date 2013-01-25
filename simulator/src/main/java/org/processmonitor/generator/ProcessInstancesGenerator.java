@@ -26,9 +26,10 @@ public class ProcessInstancesGenerator {
 
 	protected static Logger log = Logger.getLogger(ProcessInstancesGenerator.class.getName());
 	
-	RuntimeService runtimeService;
-	RepositoryService repositoryService;
-	
+	private RuntimeService runtimeService;
+	private RepositoryService repositoryService;
+	/** limit for highlighting node - do not highlight counts below the limit default value is 0*/  
+	private long limit = 0;
 	/**
 	 * Generate report about executions for the process instances driven by processDefinitionId.
 	 * Report contains counts of tokens and node highlighting where tokens are located
@@ -57,14 +58,17 @@ public class ProcessInstancesGenerator {
 	    List<ActivityImpl> activities = pde.getActivities();
 	    // iterate through all activities
 	    for( ActivityImpl activity : activities) {
-	    	// get count of  executions for activity in the given process
-	    	long count = runtimeService.createExecutionQuery().processDefinitionId(processDefinitionId).activityId( activity.getId() ).count();
-	    	if ( count > 0 ) {
-	    		// store count in the diagram generator data structures
-	    		highLightedActivities.add(activity.getId());
-	    		counts.put(activity.getId(), Long.toString(count));
+	    	// get count of  executions for userTask in the given process
+	    	if (activity.getProperty("type") == "userTask") {
+		    	long count = runtimeService.createExecutionQuery().processDefinitionId(processDefinitionId).activityId( activity.getId() ).count();
+		    	if ( count > 0 ) {
+		    		// store count in the diagram generator data structures
+		    		if ( count > limit )
+		    			highLightedActivities.add(activity.getId());
+		    		counts.put(activity.getId(), Long.toString(count));
+		    	}
+		    	log.log( Level.FINER, "selected counts "+processDefinitionId +"-"+activity.getId()+"-"+count);
 	    	}
-	    	log.log( Level.FINER, "selected counts "+processDefinitionId +"-"+activity.getId()+"-"+count);
 	    }
 		return pde;
 	}
@@ -119,6 +123,16 @@ public class ProcessInstancesGenerator {
 
 	public void setRepositoryService(RepositoryService repositoryService) {
 		this.repositoryService = repositoryService;
+	}
+
+
+	public long getLimit() {
+		return limit;
+	}
+
+
+	public void setLimit(long limit) {
+		this.limit = limit;
 	}
 
 }

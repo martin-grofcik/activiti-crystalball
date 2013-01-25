@@ -45,7 +45,7 @@ public class BasicSimulationTest {
 	@Test
 	public void testBasicSimulationRun() throws IOException {
 		System.setProperty("_SIM_DB_PATH", System.getProperty("tempDir", "target") + "/simDB");
-		System.setProperty("liveDB", System.getProperty("liveDB", "target/basicSimulation"));
+		System.setProperty("liveDB", "target/basicSimulation");
 
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/processmonitor/simulator/SimEngine-h2-context.xml");
 		SimulationRun simRun = (SimulationRun) appContext.getBean("simulationRun");

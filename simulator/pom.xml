@@ -2,31 +2,31 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-        <parent>
-            <groupId>org.processmonitor</groupId>
-            <artifactId>parent</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </parent>
+	<parent>
+		<groupId>org.processmonitor</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
 
-    <groupId>org.processmonitor</groupId>
+	<groupId>org.processmonitor</groupId>
 	<artifactId>simulator</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>simulator</name>
 	<url>http://maven.apache.org</url>
-	
+
 	<properties>
-		<liveDB>${project.build.directory}/basicSimulation</liveDB>	
+		<liveDB>${project.build.directory}/basicSimulation</liveDB>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.processmonitor</groupId>
 			<artifactId>image-builder</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy</artifactId>
@@ -59,8 +59,14 @@
 			<version>${spring.framework.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.2</version>
+			<!-- scope>test</scope -->
+		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<directory>target</directory>
 		<outputDirectory>target/classes</outputDirectory>
@@ -84,7 +90,7 @@
 			<testResource>
 				<directory>src/test/process</directory>
 			</testResource>
-			</testResources>
+		</testResources>
 		<plugins>
 			<!-- running engine generator -->
 			<plugin>
@@ -104,7 +110,7 @@
 							<stopUnresponsiveDaemonThreads>true</stopUnresponsiveDaemonThreads>
 							<mainClass>org.processmonitor.simulator.GenerateProcessEngineState</mainClass>
 							<arguments>
-								<argument>${liveDB}</argument>
+								<argument>${project.build.directory}</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -126,13 +132,17 @@
 							<value>${project.basedir}</value>
 						</property>
 						<property>
+							-
 							<name>liveDB</name>
+							-
 							<value>${liveDB}</value>
+							-
 						</property>
+
 					</systemProperties>
 				</configuration>
 			</plugin>
-			
+
 		</plugins>
 	</build>
 

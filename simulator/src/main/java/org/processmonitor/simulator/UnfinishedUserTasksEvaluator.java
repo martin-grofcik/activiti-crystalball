@@ -3,8 +3,6 @@ package org.processmonitor.simulator;
 import java.util.List;
 
 import org.activiti.engine.HistoryService;
-import org.activiti.engine.history.HistoricTaskInstance;
-import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
@@ -12,7 +10,7 @@ import org.activiti.engine.repository.ProcessDefinition;
 
 public class UnfinishedUserTasksEvaluator implements HistoryEvaluator {
 
-	public static String type = "unfinished_task";
+	public String type = "unfinished_task";
 	
 	private RepositoryServiceImpl repositoryService;
 	

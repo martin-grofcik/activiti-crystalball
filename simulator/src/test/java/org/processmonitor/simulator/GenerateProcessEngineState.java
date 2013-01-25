@@ -21,20 +21,34 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class GenerateProcessEngineState {
 	
-	
+	static String TEMP_DIR;
 	
 	public static void main(String[] args) throws InterruptedException {
+		TEMP_DIR = args[0];
+		if (TEMP_DIR == null)
+			TEMP_DIR = "target";
+		
+		generateLiveDB();
+		generateBasicEngine();
+		
+	}
 
+	private static void generateBasicEngine()
+			throws InterruptedException {
 		String PROCESS_KEY = "threetasksprocess";
 		RepositoryService repositoryService;
 		RuntimeService runtimeService;
 		TaskService taskService;
 		IdentityService identityService;
 		ProcessEngine processEngine;
-
+		String liveDB = TEMP_DIR + "/BasicSimulation";
+		
 		// delete previous DB instalation and set property to point to the current file
-		File prevDB = new File(args[0]+".h2.db");
-		System.setProperty("liveDB", args[0]);
+		File prevDB = new File(liveDB+".h2.db");
+		
+		String previousLiveDB = System.getProperty("liveDB");
+		
+		System.setProperty("liveDB", liveDB);
 		if ( prevDB.exists() )
 			prevDB.delete();
 		prevDB = null;
@@ -51,7 +65,7 @@ public class GenerateProcessEngineState {
 		repositoryService.createDeployment()
 	       .addClasspathResource("org/processmonitor/simulator/ThreeTasksProcess.bpmn")
 	       .deploy();
-		
+
 		// init identity service
 		identityService.saveGroup( identityService.newGroup("Group1") );
 		identityService.saveGroup( identityService.newGroup("Group2") );
@@ -95,6 +109,67 @@ public class GenerateProcessEngineState {
 		processEngine.close();
 		
 		appContext.close();
+		
+		if (previousLiveDB != null)
+			System.setProperty("liveDB", previousLiveDB);
+		else
+			System.setProperty("liveDB", "");
+
+	}
+
+	private static void generateLiveDB() throws InterruptedException {
+		
+		RepositoryService repositoryService;
+		IdentityService identityService;
+		ProcessEngine processEngine;
+		String LIVE_DB = TEMP_DIR + "/live-SimulateBottleneckTest";
+
+		String previousLiveDB = System.getProperty("liveDB");
+		System.setProperty("liveDB", LIVE_DB);
+		
+		// delete previous DB instalation and set property to point to the current file
+		File prevDB = new File(LIVE_DB+".h2.db");
+		
+		if ( prevDB.exists() )
+			prevDB.delete();
+		prevDB = null;
+
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("org/processmonitor/simulator/LiveEngine-context.xml");
+		
+		repositoryService = appContext.getBean( RepositoryService.class );
+
+		identityService = appContext.getBean( IdentityService.class );
+		processEngine = appContext.getBean( ProcessEngine.class);
+		
+		// deploy processes
+		repositoryService.createDeployment()
+	       .addClasspathResource("org/processmonitor/simulator/ParallelUserTasksProcess.bpmn")
+	       .deploy();
+		
+		// init identity service
+		identityService.saveGroup( identityService.newGroup("Group1") );
+		identityService.saveGroup( identityService.newGroup("Group2") );
+		identityService.saveGroup( identityService.newGroup("Group3") );
+		identityService.saveGroup( identityService.newGroup("Group4") );
+		identityService.saveUser( identityService.newUser("user1") );
+		identityService.saveUser( identityService.newUser("user2") );
+		identityService.saveUser( identityService.newUser("user3") );
+		identityService.saveUser( identityService.newUser("user4") );
+		
+		identityService.createMembership("user1", "Group1");
+		identityService.createMembership("user2", "Group2");
+		identityService.createMembership("user3", "Group3");
+		identityService.createMembership("user4", "Group4");
+		identityService.createUserQuery().list();
+		
+		processEngine.close();
+		
+		appContext.close();		
+		
+		if (previousLiveDB != null)
+			System.setProperty("liveDB", previousLiveDB);
+		else
+			System.setProperty("liveDB", "");
 	}
 
 }

@@ -19,6 +19,7 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.task.Task;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -136,7 +137,7 @@ public class TwoEnginesTest {
 	
 	}
 
-
+	@Ignore
 	@Test
 	public void test() {
 		// prepare params

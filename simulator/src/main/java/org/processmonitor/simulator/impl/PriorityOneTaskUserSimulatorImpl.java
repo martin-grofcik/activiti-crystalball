@@ -71,7 +71,10 @@ public class PriorityOneTaskUserSimulatorImpl implements Simulator {
 		if ( !execTaskList.isEmpty()) {
 			Task execTask = execTaskList.get(0);
 			if (execTask != null ) {
+				// claim task and update assignee
 				taskService.claim( execTask.getId(), userId);
+				execTask.setAssignee(userId);
+				
 				// create complete task event
 				Map<String, Object> props = new HashMap<String, Object>();
 				props.put( "task", execTask.getId());

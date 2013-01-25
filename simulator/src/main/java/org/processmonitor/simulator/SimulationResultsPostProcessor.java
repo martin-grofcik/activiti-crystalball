@@ -73,8 +73,8 @@ public class SimulationResultsPostProcessor {
 	 * @param resultList
 	 * @return
 	 */
-	static public Map<String, Object> getNodeDescriptions(List<SimulationResultEvent> resultList) {
-		Map<String, Object> desc = new HashMap<String,Object>();
+	static public Map<String, String> getNodeDescriptions(List<SimulationResultEvent> resultList) {
+		Map<String, String> desc = new HashMap<String,String>();
 		for (SimulationResultEvent event : resultList) {
 			desc.put( event.getTaskDefinitionKey(), event.getDescription() );
 		}

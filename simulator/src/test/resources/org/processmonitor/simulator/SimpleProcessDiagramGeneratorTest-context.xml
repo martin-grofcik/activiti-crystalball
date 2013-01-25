@@ -7,7 +7,7 @@
                            http://www.activiti.org/schema/spring/components http://www.activiti.org/schema/spring/components/activiti.xsd">
 	<bean id="placeholderConfig"
 	      class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-	      <property name="liveDB" value="target/BasicSimulation"/>
+	      <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
 	</bean>
 
 	<!-- *************************************** -->
