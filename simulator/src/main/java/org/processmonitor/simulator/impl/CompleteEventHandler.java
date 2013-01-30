@@ -1,5 +1,8 @@
 package org.processmonitor.simulator.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.processmonitor.simulator.SimulationContext;
 import org.processmonitor.simulator.SimulationEvent;
 import org.processmonitor.simulator.SimulationEventHandler;
@@ -14,7 +17,7 @@ public class CompleteEventHandler implements SimulationEventHandler {
 	public void handle(SimulationEvent event, SimulationContext context) {
 		String taskId = (String) event.getProperty("task");
 		context.getTaskService().complete( taskId );
-		log.debug( "completed taskId "+ taskId);
+		log.debug( SimpleDateFormat.getTimeInstance().format( new Date(event.getSimulationTime())) +": completed taskId "+ taskId);
 	}
 
 	@Override

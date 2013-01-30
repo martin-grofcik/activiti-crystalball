@@ -1,5 +1,7 @@
 package org.processmonitor.simulator.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +13,11 @@ import org.activiti.engine.impl.util.ClockUtil;
 import org.activiti.engine.task.Task;
 import org.processmonitor.simulator.EventCalendar;
 import org.processmonitor.simulator.SimulationEvent;
+import org.processmonitor.simulator.SimulationRun;
 import org.processmonitor.simulator.Simulator;
 import org.processmonitor.simulator.executor.UserTaskExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * simulate users' work  
@@ -22,7 +27,9 @@ import org.processmonitor.simulator.executor.UserTaskExecutor;
  * 		when user does not have any task assigned (claimed), he takes immediately next one
  */
 public class PriorityOneTaskUserSimulatorImpl implements Simulator {
-
+	
+	private static Logger log = LoggerFactory.getLogger(PriorityOneTaskUserSimulatorImpl.class.getName());
+	
 	private IdentityService identityService;
 	private TaskService taskService;
 	private UserTaskExecutor userTaskExecutor;
@@ -55,7 +62,7 @@ public class PriorityOneTaskUserSimulatorImpl implements Simulator {
 	 */
 	@Override
 	public void simulate(EventCalendar calendar) {
-		List<User> users = identityService.createUserQuery().list();
+		List<User> users = identityService.createUserQuery().orderByUserId().asc().list();
 
 		for (User user : users) {
 			if ( isFree( user.getId() )) {
@@ -72,6 +79,8 @@ public class PriorityOneTaskUserSimulatorImpl implements Simulator {
 			Task execTask = execTaskList.get(0);
 			if (execTask != null ) {
 				// claim task and update assignee
+				log.debug( SimpleDateFormat.getTimeInstance().format( new Date(simulationTime)) + 
+						": claiming task  [" + execTask.getName() + "][" +execTask.getId() +"] for user ["+userId +"]");
 				taskService.claim( execTask.getId(), userId);
 				execTask.setAssignee(userId);
 				
