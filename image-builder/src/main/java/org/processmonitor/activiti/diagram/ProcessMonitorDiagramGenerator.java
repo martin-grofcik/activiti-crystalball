@@ -54,7 +54,7 @@ public class ProcessMonitorDiagramGenerator extends org.activiti.engine.impl.bpm
 		    
 		    // Draw activities and their sequence-flows
 		    for (ActivityImpl activity : processDefinition.getActivities()) {
-		      drawActivity(processDiagramCanvas, activity, highLightedActivities);
+		      drawActivity(processDiagramCanvas, activity, highLightedActivities, null);
 		    }
 		    
 		    return processDiagramCanvas;

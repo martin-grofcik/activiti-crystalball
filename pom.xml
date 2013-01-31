@@ -13,7 +13,7 @@
   <properties>
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	<spring.framework.version>3.1.2.RELEASE</spring.framework.version>
-	<activiti.version>5.10</activiti.version>
+	<activiti.version>5.11</activiti.version>
   </properties>
 
   <modules>

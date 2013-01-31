@@ -9,6 +9,7 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.RepositoryServiceImpl;
+import org.activiti.engine.impl.bpmn.behavior.BoundaryEventActivityBehavior;
 import org.activiti.engine.impl.bpmn.diagram.ProcessDiagramCanvas;
 import org.activiti.engine.impl.bpmn.parser.BpmnParse;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
@@ -59,7 +60,8 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 	    activityDrawInstructions.put("intermediateSignalCatch", new ActivityDrawXYInstruction() {
 	      
 	      public void draw(ProcessDiagramCanvas processDiagramCreator, ActivityImpl activityImpl, int x, int y) {
-	        processDiagramCreator.drawCatchingSignalEvent(x, y, activityImpl.getWidth(), activityImpl.getHeight());
+	    	BoundaryEventActivityBehavior behavior = (BoundaryEventActivityBehavior)activityImpl.getActivityBehavior();
+	        processDiagramCreator.drawCatchingSignalEvent(x, y, activityImpl.getWidth(), activityImpl.getHeight(), behavior.isInterrupting());
 	      }
 	    });
 	    
@@ -195,7 +197,8 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 	    activityDrawInstructions.put("boundaryTimer", new ActivityDrawXYInstruction() {
 
 	      public void draw(ProcessDiagramCanvas processDiagramCreator, ActivityImpl activityImpl, int x, int y) {
-	        processDiagramCreator.drawCatchingTimerEvent(x, y, activityImpl.getWidth(), activityImpl.getHeight());
+	    	BoundaryEventActivityBehavior behavior = (BoundaryEventActivityBehavior)activityImpl.getActivityBehavior();
+	        processDiagramCreator.drawCatchingTimerEvent(x, y, activityImpl.getWidth(), activityImpl.getHeight(), behavior.isInterrupting());
 	      }
 	    });
 
@@ -203,7 +206,8 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 	    activityDrawInstructions.put("boundaryError", new ActivityDrawXYInstruction() {
 
 	      public void draw(ProcessDiagramCanvas processDiagramCreator, ActivityImpl activityImpl, int x, int y) {
-	        processDiagramCreator.drawCatchingErroEvent(x, y, activityImpl.getWidth(), activityImpl.getHeight());
+	    	BoundaryEventActivityBehavior behavior = (BoundaryEventActivityBehavior)activityImpl.getActivityBehavior();
+	        processDiagramCreator.drawCatchingErrorEvent(x, y, activityImpl.getWidth(), activityImpl.getHeight(), behavior.isInterrupting());
 	      }
 	    });
 	    
@@ -211,7 +215,8 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 	    activityDrawInstructions.put("boundarySignal", new ActivityDrawXYInstruction() {
 
 	      public void draw(ProcessDiagramCanvas processDiagramCreator, ActivityImpl activityImpl, int x, int y) {
-	        processDiagramCreator.drawCatchingSignalEvent(x, y, activityImpl.getWidth(), activityImpl.getHeight());
+	    	BoundaryEventActivityBehavior behavior = (BoundaryEventActivityBehavior)activityImpl.getActivityBehavior();
+	        processDiagramCreator.drawCatchingSignalEvent(x, y, activityImpl.getWidth(), activityImpl.getHeight(), behavior.isInterrupting());
 	      }
 	    });
 
@@ -219,7 +224,8 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 	    activityDrawInstructions.put("intermediateTimer", new ActivityDrawXYInstruction() {
 
 	      public void draw(ProcessDiagramCanvas processDiagramCreator, ActivityImpl activityImpl, int x, int y) {
-	        processDiagramCreator.drawCatchingTimerEvent(x, y, activityImpl.getWidth(), activityImpl.getHeight());
+	    	BoundaryEventActivityBehavior behavior = (BoundaryEventActivityBehavior)activityImpl.getActivityBehavior();
+	        processDiagramCreator.drawCatchingTimerEvent(x, y, activityImpl.getWidth(), activityImpl.getHeight(), behavior.isInterrupting());
 	      }
 	    });
 
