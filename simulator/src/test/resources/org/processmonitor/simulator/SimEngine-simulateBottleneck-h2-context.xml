@@ -57,4 +57,10 @@
         <property name="repositoryService" ref="simRepositoryService"/>	
         <property name="limit" value="5"/> <!-- highlight nodes with more that 5 instances -->	
 	</bean>
+	
+	<bean id="dueDateReportGenerator" class="org.processmonitor.generator.DueDateGraphGenerator">
+        <property name="repositoryService" ref="simRepositoryService"/>	
+        <property name="historyService" ref="simHistoryService"/>	
+        <property name="limit" value="5"/> <!-- highlight nodes with more that 5% task instances after due date-->	
+	</bean>
 </beans>

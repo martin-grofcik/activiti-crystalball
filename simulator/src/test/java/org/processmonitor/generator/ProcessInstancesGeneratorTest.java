@@ -75,13 +75,13 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 	 */
 	public void testGenerateProcessDefinition() throws IOException {
 	    
-	    ProcessInstancesGenerator monitor = new ProcessInstancesGenerator();
+		ProcessInstancesGenerator monitor = new ProcessInstancesGenerator();
 	    monitor.setRepositoryService(repositoryService);
 	    monitor.setRuntimeService(runtimeService);
 	    
 	    String processDefinitionId = repositoryService.createProcessDefinitionQuery().processDefinitionKey( PROCESS_KEY).singleResult().getId();
 	    
-	    monitor.generateReport( processDefinitionId, "target/ProcessInstanceMonitor-1.png");
+	    monitor.generateReport( processDefinitionId, null, null, "target/ProcessInstanceMonitor-1.png");
 	    
 	    File expectedFile = new File("src/test/resources/org/processmonitor/generator/ProcessInstanceMonitor-1.png" );
 	    File generatedFile = new File("target/ProcessInstanceMonitor-1.png" );
@@ -95,7 +95,7 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 				taskService.complete(t.getId());
 		}
 
-	    monitor.generateReport( processDefinitionId, "target/ProcessInstanceMonitor-2.png");
+	    monitor.generateReport( processDefinitionId, null, null, "target/ProcessInstanceMonitor-2.png");
 	    
 	    expectedFile = new File("src/test/resources/org/processmonitor/generator/ProcessInstanceMonitor-2.png" );
 	    generatedFile = new File("target/ProcessInstanceMonitor-2.png" );
@@ -108,7 +108,7 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 				taskService.complete(t.getId());
 		}
 
-	    monitor.generateReport( processDefinitionId, "target/ProcessInstanceMonitor-3.png");
+	    monitor.generateReport( processDefinitionId, null, null, "target/ProcessInstanceMonitor-3.png");
 
 		expectedFile = new File("src/test/resources/org/processmonitor/generator/ProcessInstanceMonitor-3.png" );
 	    generatedFile = new File("target/ProcessInstanceMonitor-3.png" );
@@ -121,7 +121,7 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 				taskService.complete(t.getId());
 		}
 
-	    monitor.generateReport( processDefinitionId, "target/ProcessInstanceMonitor-4.png");
+	    monitor.generateReport( processDefinitionId, null, null, "target/ProcessInstanceMonitor-4.png");
 
 		expectedFile = new File("src/test/resources/org/processmonitor/generator/ProcessInstanceMonitor-4.png" );
 	    generatedFile = new File("target/ProcessInstanceMonitor-4.png" );

@@ -12,7 +12,7 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.processmonitor.generator.ProcessInstancesGenerator;
+import org.processmonitor.generator.AbstractGraphGenerator;
 import org.processmonitor.simulator.impl.StartProcessEventHandler;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -100,13 +100,13 @@ public class SimulateBottleneckTest {
 	    @SuppressWarnings("unused")
 		List<SimulationResultEvent> resultEventList = simRun.execute(startDate, finishDate);
 	    
-	    ProcessInstancesGenerator generator = (ProcessInstancesGenerator) appContext.getBean( "reportGenerator");
+	    AbstractGraphGenerator generator = (AbstractGraphGenerator) appContext.getBean( "reportGenerator");
 	
 	    RepositoryService simRepositoryService = (RepositoryService) appContext.getBean("simRepositoryService");
 	    
 	    String processDefinitionId = simRepositoryService.createProcessDefinitionQuery().processDefinitionKey(PROCESS_KEY).singleResult().getId();
 	
-	    generator.generateReport(processDefinitionId, generatedImage);
+	    generator.generateReport(processDefinitionId, startDate, finishDate, generatedImage);
 	    
 	}
 

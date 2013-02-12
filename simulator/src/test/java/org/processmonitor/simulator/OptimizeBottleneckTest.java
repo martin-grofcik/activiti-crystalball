@@ -13,7 +13,7 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.processmonitor.generator.ProcessInstancesGenerator;
+import org.processmonitor.generator.AbstractGraphGenerator;
 import org.processmonitor.simulator.impl.StartProcessEventHandler;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -40,7 +40,7 @@ public class OptimizeBottleneckTest {
         IdentityService identityService = (IdentityService) appContext.getBean("simIdentityService");
         identityService.createMembership("user3", "Group2");
         
-        runSimulation(appContext, tempDir + "/OptimizeBottleneckTest3.png");
+        runSimulation(appContext, tempDir + "/OptimizeBottleneckTest3.png", tempDir + "/OptimizeBottleneckTest3-dueDate.png");
 
         processEngine.close();
         appContext.close();        
@@ -48,7 +48,12 @@ public class OptimizeBottleneckTest {
         File expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/processmonitor/simulator/OptimizeBottleneckTest3.png" );   
 		File generated = new File(tempDir + "/OptimizeBottleneckTest3.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	          
-		// delete database file
+
+        expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/processmonitor/simulator/OptimizeBottleneckTest3-dueDate.png" );   
+		generated = new File(tempDir + "/OptimizeBottleneckTest3-dueDate.png");   
+	    assertTrue( FileUtils.contentEquals(expected, generated));	          
+
+	    // delete database file
 		File f = new File( System.getProperty("_SIM_DB_PATH") +".h2.db");
 		if ( !f.delete() )
 			System.err.println("unable to delete file");		
@@ -73,14 +78,19 @@ public class OptimizeBottleneckTest {
 
         identityService.createMembership("user4", "Group2");
         
-        runSimulation(appContext,tempDir + "/OptimizeBottleneckTest4.png");
+        runSimulation(appContext,tempDir + "/OptimizeBottleneckTest4.png", tempDir + "/OptimizeBottleneckTest4-dueDate.png");
 
         processEngine.close();
         appContext.close();        
 
         File expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/processmonitor/simulator/OptimizeBottleneckTest4.png" );   
 		File generated = new File(tempDir + "/OptimizeBottleneckTest4.png");   
+	    assertTrue( FileUtils.contentEquals(expected, generated));	
+	    
+        expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/processmonitor/simulator/OptimizeBottleneckTest4-dueDate.png" );   
+		generated = new File(tempDir + "/OptimizeBottleneckTest4-dueDate.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	          
+
 		// delete database file
 		File f = new File( System.getProperty("_SIM_DB_PATH") +".h2.db");
 		if ( !f.delete() )
@@ -105,14 +115,19 @@ public class OptimizeBottleneckTest {
         identityService.saveUser( identityService.newUser("user5") );
         identityService.createMembership("user5", "Group2");
         
-        runSimulation(appContext,tempDir + "/OptimizeBottleneckTest5.png");
+        runSimulation(appContext,tempDir + "/OptimizeBottleneckTest5.png", tempDir + "/OptimizeBottleneckTest5-dueDate.png");
 
         processEngine.close();
         appContext.close();        
 
         File expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/processmonitor/simulator/OptimizeBottleneckTest5.png" );   
 		File generated = new File(tempDir + "/OptimizeBottleneckTest5.png");   
+	    assertTrue( FileUtils.contentEquals(expected, generated));
+	    
+        expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/processmonitor/simulator/OptimizeBottleneckTest5-dueDate.png" );   
+		generated = new File(tempDir + "/OptimizeBottleneckTest5-dueDate.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	          
+
 		// delete database file
 		File f = new File( System.getProperty("_SIM_DB_PATH") +".h2.db");
 		if ( !f.delete() )
@@ -138,14 +153,19 @@ public class OptimizeBottleneckTest {
         identityService.createMembership("user5", "Group2");
         identityService.createMembership("user5", "Group4");
         
-        runSimulation(appContext, tempDir + "/OptimizeBottleneckTest45.png");
+        runSimulation(appContext, tempDir + "/OptimizeBottleneckTest45.png", tempDir + "/OptimizeBottleneckTest45-dueDate.png");
 
         processEngine.close();
         appContext.close();        
 
         File expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/processmonitor/simulator/OptimizeBottleneckTest45.png" );   
 		File generated = new File(tempDir + "/OptimizeBottleneckTest45.png");   
+	    assertTrue( FileUtils.contentEquals(expected, generated));
+	    
+        expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/processmonitor/simulator/OptimizeBottleneckTest45-dueDate.png" );   
+		generated = new File(tempDir + "/OptimizeBottleneckTest45-dueDate.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	          
+
 		// delete database file
 		File f = new File( System.getProperty("_SIM_DB_PATH") +".h2.db");
 		if ( !f.delete() )
@@ -158,7 +178,7 @@ public class OptimizeBottleneckTest {
 	 * @param appContext
 	 * @throws IOException
 	 */
-	protected void runSimulation(AbstractApplicationContext appContext, String generatedImage) throws IOException {
+	protected void runSimulation(AbstractApplicationContext appContext, String instancesGeneratedImage, String dueDateGeneratedImage) throws IOException {
 	
 	    SimulationRun simRun = (SimulationRun)appContext.getBean(SimulationRun.class);
 	    
@@ -172,14 +192,18 @@ public class OptimizeBottleneckTest {
 	    // run simulation for 30 days
 	    @SuppressWarnings("unused")
 		List<SimulationResultEvent> resultEventList = simRun.execute(startDate, finishDate);
-	    
-	    ProcessInstancesGenerator generator = (ProcessInstancesGenerator) appContext.getBean( "reportGenerator");
-	
-	    RepositoryService simRepositoryService = (RepositoryService) appContext.getBean("simRepositoryService");
-	    
+	    	
+	    RepositoryService simRepositoryService = (RepositoryService) appContext.getBean("simRepositoryService");	    
 	    String processDefinitionId = simRepositoryService.createProcessDefinitionQuery().processDefinitionKey(PROCESS_KEY).singleResult().getId();
 	
-	    generator.generateReport(processDefinitionId, generatedImage);
+	    // GENERATE REPORTS
 	    
+	    // instances report 
+	    AbstractGraphGenerator generator = (AbstractGraphGenerator) appContext.getBean( "reportGenerator");
+	    generator.generateReport(processDefinitionId, startDate, finishDate, instancesGeneratedImage);
+	    
+	    // after due date report
+	    generator = (AbstractGraphGenerator) appContext.getBean( "dueDateReportGenerator");
+	    generator.generateReport(processDefinitionId, startDate, finishDate, dueDateGeneratedImage);
 	}
 }
