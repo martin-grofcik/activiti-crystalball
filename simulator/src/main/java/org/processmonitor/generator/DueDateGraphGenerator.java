@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.HistoryService;
-import org.activiti.engine.RuntimeService;
 import org.activiti.engine.history.NativeHistoricTaskInstanceQuery;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
-import org.activiti.engine.runtime.NativeExecutionQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

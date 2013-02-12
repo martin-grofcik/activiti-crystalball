@@ -13,7 +13,6 @@ import org.activiti.engine.impl.util.ClockUtil;
 import org.activiti.engine.task.Task;
 import org.processmonitor.simulator.EventCalendar;
 import org.processmonitor.simulator.SimulationEvent;
-import org.processmonitor.simulator.SimulationRun;
 import org.processmonitor.simulator.Simulator;
 import org.processmonitor.simulator.executor.UserTaskExecutor;
 import org.slf4j.Logger;

@@ -1,11 +1,6 @@
 package org.processmonitor.simulator.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.util.ClockUtil;
-import org.activiti.engine.task.Task;
 import org.processmonitor.simulator.SimulationContext;
 import org.processmonitor.simulator.SimulationEvent;
 import org.processmonitor.simulator.SimulationEventHandler;
