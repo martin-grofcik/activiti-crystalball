@@ -7,7 +7,6 @@ import java.util.Map;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricDetail;
-import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricVariableUpdate;
 import org.activiti.engine.impl.util.ClockUtil;
 import org.processmonitor.simulator.SimulationContext;

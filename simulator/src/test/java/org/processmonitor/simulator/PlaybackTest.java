@@ -36,7 +36,7 @@ public class PlaybackTest {
 
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/processmonitor/simulator/PlaybackSimEngine-h2-context.xml");
 		
-		HistoryService historyService = (HistoryService)appContext.getBean("simHistoryService");
+		HistoryService simHistoryService = (HistoryService)appContext.getBean("simHistoryService");
 		
 		// init identity service
 		IdentityService identityService = (IdentityService) appContext.getBean("simIdentityService");
@@ -62,27 +62,27 @@ public class PlaybackTest {
 	    // run simulation for 10 seconds
 	    @SuppressWarnings("unused")
 		List<SimulationResultEvent> resultEventList = simRun.execute(startDate, finishDate);
-
-	    assertEquals( 3, historyService.createHistoricProcessInstanceQuery().count());
-	    List<HistoricProcessInstance> processInstances = historyService.createHistoricProcessInstanceQuery()
+	
+	    assertEquals( 3, simHistoryService.createHistoricProcessInstanceQuery().count());
+	    List<HistoricProcessInstance> processInstances = simHistoryService.createHistoricProcessInstanceQuery()
 	    		.orderByProcessInstanceStartTime().asc()
 	    		.list();
 	    HistoricProcessInstance processInstance = processInstances.get(0);
-	    HistoricVariableInstance variableInstance = historyService.createHistoricVariableInstanceQuery()
+	    HistoricVariableInstance variableInstance = simHistoryService.createHistoricVariableInstanceQuery()
 	    		.processInstanceId( processInstance.getId())
 	    		.variableName( "x")
 	    		.singleResult();
 	    assertEquals(3, ((Integer) variableInstance.getValue()).intValue());
-
+		
 	    processInstance = processInstances.get(1);
-	    variableInstance = historyService.createHistoricVariableInstanceQuery()
+	    variableInstance = simHistoryService.createHistoricVariableInstanceQuery()
 	    		.processInstanceId( processInstance.getId())
 	    		.variableName( "x")
 	    		.singleResult();
 	    assertEquals(2, ((Integer) variableInstance.getValue()).intValue());
 
 	    processInstance = processInstances.get(2);
-	    variableInstance = historyService.createHistoricVariableInstanceQuery()
+	    variableInstance = simHistoryService.createHistoricVariableInstanceQuery()
 	    		.processInstanceId( processInstance.getId())
 	    		.variableName( "x")
 	    		.singleResult();

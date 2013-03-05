@@ -1,19 +1,27 @@
 package org.processmonitor.simulator;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
+import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.util.ClockUtil;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.processmonitor.activiti.diagram.AuditTrailProcessDiagramGenerator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -24,7 +32,7 @@ public class GenerateProcessEngineState {
 	
 	static String TEMP_DIR;
 	
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, IOException {
 		TEMP_DIR = args[0];
 		if (TEMP_DIR == null)
 			TEMP_DIR = "target";
@@ -174,13 +182,13 @@ public class GenerateProcessEngineState {
 			System.setProperty("liveDB", "");
 	}
 
-	private static void generatePlaybackOriginal()
-			throws InterruptedException {
+	private static void generatePlaybackOriginal() throws InterruptedException, IOException {
 		String PROCESS_KEY = "playback";
 		RepositoryService repositoryService;
 		RuntimeService runtimeService;
 		TaskService taskService;
 		IdentityService identityService;
+		HistoryService historyService;
 		ProcessEngine processEngine;
 		String liveDB = TEMP_DIR + "/Playback";
 				
@@ -202,7 +210,9 @@ public class GenerateProcessEngineState {
 		repositoryService = appContext.getBean( RepositoryService.class );
 		runtimeService = appContext.getBean( RuntimeService.class );
 		taskService = appContext.getBean( TaskService.class );
-		identityService = appContext.getBean( IdentityService.class );
+		identityService = appContext.getBean( IdentityService.class );		
+		historyService = appContext.getBean( HistoryService.class );
+		
 		processEngine = appContext.getBean( ProcessEngine.class);
 		
 		// deploy processes
@@ -224,10 +234,10 @@ public class GenerateProcessEngineState {
 		Map<String, Object> variables0 = new HashMap<String,Object>();
 		variables0.put("x", 0);
 
-		runtimeService.startProcessInstanceByKey( PROCESS_KEY, "BUSINESS-KEY-1" , variables0);
+		ProcessInstance processInstance1 = runtimeService.startProcessInstanceByKey( PROCESS_KEY, "BUSINESS-KEY-1" , variables0);
 		calendar.add( Calendar.SECOND, 1);
 		ClockUtil.setCurrentTime( calendar.getTime());
-		runtimeService.startProcessInstanceByKey( PROCESS_KEY, "BUSINESS-KEY-2" , variables1);
+		ProcessInstance processInstance2 = runtimeService.startProcessInstanceByKey( PROCESS_KEY, "BUSINESS-KEY-2" , variables1);
 		calendar.add( Calendar.SECOND, 1);
 		ClockUtil.setCurrentTime( calendar.getTime());
 		runtimeService.startProcessInstanceByKey( PROCESS_KEY, "BUSINESS-KEY-3" , variables0);
@@ -247,6 +257,26 @@ public class GenerateProcessEngineState {
 			taskService.complete( t.getId(), variables2 );
 		}
 		
+	    // audit trail images generator
+		AuditTrailProcessDiagramGenerator generator = new AuditTrailProcessDiagramGenerator();
+		generator.setHistoryService(historyService);
+		generator.setRepositoryService((RepositoryServiceImpl) repositoryService);
+		generator.setWriteUpdates(true);
+
+		Map<String, Object> params = new HashMap<String,Object>();
+		params.put( AuditTrailProcessDiagramGenerator.PROCESS_INSTANCE_ID, processInstance1.getId());
+		
+		ImageIO.write( ImageIO.read(new ByteArrayInputStream( generator.generateLayer("png", params)))
+				, "png"
+				, new File( "target/playback-auditTrail1.png"));
+
+		params.clear();
+		params.put( AuditTrailProcessDiagramGenerator.PROCESS_INSTANCE_ID, processInstance2.getId());
+		
+		ImageIO.write( ImageIO.read(new ByteArrayInputStream( generator.generateLayer("png", params)))
+				, "png"
+				, new File( "target/playback-auditTrail2.png"));
+
 		processEngine.close();
 		
 		appContext.close();
