@@ -45,8 +45,12 @@ public class PriorityOneTaskUserSimulatorImpl implements Simulator {
 					// create complete task event
 					Map<String, Object> props = new HashMap<String, Object>();
 					props.put( "task", execTask.getId());
+					Map<String, Object> variables = new HashMap<String, Object>();
+					long userTaskDelta = userTaskExecutor.simulateTaskExecution(execTask, variables);
+					props.put( "variables", variables);
+					
 					// TODO simulateTaskExecution simulates new task execution - does not take into account work in the progress. It should be changed
-					SimulationEvent completeEvent = new SimulationEvent( userTaskExecutor.simulateTaskExecution(execTask, simulationTime), SimulationEvent.TYPE_COMPLETE, props);
+					SimulationEvent completeEvent = new SimulationEvent( simulationTime + userTaskDelta, SimulationEvent.TYPE_COMPLETE, props);
 					// add complete task event
 					calendar.addEvent( completeEvent);
 				}
@@ -86,7 +90,11 @@ public class PriorityOneTaskUserSimulatorImpl implements Simulator {
 				// create complete task event
 				Map<String, Object> props = new HashMap<String, Object>();
 				props.put( "task", execTask.getId());
-				SimulationEvent completeEvent = new SimulationEvent( userTaskExecutor.simulateTaskExecution(execTask, simulationTime), SimulationEvent.TYPE_COMPLETE, props);
+				Map<String, Object> variables = new HashMap<String, Object>();
+				long userTaskDelta = userTaskExecutor.simulateTaskExecution(execTask, variables);
+				props.put( "variables", variables);
+
+				SimulationEvent completeEvent = new SimulationEvent( simulationTime + userTaskDelta, SimulationEvent.TYPE_COMPLETE, props);
 				// schedule complete task event
 				calendar.addEvent( completeEvent);
 			}

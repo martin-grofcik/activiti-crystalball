@@ -29,12 +29,12 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringNewContextProcessEngineConfiguration">
 		<property name="dataSource" ref="dataSource" />
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="databaseSchemaUpdate" value="true" />
 		<property name="jobExecutorActivate" value="false" />
-		<property name="history" value="audit" />
+		<property name="history" value="full" />
 	</bean>
 
     <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">

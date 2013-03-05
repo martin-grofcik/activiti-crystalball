@@ -1,6 +1,7 @@
 package org.processmonitor.simulator.executor.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.activiti.engine.HistoryService;
@@ -37,17 +38,18 @@ public class TaskInstanceHistoryExecutor implements UserTaskExecutor {
 	 * take randomly one task from the history and use its duration for simulation  
 	 * 
 	 */
-	public long simulateTaskExecution(Task execTask, long simulationTime) {
+	public long simulateTaskExecution(Task execTask, Map<String, Object> variables) {
 		List<HistoricTaskInstance> historicInstances = historyService.createHistoricTaskInstanceQuery()
 			.taskDefinitionKey( execTask.getTaskDefinitionKey() ).finished().list();
 		
 		if ( historicInstances.isEmpty() )
 			//use backupExecutor
-			return backUpExecutor.simulateTaskExecution(execTask, simulationTime);
+			return backUpExecutor.simulateTaskExecution(execTask, variables);
 		
 		// get random historic instance 
 		HistoricTaskInstance historicTask = historicInstances.get( randomGenerator.nextInt( historicInstances.size() ));
-		return simulationTime + historicTask.getDurationInMillis();
+		//@TODO in version 5.12 use time spend on task 
+		return historicTask.getDurationInMillis();
 	}
 
 	public HistoryService getHistoryService() {

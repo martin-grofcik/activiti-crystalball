@@ -13,7 +13,7 @@
 	<!-- *************************************** -->
 	<!--   SIMULATOR                             -->
 	<!-- *************************************** -->
-	<import resource="Simulator-context.xml"/>
+	<import resource="Simulator-Playback-context.xml"/>
 	                           
     <!-- property placeholder -->
 	<bean id="placeholderConfig"
@@ -38,16 +38,25 @@
         <property name="dataSource" ref="simDataSource"/>
     </bean>
 
-	<bean id="simProcessEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+	<bean id="simProcessEngineConfiguration" class="org.activiti.spring.SpringNewContextProcessEngineConfiguration">
 		<property name="dataSource" ref="simDataSource" />
 		<property name="transactionManager" ref="simTransactionManager" />
 		<property name="databaseSchemaUpdate" value="true" />
 		<property name="jobExecutorActivate" value="false" />
+		<property name="history" value="full" />
+		
 		<property name="preParseListeners">
 			<list>
 				<bean class="org.processmonitor.simulator.parse.SimulationBpmnParseListener"></bean>
 			</list>
 		</property>
+		
+		<!-- Setting history service bean from which playback is played -->
+		<property name="beans">
+	        <map>
+	          <entry key="_playback.historyService" value-ref="historyService"/>
+	        </map>
+    	</property>
 	</bean>
 
     <bean id="simProcessEngine" class="org.activiti.spring.ProcessEngineFactoryBean" >

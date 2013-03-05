@@ -1,5 +1,7 @@
 package org.processmonitor.simulator.executor.impl;
 
+import java.util.Map;
+
 import org.activiti.engine.task.Task;
 import org.processmonitor.simulator.executor.UserTaskExecutor;
 
@@ -19,8 +21,8 @@ public class ConstantUserTaskExecutor implements UserTaskExecutor {
 		this.constantExecutionTime = time;
 	}
 	
-	public long simulateTaskExecution(Task execTask, long simulationTime) {
-		return simulationTime + constantExecutionTime;
+	public long simulateTaskExecution(Task execTask, Map<String, Object> variables) {
+		return constantExecutionTime;
 	}
 
 	public long getConstantExecutionTime() {

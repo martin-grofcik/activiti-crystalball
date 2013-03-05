@@ -18,12 +18,12 @@ public class ConstantUserMapTaskExecutor implements UserTaskExecutor {
 	private UserTaskExecutor backUpExecutor;	
 	
 	@Override
-	public long simulateTaskExecution(Task execTask, long simulationTime) {
+	public long simulateTaskExecution(Task execTask, Map<String, Object> variables) {
 		String assigneId = execTask.getAssignee();
 		if (userExecutionMap.get( assigneId) != null) {
-			return simulationTime + userExecutionMap.get( assigneId);
+			return userExecutionMap.get( assigneId);
 		}		
-		return backUpExecutor.simulateTaskExecution(execTask, simulationTime);
+		return backUpExecutor.simulateTaskExecution(execTask, variables);
 	}
 
 	public Map<String, Integer> getUserExecutionMap() {
