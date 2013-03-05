@@ -7,10 +7,11 @@ import java.util.logging.Logger;
 
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
+import org.activiti.engine.history.HistoricDetail;
 import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricVariableUpdate;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.bpmn.behavior.BoundaryEventActivityBehavior;
-import org.activiti.engine.impl.bpmn.diagram.ProcessDiagramCanvas;
 import org.activiti.engine.impl.bpmn.parser.BpmnParse;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
@@ -31,6 +32,8 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 	private static final int TRANSITION_HEIGHT = 20;
 	private int maxX = 0;
 	private int maxY = 0;
+	
+	protected boolean writeUpdates = false;
 	
 	//
 	// Copied from ProcessDiagramGenerator
@@ -259,7 +262,7 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 
 	  }
 
-	  protected static void drawActivity(ProcessDiagramCanvas processDiagramCanvas, ActivityImpl activity, Integer x, Integer y) {
+	  protected static void drawActivity(ProcessDiagramCanvas processDiagramCanvas, ActivityImpl activity, Map<String,Object> varUpdates, Integer x, Integer y, boolean writeUpdates) {
 	    String type = (String) activity.getProperty("type");
 	    ActivityDrawXYInstruction drawInstruction = activityDrawInstructions.get(type);
 	    if (drawInstruction != null) {
@@ -286,7 +289,9 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 	      // Actually draw the markers
 	      processDiagramCanvas.drawActivityMarkers(x, y, activity.getWidth(), activity.getHeight(), multiInstanceSequential,
 	              multiInstanceParallel, collapsed);
-
+	      
+	      if (writeUpdates && !varUpdates.isEmpty())
+	    	  processDiagramCanvas.drawStringToNode( varUpdates.toString(), x, y, activity.getWidth()+10, activity.getHeight());
 	    }
 
 	    // TODO: Nested activities (boundary events)
@@ -342,13 +347,15 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 	    		.processInstanceId( processInstanceId)
 	    		.orderByHistoricActivityInstanceStartTime()
 	    		.asc()
+	    		.orderByHistoricActivityInstanceEndTime()
+	    		.asc()
 	    		.list();
 	    int y = 0;
 	    
 	    if ( !historicActivities.isEmpty()) {
 	    	ActivityImpl activity = findActivity(processDefinition, historicActivities.get(0).getActivityId());
 	   
-	    	drawActivity( processDiagramCanvas, activity, (maxX - activity.getWidth())/2, y);
+	    	drawActivity( processDiagramCanvas, activity, getVarUpdates(historicActivities.get(0)), (maxX - activity.getWidth())/2, y, writeUpdates);
 		    y += activity.getHeight();
 		    
 	    	for ( int i=1; i < historicActivities.size(); i++ ) {
@@ -358,7 +365,7 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 			    
 	    		// draw activity
 	    		activity = findActivity(processDefinition, historicActivities.get(i).getActivityId());
-	    		drawActivity( processDiagramCanvas, activity, (maxX - activity.getWidth())/2, y);
+	    		drawActivity( processDiagramCanvas, activity, getVarUpdates(historicActivities.get(i)), (maxX - activity.getWidth())/2, y, writeUpdates);
 			    y += activity.getHeight();
 	    	}
 	    } 	
@@ -366,6 +373,24 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 		return processDiagramCanvas;
 	}
 	
+	/** 
+	 * get var updates in the node
+	 * @param historicActivityInstance
+	 * @return
+	 */
+	private Map<String, Object> getVarUpdates(HistoricActivityInstance historicActivityInstance) {
+		Map<String, Object> updates = new HashMap<String,Object>();
+		
+		List<HistoricDetail> historicUpdates = historyService.createHistoricDetailQuery()
+				.processInstanceId( historicActivityInstance.getProcessInstanceId())
+				.activityInstanceId( historicActivityInstance.getId())
+				.variableUpdates()
+				.list();
+		for (HistoricDetail historicDetail : historicUpdates)
+			updates.put( ((HistoricVariableUpdate) historicDetail).getVariableName(), ((HistoricVariableUpdate) historicDetail).getValue());
+		return updates;
+	}
+
 	protected ProcessDiagramCanvas initProcessDiagramCanvas(String processInstanceId,
 			ProcessDefinitionEntity processDefinition) {
 		int minX = 0;
@@ -378,11 +403,13 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 		List<HistoricActivityInstance> historicActivityList = historyService.createHistoricActivityInstanceQuery().processInstanceId(processInstanceId).orderByHistoricActivityInstanceStartTime().asc().list();
 		for (HistoricActivityInstance historicActivity : historicActivityList) {
 			ActivityImpl activity = findActivity( processDefinition, historicActivity.getActivityId());
+			
 			if (activity != null) {
 				// width
-				if (activity.getWidth() > maxX) {
+				if (activity.getWidth() > maxX) {					
 					maxX = activity.getWidth();
 				}
+
 				// height
 				maxY += activity.getHeight();
 	
@@ -399,8 +426,11 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 	}
 	
 	private static ActivityImpl findActivity(ProcessDefinitionEntity processDefinition, String activityId) {
+		if (activityId == null)
+			return null;
+		
 		for (ActivityImpl activity : processDefinition.getActivities()) {
-			if ( activity.getId() == activityId)
+			if ( activityId.equals( activity.getId() ))
 				return activity;
 		}
 		return null;
@@ -412,6 +442,14 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 
 	public void setHistoryService(HistoryService historyService) {
 		this.historyService = historyService;
+	}
+
+	public boolean isWriteUpdates() {
+		return writeUpdates;
+	}
+
+	public void setWriteUpdates(boolean writeUpdates) {
+		this.writeUpdates = writeUpdates;
 	}
 
 }
