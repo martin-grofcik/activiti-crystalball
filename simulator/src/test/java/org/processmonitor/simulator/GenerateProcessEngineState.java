@@ -67,9 +67,6 @@ public class GenerateProcessEngineState {
 		repositoryService.createDeployment()
 	       .addClasspathResource("org/processmonitor/simulator/ThreeTasksProcess.bpmn")
 	       .deploy();
-		repositoryService.createDeployment()
-	       .addClasspathResource("org/processmonitor/simulator/ScriptTaskProcess.bpmn")
-	       .deploy();
 
 		// init identity service
 		identityService.saveGroup( identityService.newGroup("Group1") );
