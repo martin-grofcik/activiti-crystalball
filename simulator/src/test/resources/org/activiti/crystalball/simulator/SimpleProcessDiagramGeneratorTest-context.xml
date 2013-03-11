@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:activiti="http://www.activiti.org/schema/spring/components"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.activiti.org/schema/spring/components http://www.activiti.org/schema/spring/components/activiti.xsd">
+	<bean id="placeholderConfig"
+	      class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	      <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+	</bean>
+
+	<!-- *************************************** -->
+	<!-- RUNNING PROCESS ENGINE                  -->
+	<!-- *************************************** -->
+	<import resource="classpath:org/activiti/crystalball/simulator/LiveEngine-context.xml"/>
+	
+	<!-- *************************************** -->
+	<!-- ENGINE FOR REPORTS GENERATION           -->
+	<!-- *************************************** -->    
+	<import resource="Generator-context.xml"/>
+
+</beans>

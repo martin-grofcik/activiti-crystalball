@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:activiti="http://www.activiti.org/schema/spring/components"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.activiti.org/schema/spring/components http://www.activiti.org/schema/spring/components/activiti.xsd">
+	<!-- *************************************** -->
+	<!--   SIMULATOR                             -->
+	<!-- *************************************** -->
+	<bean id="simulationRun" class="org.activiti.crystalball.simulator.SimulationRun">
+		<constructor-arg>
+				<bean class="org.activiti.crystalball.simulator.impl.PriorityOneTaskUserSimulatorImpl">
+		       		<property name="identityService" ref="simIdentityService"/>
+		       		<property name="taskService" ref="simTaskService"/>
+		       		<property name="userTaskExecutor" ref="userTaskExecutor"/>
+				</bean>
+		</constructor-arg>
+	
+		<constructor-arg ref="simulationContext">
+
+		</constructor-arg>
+		<constructor-arg>
+			<map>
+				<entry key="COMPLETE" value-ref="completeEventHandler"/>
+				<entry key="START_PROCESS" value-ref="startProcessEventHandler"/>
+				<entry key="SCHEDULE_PROCESS" value-ref="scheduleProcessEventHandler"/>
+			</map>
+		</constructor-arg>
+		<constructor-arg>
+			<list>
+				<bean class="org.activiti.crystalball.simulator.UnfinishedUserTasksEvaluator">
+					<property name="repositoryService" ref="simRepositoryService" />
+					<property name="type" value="unfinished_task" />
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="simulationContext" class="org.activiti.crystalball.simulator.SimulationContext">
+		<property name="runtimeService" ref="simRuntimeService" />
+		<property name="taskService" ref="simTaskService" />
+		<!-- simulation run audit is logged into simEngine history log -->
+		<property name="historyService" ref="simHistoryService" />
+	</bean>
+			
+	<!--   simulation event handlers              -->
+	<bean id="completeEventHandler" class="org.activiti.crystalball.simulator.impl.PlaybackCompleteEventHandler"/>
+	
+	<bean id="startProcessEventHandler" class="org.activiti.crystalball.simulator.impl.PlaybackStartProcessEventHandler">
+		<property name="eventType" value="START_PROCESS" /> 
+		<!-- process to start key - can differ from played back process-->
+		<property name="processToStartKey" value="playback" />
+		<property name="HistoryService" ref="historyService" />
+	</bean>
+	
+	<bean id="scheduleProcessEventHandler" class="org.activiti.crystalball.simulator.impl.PlaybackScheduleStartProcessEventHandler">
+		<property name="eventType" value="SCHEDULE_PROCESS" /> 
+		<property name="eventTypeToSchedule" value="START_PROCESS" /> 
+		<!-- process to playback key - this process will be play backed.-->
+		<property name="processToPlaybackKey" value="playback" />
+		<property name="HistoryService" ref="historyService" />
+		<property name="playBackStart" value="25-02-2013 14:30:00" />	
+		<property name="playBackEnd" value="25-02-2013 14:30:05" />
+		<property name="repeatPlayback" value="false" />
+	</bean>
+	
+	<!--  User tasks executors                    -->
+    <bean id="userTaskExecutor" class="org.activiti.crystalball.simulator.executor.impl.PlaybackUserTaskExecutor">
+       	<property name="backUpExecutor" ref="backUpTaskExecutor"/>
+		<property name="playbackHistoryService" ref="historyService" />       	
+		<property name="runtimeService" ref="simRuntimeService" />       	
+		<property name="taskService" ref="simTaskService" />       	
+    </bean>
+       
+    <bean id="backUpTaskExecutor" class="org.activiti.crystalball.simulator.executor.impl.ConstantUserTaskExecutor">
+     		<constructor-arg value="1000"/>
+    </bean>
+
+	<bean id="customEditorConfigurer"
+		class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="java.util.Date">
+					<bean class="org.springframework.beans.propertyeditors.CustomDateEditor">
+						<constructor-arg index="0">
+							<bean class="java.text.SimpleDateFormat">
+								<constructor-arg value="dd-MM-yyyy HH:mm:ss" />
+							</bean>
+						</constructor-arg>
+						<constructor-arg index="1" value="false" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+</beans>

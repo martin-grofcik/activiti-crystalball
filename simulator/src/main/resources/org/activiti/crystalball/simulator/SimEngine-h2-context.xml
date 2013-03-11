@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:activiti="http://www.activiti.org/schema/spring/components"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.activiti.org/schema/spring/components http://www.activiti.org/schema/spring/components/activiti.xsd">
+	<!-- *************************************** -->
+	<!-- RUNNING PROCESS ENGINE                  -->
+	<!-- *************************************** -->
+	<import resource="LiveEngine-context.xml"/>
+	
+	<!-- *************************************** -->
+	<!--   SIMULATOR                             -->
+	<!-- *************************************** -->
+	<import resource="Simulator-context.xml"/>
+	                           
+    <!-- property placeholder -->
+	<bean id="placeholderConfig"
+	      class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	</bean>
+
+	<!-- *************************************** -->
+	<!-- SIMULATION PROCESS ENGINE               -->
+	<!-- *************************************** -->    
+	<bean id="simDataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+        <property name="targetDataSource">
+            <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+                <property name="driverClass" value="org.h2.Driver"/>
+                <property name="url" value="jdbc:h2:${_SIM_DB_PATH};DB_CLOSE_DELAY=1000"/>
+                <property name="username" value="sa"/>
+                <property name="password" value=""/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="simTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
+        <property name="dataSource" ref="simDataSource"/>
+    </bean>
+
+	<bean id="simProcessEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+		<property name="dataSource" ref="simDataSource" />
+		<property name="transactionManager" ref="simTransactionManager" />
+		<property name="databaseSchemaUpdate" value="true" />
+		<property name="jobExecutorActivate" value="false" />
+		<property name="preParseListeners">
+			<list>
+				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener"></bean>
+			</list>
+		</property>
+	</bean>
+
+    <bean id="simProcessEngine" class="org.activiti.spring.ProcessEngineFactoryBean" >
+        <property name="processEngineConfiguration" ref="simProcessEngineConfiguration"/>
+    </bean>
+
+    <bean id="simRepositoryService" factory-bean="simProcessEngine" factory-method="getRepositoryService"/>
+    <bean id="simRuntimeService" factory-bean="simProcessEngine" factory-method="getRuntimeService"/>
+    <bean id="simTaskService" factory-bean="simProcessEngine" factory-method="getTaskService"/>
+    <bean id="simHistoryService" factory-bean="simProcessEngine" factory-method="getHistoryService"/>
+    <bean id="simManagementService" factory-bean="simProcessEngine" factory-method="getManagementService"/>
+    <bean id="simIdentityService" factory-bean="simProcessEngine" factory-method="getIdentityService"/>
+
+</beans>

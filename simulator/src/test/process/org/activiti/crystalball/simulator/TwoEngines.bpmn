@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="two-engines" name="Two Engines">
+    <documentation>start two engines for simulation purposes
+
+Input variables:
+runningDatabase - path to the H2 db file - running process engine. It is copied into simulation
+tempDir</documentation>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <scriptTask id="scripttask2" name="Simulation run" scriptFormat="groovy">
+      <script><![CDATA[	import org.apache.commons.io.*;
+       import static org.junit.Assert.*;
+	import java.util.List;
+	import org.activiti.engine.IdentityService;
+	import org.activiti.engine.identity.User;
+	import org.springframework.context.support.ClassPathXmlApplicationContext;
+	import org.activiti.crystalball.simulator.*;
+
+	// create copy of the running process engine database and set system property to this file
+
+FileUtils.copyFile( FileUtils.getFile(runningDatabaseFile), FileUtils.getFile( tempDir+"/TwoEngines-simulationRunDB"+Thread.currentThread().getId()+".h2.db"))
+System.setProperty("_SIM_DB_PATH", tempDir+"/TwoEngines-simulationRunDB"+Thread.currentThread().getId())
+	
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/activiti/crystalball/simulator/SimEngine-h2-context.xml")
+		IdentityService identityService = appContext.getBean("identityService")
+		IdentityService simIdentityService = appContext.getBean("simIdentityService")
+		List<User> simUsers = simIdentityService.createUserQuery().list();
+		List<User> users = identityService.createUserQuery().list();
+		assertTrue("Copied identity service is not the same as source  identity service", simUsers.size() == users.size());
+
+		SimulationRun simRun = appContext.getBean(SimulationRun.class)
+		resultEventList = simRun.execute(new Date(), null)
+
+		assertTrue("Simulation result event list is empty", resultEventList.size() > 0);
+
+		appContext.close()]]></script>
+    </scriptTask>
+    <sequenceFlow id="flow9" name="" sourceRef="startevent1" targetRef="scripttask2"></sequenceFlow>
+    <sequenceFlow id="flow10" name="" sourceRef="scripttask2" targetRef="endevent1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_two-engines">
+    <bpmndi:BPMNPlane bpmnElement="two-engines" id="BPMNPlane_two-engines">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35" width="35" x="226" y="150"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35" width="35" x="480" y="150"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask2" id="BPMNShape_scripttask2">
+        <omgdc:Bounds height="55" width="105" x="320" y="140"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="261" y="167"></omgdi:waypoint>
+        <omgdi:waypoint x="320" y="167"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="425" y="167"></omgdi:waypoint>
+        <omgdi:waypoint x="480" y="167"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.processmonitor</groupId>
+		<groupId>org.crystalball</groupId>
 		<artifactId>parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.processmonitor</groupId>
+	<groupId>org.crystalball</groupId>
 	<artifactId>simulator</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -22,7 +22,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.processmonitor</groupId>
+			<groupId>org.activiti.crystalball</groupId>
 			<artifactId>image-builder</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -108,7 +108,7 @@
 							<classpathScope>test</classpathScope>
 							<cleanupDaemonThreads>true</cleanupDaemonThreads>
 							<stopUnresponsiveDaemonThreads>true</stopUnresponsiveDaemonThreads>
-							<mainClass>org.processmonitor.simulator.GenerateProcessEngineState</mainClass>
+							<mainClass>org.activiti.crystalball.simulator.GenerateProcessEngineState</mainClass>
 							<arguments>
 								<argument>${project.build.directory}</argument>
 							</arguments>

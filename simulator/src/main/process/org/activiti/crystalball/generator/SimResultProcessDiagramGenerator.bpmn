@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="simResultProcessDiagramGenerator" name="simResultProcessDiagramGenerator">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <scriptTask id="scripttask1" name="preProcessResults" scriptFormat="groovy">
+      <script><![CDATA[import org.activiti.crystalball.simulator.*
+
+processDefinitionId=eventList.get(0).getProcessDefinitionKey();
+highlightTasks =  SimulationResultsPostProcessor.getTaskDefinitionKeys( eventList);
+nodeDescription = SimulationResultsPostProcessor.getNodeDescriptions( eventList);
+
+]]></script>
+    </scriptTask>
+    <callActivity id="callactivity1" name="Generate report" calledElement="generateProcessDiagram">
+      <extensionElements>
+        <activiti:in source="processDefinitionId" target="processDefinitionId"></activiti:in>
+        <activiti:in source="nodeDescription" target="counts"></activiti:in>
+        <activiti:in source="highlightTasks" target="highLightedActivities"></activiti:in>
+        <activiti:out source="processDiagram" target="processDiagram"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <scriptTask id="scripttask2" name="Write report to file " scriptFormat="groovy">
+      <script><![CDATA[import java.io.*
+      
+      	File dir = new File(tempDir + "/" + eventList.get(0).getType());
+		dir.mkdir();
+		reportFileName = tempDir + "/" + eventList.get(0).getType() +"/"+ processDefinitionId +".png"; 
+      
+      javax.imageio.ImageIO.write( javax.imageio.ImageIO.read(new ByteArrayInputStream( processDiagram)),
+				, "png"
+				, new File( reportFileName));]]></script>
+    </scriptTask>
+    <sequenceFlow id="flow3" name="" sourceRef="scripttask1" targetRef="callactivity1"></sequenceFlow>
+    <sequenceFlow id="flow1" name="" sourceRef="startevent1" targetRef="scripttask1"></sequenceFlow>
+    <sequenceFlow id="flow2" name="" sourceRef="callactivity1" targetRef="scripttask2"></sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow4" name="" sourceRef="scripttask2" targetRef="endevent1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_simResultProcessDiagramGenerator">
+    <bpmndi:BPMNPlane bpmnElement="simResultProcessDiagramGenerator" id="BPMNPlane_simResultProcessDiagramGenerator">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35" width="35" x="140" y="160"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask1" id="BPMNShape_scripttask1">
+        <omgdc:Bounds height="55" width="105" x="230" y="150"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callactivity1" id="BPMNShape_callactivity1">
+        <omgdc:Bounds height="55" width="105" x="390" y="150"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask2" id="BPMNShape_scripttask2">
+        <omgdc:Bounds height="55" width="105" x="550" y="150"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35" width="35" x="710" y="160"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="335" y="177"></omgdi:waypoint>
+        <omgdi:waypoint x="390" y="177"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="175" y="177"></omgdi:waypoint>
+        <omgdi:waypoint x="230" y="177"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="495" y="177"></omgdi:waypoint>
+        <omgdi:waypoint x="550" y="177"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="655" y="177"></omgdi:waypoint>
+        <omgdi:waypoint x="710" y="177"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
