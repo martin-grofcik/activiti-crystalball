@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.crystalball</groupId>
+		<groupId>org.activiti.crystalball</groupId>
 		<artifactId>parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.crystalball</groupId>
+	<groupId>org.activiti.crystalball</groupId>
 	<artifactId>simulator</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
