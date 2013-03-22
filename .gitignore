@@ -1,6 +1,8 @@
 **/.project
 **/.classpath
-generator/target/
+simulator/target/
 image-builder/target/
+examples/target/
 **/.settings/
 **/.bpmn/
+.project
