@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricTaskInstance;
-import org.activiti.engine.task.Task;
-import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
+import org.activiti.engine.impl.persistence.entity.TaskEntity;
 
 /**
  * Simulate user work based on taskinstance history, in the case when there is no task history 
@@ -38,7 +38,7 @@ public class TaskInstanceHistoryExecutor implements UserTaskExecutor {
 	 * take randomly one task from the history and use its duration for simulation  
 	 * 
 	 */
-	public long simulateTaskExecution(Task execTask, Map<String, Object> variables) {
+	public long simulateTaskExecution(TaskEntity execTask, Map<String, Object> variables) {
 		List<HistoricTaskInstance> historicInstances = historyService.createHistoricTaskInstanceQuery()
 			.taskDefinitionKey( execTask.getTaskDefinitionKey() ).finished().list();
 		

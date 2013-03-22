@@ -47,7 +47,9 @@
 		
 		<property name="preParseListeners">
 			<list>
-				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener"></bean>
+				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener">
+					<constructor-arg ref="eventCalendar"/>				
+				</bean>
 			</list>
 		</property>
 		

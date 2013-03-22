@@ -3,12 +3,17 @@ package org.activiti.crystalball.simulator.parse;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import org.activiti.crystalball.simulator.EventCalendar;
+import org.activiti.crystalball.simulator.SimulationEvent;
+import org.activiti.crystalball.simulator.delegate.AbstractSimulationActivityBehavior;
+import org.activiti.crystalball.simulator.delegate.UserTaskExecutionListener;
+import org.activiti.engine.delegate.TaskListener;
+import org.activiti.engine.impl.bpmn.behavior.UserTaskActivityBehavior;
 import org.activiti.engine.impl.bpmn.parser.AbstractBpmnParseListener;
 import org.activiti.engine.impl.pvm.delegate.ActivityBehavior;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.pvm.process.ScopeImpl;
 import org.activiti.engine.impl.util.xml.Element;
-import org.activiti.crystalball.simulator.delegate.AbstractSimulationActivityBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +35,23 @@ public class SimulationBpmnParseListener extends AbstractBpmnParseListener {
 
 	private static Logger log = LoggerFactory.getLogger(SimulationBpmnParseListener.class);
 	
-	  public void parseUserTask(Element userTaskElement, ScopeImpl scope, ActivityImpl activity) {
-			setSimulationBehavior(userTaskElement, scope, activity);
+	protected EventCalendar eventCalendar;
+	
+	public SimulationBpmnParseListener(EventCalendar eventCalendar) {
+		this.eventCalendar = eventCalendar;
+	}
+	
+	@Override
+    public void parseServiceTask(Element serviceTaskElement, ScopeImpl scope, ActivityImpl activity) {
+	  	setSimulationBehavior(serviceTaskElement, scope, activity);
+	}
+	
+	public void parseUserTask(Element userTaskElement, ScopeImpl scope, ActivityImpl activity) {
+		    // add create task execution listener to schedule task createEvent
+			UserTaskActivityBehavior userTaskActivity = (UserTaskActivityBehavior) activity.getActivityBehavior();
+			userTaskActivity.getTaskDefinition().addTaskListener( TaskListener.EVENTNAME_CREATE, new  UserTaskExecutionListener(SimulationEvent.TYPE_TASK_CREATE, eventCalendar));
+		  	
+		  	setSimulationBehavior(userTaskElement, scope, activity);
 	  }	
 	  
 	public void parseScriptTask(Element scriptTaskElement, ScopeImpl scope, ActivityImpl activity) {

@@ -3,15 +3,15 @@ package org.activiti.crystalball.simulator.executor.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
+import org.activiti.crystalball.simulator.impl.PlaybackStartProcessEventHandler;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricDetail;
 import org.activiti.engine.history.HistoricVariableUpdate;
-import org.activiti.engine.task.Task;
-import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
-import org.activiti.crystalball.simulator.impl.PlaybackStartProcessEventHandler;
+import org.activiti.engine.impl.persistence.entity.TaskEntity;
 
 /**
  * Playback user task execution. Task execution takes exactly the same time 
@@ -54,7 +54,7 @@ public class PlaybackUserTaskExecutor implements UserTaskExecutor {
 	}
 
 	@Override
-	public long simulateTaskExecution(Task execTask, Map<String, Object> variables) {
+	public long simulateTaskExecution(TaskEntity execTask, Map<String, Object> variables) {
 		
 		String playbackProcessInstanceId = (String) runtimeService.getVariable(execTask.getExecutionId(), PlaybackStartProcessEventHandler.PROCESS_INSTANCE_ID);
 		

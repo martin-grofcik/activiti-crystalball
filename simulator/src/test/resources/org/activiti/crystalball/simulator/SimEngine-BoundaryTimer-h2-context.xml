@@ -9,7 +9,7 @@
 	<!-- *************************************** -->
 	<!--   SIMULATOR                             -->
 	<!-- *************************************** -->
-	<import resource="Simulator-simulateBottleneck-context.xml"/>
+	<import resource="Simulator-BoundaryTimer-context.xml"/>
 	                           
     <!-- property placeholder -->
 	<bean id="placeholderConfig"
@@ -65,15 +65,4 @@
 		<constructor-arg ref="eventCalendar"/>
 	</bean>
 	
-	<bean id="reportGenerator" class="org.activiti.crystalball.generator.ProcessInstancesGenerator">
-        <property name="runtimeService" ref="simRuntimeService"/>
-        <property name="repositoryService" ref="simRepositoryService"/>	
-        <property name="limit" value="5"/> <!-- highlight nodes with more that 5 instances -->	
-	</bean>
-	
-	<bean id="dueDateReportGenerator" class="org.activiti.crystalball.generator.DueDateGraphGenerator">
-        <property name="repositoryService" ref="simRepositoryService"/>	
-        <property name="historyService" ref="simHistoryService"/>	
-        <property name="limit" value="5"/> <!-- highlight nodes with more that 5% task instances after due date-->	
-	</bean>
 </beans>

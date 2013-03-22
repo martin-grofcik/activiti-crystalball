@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.activiti.engine.impl.util.ClockUtil;
+
 public class EventCalendar {
 	
 	List<SimulationEvent> eventList = new ArrayList<SimulationEvent>();
@@ -14,15 +16,19 @@ public class EventCalendar {
 		this.eventComparator = eventComparator;		
 	}
 	
-	public boolean isEmpty() {
+	public synchronized boolean isEmpty() {
 		return minIndex == null;
 	}
 	
-	public SimulationEvent getFirstEvent() {
+	public synchronized SimulationEvent removeFirstEvent() {
 		if (minIndex == null)
 			return null;
 		
 		SimulationEvent minEvent = eventList.remove( (int) minIndex );
+		
+		if (minEvent.getSimulationTime() < ClockUtil.getCurrentTime().getTime())
+			throw new RuntimeException("Unable to execute event from the past");
+		
 		if (eventList.isEmpty()) { 
 			minIndex = null;
 		} else {
@@ -38,7 +44,7 @@ public class EventCalendar {
 		return minEvent;
 	}
 	
-	public void addEvent(SimulationEvent event) {
+	public synchronized void addEvent(SimulationEvent event) {
 		if (event != null && isMinimal(event))
 			minIndex = eventList.size();
 		eventList.add(event);			

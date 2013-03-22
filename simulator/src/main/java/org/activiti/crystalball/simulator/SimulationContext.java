@@ -24,7 +24,6 @@ public class SimulationContext {
     private EventCalendar eventCalendar;
     
     public SimulationContext() {
-    	eventCalendar = new EventCalendar( new SimulationEventComparator());
     }
     
 	public RuntimeService getRuntimeService() {
@@ -44,6 +43,9 @@ public class SimulationContext {
 	}
 
 	public EventCalendar getEventCalendar() {
+		if (eventCalendar == null)
+			// create default calendar
+			eventCalendar = new EventCalendar(new SimulationEventComparator());
 		return eventCalendar;
 	}
 

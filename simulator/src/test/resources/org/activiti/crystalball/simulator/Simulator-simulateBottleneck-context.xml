@@ -9,26 +9,28 @@
 	<!--   SIMULATOR                             -->
 	<!-- *************************************** -->
 	<bean id="simulationRun" class="org.activiti.crystalball.simulator.SimulationRun">
-		<constructor-arg>
-				<bean class="org.activiti.crystalball.simulator.impl.PriorityOneTaskUserSimulatorImpl">
-		       		<property name="identityService" ref="simIdentityService"/>
-		       		<property name="taskService" ref="simTaskService"/>
-		       		<property name="userTaskExecutor" ref="userTaskExecutor"/>
-				</bean>
-		</constructor-arg>
-	
+
 		<constructor-arg>
 			<bean class="org.activiti.crystalball.simulator.SimulationContext">
 	       		<property name="runtimeService" ref="simRuntimeService"/>
 	       		<property name="taskService" ref="simTaskService"/>
 	       		<!-- simulation run audit is logged into simEngine history log -->
 	       		<property name="historyService" ref="simHistoryService"/>
+	       		<property name="eventCalendar" ref="eventCalendar"/>
 			</bean>
 		</constructor-arg>
 		<constructor-arg>
 			<map>
+				<entry key="TASK_CREATE" value-ref="claimEventHandler"/>
 				<entry key="COMPLETE" value-ref="completeEventHandler"/>
 				<entry key="START_PROCESS" value-ref="startProcessEventHandler"/>
+				<entry key="LOG">
+					<bean class="org.activiti.crystalball.simulator.LogTimeEventHandler">
+						<constructor-arg value="LOG"/>
+						<!-- log delta in minutes (24*60=1440) -->
+						<constructor-arg value="720"/>
+					</bean>
+				</entry>
 			</map>
 		</constructor-arg>
 		<constructor-arg>
@@ -39,10 +41,26 @@
 				</bean>
 			</list>
 		</constructor-arg>
+		<constructor-arg ref="simDefaultJobExecutor"/>
 	</bean>
 	
+	<bean id="eventCalendar" class="org.activiti.crystalball.simulator.EventCalendar">
+		<constructor-arg>
+			<bean class="org.activiti.crystalball.simulator.SimulationEventComparator"/>
+		</constructor-arg>
+	</bean>
+	
+	
 	<!--   simulation event handlers              -->
-	<bean id="completeEventHandler" class="org.activiti.crystalball.simulator.impl.CompleteEventHandler"/>
+	<bean id="claimEventHandler" class="org.activiti.crystalball.simulator.impl.ClaimTaskEventHandler">
+	       		<property name="identityService" ref="simIdentityService"/>
+	       		<property name="taskService" ref="simTaskService"/>
+	       		<property name="userTaskExecutor" ref="userTaskExecutor"/>
+	</bean>
+		
+	<bean id="completeEventHandler" class="org.activiti.crystalball.simulator.impl.CompleteEventHandler">
+		<property name="userTaskExecutor" ref="userTaskExecutor"/>
+	</bean>
 	
 	<bean id="startProcessEventHandler" class="org.activiti.crystalball.simulator.impl.StartProcessEventHandler">
 	 		<property name="period" value="3600000" /> <!-- start new process each HOUR -->

@@ -22,6 +22,9 @@ public class StartProcessEventHandler implements SimulationEventHandler {
 	/** event type on which Handler is listening to start new process */
 	private String eventType;
 	
+	/** how many times start the process - -1 for ever*/
+	protected int count = -1;
+	
 	@Override
 	public void init(SimulationContext context) {
 		// schedule new process instance start now
@@ -31,9 +34,12 @@ public class StartProcessEventHandler implements SimulationEventHandler {
 
 	private void scheduleNextProcessStart(SimulationContext context,
 			long simulationTime) {
-		SimulationEvent completeEvent = new SimulationEvent( simulationTime, eventType, null);
-		// add start process event
-		context.getEventCalendar().addEvent( completeEvent);
+		if (count != 0 ) {
+			if ( count > 0 ) count--;
+			SimulationEvent completeEvent = new SimulationEvent( simulationTime, eventType, null);
+			// add start process event
+			context.getEventCalendar().addEvent( completeEvent);
+		}
 	}
 
 	@Override
@@ -67,6 +73,14 @@ public class StartProcessEventHandler implements SimulationEventHandler {
 
 	public void setEventType(String event_type) {
 		this.eventType = event_type;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
 	}
 
 }
