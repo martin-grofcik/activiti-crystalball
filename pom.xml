@@ -17,6 +17,7 @@
   </properties>
 
   <modules>
+     <module>examples</module>
      <module>simulator</module>
      <module>image-builder</module>
   </modules>
