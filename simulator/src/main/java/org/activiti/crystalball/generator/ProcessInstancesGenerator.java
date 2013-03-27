@@ -1,5 +1,6 @@
 package org.activiti.crystalball.generator;
 
+import java.awt.Color;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,10 @@ import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * highlight user tasks with running process instances higher than limit 
+ *
+ */
 public class ProcessInstancesGenerator extends AbstractGraphGenerator {
 
 	protected static Logger log = LoggerFactory.getLogger(ProcessInstancesGenerator.class);
@@ -18,7 +23,7 @@ public class ProcessInstancesGenerator extends AbstractGraphGenerator {
 	
 	@Override
 	protected ProcessDefinitionEntity getProcessData(String processDefinitionId, Date startDate, Date finishDate,
-			List<String> highLightedActivities, Map<String, String> counts) {
+			Map<Color,List<String>> highLightedActivitiesMap, Map<String, String> counts) {
 		ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ( ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition( processDefinitionId ));
 	    List<ActivityImpl> activities = pde.getActivities();
 	    // iterate through all activities
@@ -26,10 +31,16 @@ public class ProcessInstancesGenerator extends AbstractGraphGenerator {
 	    	// get count of  executions for userTask in the given process
 	    	if (activity.getProperty("type") == "userTask") {
 		    	long count = runtimeService.createExecutionQuery().processDefinitionId(processDefinitionId).activityId( activity.getId() ).count();
+
+		    	// store count in the diagram generator data structures
+		    	for ( ColorInterval colorInterval : highlightColorIntervalList )
+		    	{
+			    	if ( colorInterval.isInside( count ) ) {
+			    			addToHighlighted( highLightedActivitiesMap, colorInterval.color, activity.getId());
+			    	}
+		    	}
+
 		    	if ( count > 0 ) {
-		    		// store count in the diagram generator data structures
-		    		if ( count > limit )
-		    			highLightedActivities.add(activity.getId());
 		    		counts.put(activity.getId(), Long.toString(count));
 		    	}
 		    	log.debug("selected counts "+processDefinitionId +"-"+activity.getId()+"-"+count);

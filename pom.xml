@@ -18,6 +18,7 @@
 
   <modules>
      <module>examples</module>
+     <module>anttasks</module>
      <module>simulator</module>
      <module>image-builder</module>
   </modules>

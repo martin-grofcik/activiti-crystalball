@@ -75,7 +75,9 @@ slide 32</documentation>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!approved}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow5" name="" sourceRef="rejection_email" targetRef="endevent1"></sequenceFlow>
-    <sequenceFlow id="flow6" name="" sourceRef="exclusivegateway1" targetRef="in-depth_analysis"></sequenceFlow>
+    <sequenceFlow id="flow6" name="" sourceRef="exclusivegateway1" targetRef="in-depth_analysis">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${approved}]]></conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="flow16" name="" sourceRef="in-depth_analysis" targetRef="update_doc"></sequenceFlow>
     <sequenceFlow id="flow17" name="" sourceRef="update_doc" targetRef="final_evaluation"></sequenceFlow>
     <sequenceFlow id="flow18" name="" sourceRef="final_evaluation" targetRef="exclusivegateway2"></sequenceFlow>

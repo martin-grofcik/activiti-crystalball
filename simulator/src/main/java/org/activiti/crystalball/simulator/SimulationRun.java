@@ -25,7 +25,7 @@ public class SimulationRun {
 	
 	private List<HistoryEvaluator> historyEvaluators;
 
-	/** simulation run event handlers - e.g. specific handlers for managing simulatin time events*/
+	/** simulation run event handlers - e.g. specific handlers for managing simulation time events*/
 	private HashMap<String, SimulationEventHandler> eventHandlerMap;
 
 	public SimulationRun() {		
@@ -104,7 +104,7 @@ public class SimulationRun {
 
 	private void execute(SimulationEvent event) {
 		// set simulation time to the next event for process engine too
-		log.debug( "Simulation time:" + ClockUtil.getCurrentTime());
+		log.info( "Simulation time:" + ClockUtil.getCurrentTime());
 
 		// internal handlers first
 		SimulationEventHandler handler = eventHandlerMap.get( event.getType() );

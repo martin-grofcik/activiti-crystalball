@@ -110,7 +110,64 @@
 					</systemProperties>
 				</configuration>
 			</plugin>
-
+			
+			<!--                  -->
+			<!-- simulation tests -->
+			<!--                  -->
+			<plugin>
+		        <artifactId>maven-antrun-plugin</artifactId>
+		        <version>1.7</version>
+		        <executions>
+		          <execution>
+		            <id>mvn-test</id>
+		            <phase>test</phase>
+					<configuration>											
+						<target>
+							<taskdef name="runSimulation"
+								classname="org.activiti.crystalball.anttasks.RunSimulationTask"
+								classpathref="maven.plugin.classpath" />
+							<taskdef name="runGenerator"
+								classname="org.activiti.crystalball.anttasks.GenerateGraphTask"
+								classpathref="maven.plugin.classpath" />
+							
+							<delete>
+    							<fileset dir="${project.build.directory}" includes="mvn.*"/>
+  							</delete> 
+							
+							<tstamp />
+							
+							<runSimulation
+								appContext="${project.build.directory}/test-classes/org/activiti/crystalball/examples/mvn/mortages-h2-context.xml"
+								simRunBean="simulationRun"
+								startDate="${TODAY}" />
+								
+							<runGenerator
+								appContext="${project.build.directory}/test-classes/org/activiti/crystalball/examples/mvn/mortages-h2-context.xml"
+								generatorBean="reportInstances" 
+								processDefinitionId="mortagedemo-0:1:4"
+								startDate="${TODAY}"
+								reportFileName="${project.build.directory}/mvn-report.png">
+							</runGenerator>
+						</target>
+		            </configuration>
+		            <goals>
+		              <goal>run</goal>
+		            </goals>
+		          </execution>		          
+		        </executions>
+		        <dependencies>
+		        	<dependency>
+						<groupId>org.activiti.crystalball</groupId>
+						<artifactId>anttasks</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>com.h2database</groupId>
+						<artifactId>h2</artifactId>
+						<version>1.3.168</version>
+					</dependency>
+		        </dependencies>
+      		</plugin>
 		</plugins>
 	</build>
 

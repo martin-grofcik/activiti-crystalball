@@ -40,7 +40,7 @@
 		<property name="databaseSchemaUpdate" value="true" />
 		<!-- job executor activation has to be disabled. Job executor has to be activated at the simulation run start -->
 		<property name="jobExecutorActivate" value="false" />		
-		<property name="jobExecutor" ref="simDefaultJobExecutor"/>		
+		<!-- property name="jobExecutor" ref="simDefaultJobExecutor"/-->		
 		<property name="preParseListeners">
 			<list>
 				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener">
@@ -61,19 +61,35 @@
     <bean id="simManagementService" factory-bean="simProcessEngine" factory-method="getManagementService"/>
     <bean id="simIdentityService" factory-bean="simProcessEngine" factory-method="getIdentityService"/>
 
-	<bean id="simDefaultJobExecutor" class="org.activiti.crystalball.simulator.processengine.jobexecutor.SimulationDefaultJobExecutor">
+	<!-- bean id="simDefaultJobExecutor" class="org.activiti.crystalball.simulator.processengine.jobexecutor.SimulationDefaultJobExecutor">
 		<constructor-arg ref="eventCalendar"/>
-	</bean>
+	</bean-->
 	
 	<bean id="reportGenerator" class="org.activiti.crystalball.generator.ProcessInstancesGenerator">
         <property name="runtimeService" ref="simRuntimeService"/>
-        <property name="repositoryService" ref="simRepositoryService"/>	
-        <property name="limit" value="5"/> <!-- highlight nodes with more that 5 instances -->	
+        <property name="repositoryService" ref="simRepositoryService"/>
+        <!-- highlight nodes with more or eq to 5 instances -->	
+        <property name="highlightColorIntervalList">
+        	<list>
+        		<bean class="org.activiti.crystalball.generator.ColorInterval">
+        			<constructor-arg value="5" />
+        			<constructor-arg value="red"/>
+        		</bean>
+        	</list>
+        </property> 	
 	</bean>
 	
 	<bean id="dueDateReportGenerator" class="org.activiti.crystalball.generator.DueDateGraphGenerator">
         <property name="repositoryService" ref="simRepositoryService"/>	
         <property name="historyService" ref="simHistoryService"/>	
-        <property name="limit" value="5"/> <!-- highlight nodes with more that 5% task instances after due date-->	
+		<!-- highlight nodes with more that 5% task instances after due date-->
+		<property name="highlightColorIntervalList">
+        	<list>
+        		<bean class="org.activiti.crystalball.generator.ColorInterval">
+        			<constructor-arg value="5" />
+        			<constructor-arg value="red"/>
+        		</bean>
+        	</list>
+        </property> 		
 	</bean>
 </beans>

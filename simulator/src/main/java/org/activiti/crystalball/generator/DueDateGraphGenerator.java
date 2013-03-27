@@ -1,5 +1,6 @@
 package org.activiti.crystalball.generator;
 
+import java.awt.Color;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class DueDateGraphGenerator extends AbstractGraphGenerator {
 	
 	@Override
 	protected ProcessDefinitionEntity getProcessData(String processDefinitionId, Date startDate, Date finishDate,
-			 List<String> highLightedActivities, Map<String, String> counts) {
+			 Map<Color,List<String>> highLightedActivitiesMap, Map<String, String> counts) {
 		
 		ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ( ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition( processDefinitionId ));
 	    List<ActivityImpl> activities = pde.getActivities();
@@ -53,13 +54,16 @@ public class DueDateGraphGenerator extends AbstractGraphGenerator {
 						.parameter("startDate", startDate)
 						.parameter("endDate", finishDate)
 						.count();
-		    	long percentage = (countAfterDue * 100) / count; 
-		    	if ( percentage > 0 ) {
-		    		// store count in the diagram generator data structures
-		    		if ( percentage > limit )
-		    			highLightedActivities.add(activity.getId());
-		    		counts.put(activity.getId(), Long.toString(percentage) +"%");
+		    	long percentage = (countAfterDue * 100) / count;
+		    	for ( ColorInterval colorInterval : highlightColorIntervalList )
+		    	{
+			    	if ( colorInterval.isInside(percentage) ) {
+			    			addToHighlighted( highLightedActivitiesMap, colorInterval.color, activity.getId());
+			    	}
 		    	}
+		    	if (percentage > 0)
+		    		counts.put(activity.getId(), Long.toString(percentage) +"%");
+
 		    	log.debug("selected counts "+processDefinitionId +"-"+activity.getId()+"-"+count);
 	    	}
 	    }

@@ -3,6 +3,7 @@
 simulator/target/
 image-builder/target/
 examples/target/
+target/
 **/.settings/
 **/.bpmn/
 .project

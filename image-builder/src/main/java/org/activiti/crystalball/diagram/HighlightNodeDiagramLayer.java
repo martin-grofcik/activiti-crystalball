@@ -1,10 +1,10 @@
 package org.activiti.crystalball.diagram;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.impl.RepositoryServiceImpl;
-import org.activiti.engine.impl.bpmn.diagram.ProcessDiagramCanvas;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.PvmTransition;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
@@ -22,11 +22,19 @@ public class HighlightNodeDiagramLayer extends AbstractProcessDiagramLayerGenera
 	public static String PROCESS_DEFINITION_ID = "processDefinitionId";
 	public static String HIGHLIGHTED_ACTIVITIES = "highLightedActivities";
 
+	/** color to highlight nodes */
+	protected Color color = Color.red;
+	
 	public HighlightNodeDiagramLayer() {
 	}
 	
 	public HighlightNodeDiagramLayer( RepositoryServiceImpl repositoryService) {
 		this.repositoryService = repositoryService;
+	}
+
+	public HighlightNodeDiagramLayer( RepositoryServiceImpl repositoryService, Color color) {
+		this( repositoryService);
+		this.color = color;
 	}
 	
 	/**
@@ -44,12 +52,12 @@ public class HighlightNodeDiagramLayer extends AbstractProcessDiagramLayerGenera
 		// get process definition entity
 	    ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ( ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition( processDefinitionId ));
 	    
-		org.activiti.engine.impl.bpmn.diagram.ProcessDiagramCanvas canvas = initProcessDiagramCanvas( pde );
+		ProcessDiagramCanvas canvas = initProcessDiagramCanvas( pde );
 
 		for (ActivityImpl activity : pde.getActivities()) {
 	      // Draw highlighted activities
 	      if (highLightedActivities.contains(activity.getId())) {
-	    	  canvas.drawHighLight(activity.getX(), activity.getY(), activity.getWidth(), activity.getHeight());	      }
+	    	  canvas.drawHighLight(activity.getX(), activity.getY(), activity.getWidth(), activity.getHeight(), color);	      }
 	    }
 	    return convertToByteArray( imageType, canvas.generateImage(imageType));
 	}
@@ -132,6 +140,10 @@ public class HighlightNodeDiagramLayer extends AbstractProcessDiagramLayerGenera
 	    }
 	    
 	    return new ProcessDiagramCanvas(maxX + 10, maxY + 10, minX, minY);
+	}
+
+	public void setColor(Color c) {
+		this.color = c;
 	}
 		
 

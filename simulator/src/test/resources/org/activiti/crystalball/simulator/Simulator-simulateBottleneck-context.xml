@@ -41,7 +41,7 @@
 				</bean>
 			</list>
 		</constructor-arg>
-		<constructor-arg ref="simDefaultJobExecutor"/>
+		<!-- constructor-arg ref="simDefaultJobExecutor"/-->
 	</bean>
 	
 	<bean id="eventCalendar" class="org.activiti.crystalball.simulator.EventCalendar">

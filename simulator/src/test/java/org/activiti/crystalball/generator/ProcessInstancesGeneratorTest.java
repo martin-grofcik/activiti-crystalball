@@ -1,5 +1,6 @@
 package org.activiti.crystalball.generator;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,7 +80,10 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 		ProcessInstancesGenerator monitor = new ProcessInstancesGenerator();
 	    monitor.setRepositoryService(repositoryService);
 	    monitor.setRuntimeService(runtimeService);
-	    
+	    List<ColorInterval> highlightColorIntervalList = new ArrayList<ColorInterval>();
+	    highlightColorIntervalList.add( new ColorInterval(1, Color.red));	    
+	    monitor.setHighlightColorIntervalList(highlightColorIntervalList);
+
 	    String processDefinitionId = repositoryService.createProcessDefinitionQuery().processDefinitionKey( PROCESS_KEY).singleResult().getId();
 	    
 	    monitor.generateReport( processDefinitionId, null, null, "target/ProcessInstanceMonitor-1.png");
@@ -126,6 +130,68 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 
 		expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-4.png" );
 	    generatedFile = new File("target/ProcessInstanceMonitor-4.png" );
+	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
+
+	}
+
+	public void testGenerateHistoricInstances() throws IOException {
+	    
+		HistoricInstancesGenerator monitor = new HistoricInstancesGenerator();
+	    monitor.setRepositoryService(repositoryService);
+	    monitor.setHistoryService(historyService);
+	    List<ColorInterval> highlightColorIntervalList = new ArrayList<ColorInterval>();
+	    highlightColorIntervalList.add( new ColorInterval(4, Color.green));
+	    highlightColorIntervalList.add( new ColorInterval(1,3, Color.yellow));
+	    highlightColorIntervalList.add( new ColorInterval(0,0, Color.red));
+	    
+	    monitor.setHighlightColorIntervalList(highlightColorIntervalList);
+	    
+	    String processDefinitionId = repositoryService.createProcessDefinitionQuery().processDefinitionKey( PROCESS_KEY).singleResult().getId();
+	    
+	    monitor.generateReport( processDefinitionId, null, null, "target/HistoricInstanceMonitor-1.png");
+	    
+	    File expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-1.png" );
+	    File generatedFile = new File("target/HistoricInstanceMonitor-1.png" );
+	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
+	    
+	    // move 3 tasks forward
+		List<Task> taskList = taskService.createTaskQuery().taskCandidateUser("user1").list();
+		for (int i = 0; i < 3; i++) {
+				Task t = taskList.get(i);
+				taskService.claim( t.getId(), "user1" );
+				taskService.complete(t.getId());
+		}
+
+	    monitor.generateReport( processDefinitionId, null, null, "target/HistoricInstanceMonitor-2.png");
+	    
+	    expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-2.png" );
+	    generatedFile = new File("target/HistoricInstanceMonitor-2.png" );
+	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
+
+	    // move 3 tasks forward
+		taskList = taskService.createTaskQuery().taskCandidateUser("user2").list();
+		for (Task t : taskList) {
+				taskService.claim( t.getId(), "user2" );
+				taskService.complete(t.getId());
+		}
+
+	    monitor.generateReport( processDefinitionId, null, null, "target/HistoricInstanceMonitor-3.png");
+
+		expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-3.png" );
+	    generatedFile = new File("target/HistoricInstanceMonitor-3.png" );
+	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
+
+	    // move 3 tasks forward
+		taskList = taskService.createTaskQuery().taskCandidateUser("user3").list();
+		for (Task t : taskList) {
+				taskService.claim( t.getId(), "user3" );
+				taskService.complete(t.getId());
+		}
+
+	    monitor.generateReport( processDefinitionId, null, null, "target/HistoricInstanceMonitor-4.png");
+
+		expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-4.png" );
+	    generatedFile = new File("target/HistoricInstanceMonitor-4.png" );
 	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
 
 	}
