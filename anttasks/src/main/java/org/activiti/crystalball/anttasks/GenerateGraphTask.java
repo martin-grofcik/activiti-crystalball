@@ -1,6 +1,8 @@
 package org.activiti.crystalball.anttasks;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.activiti.crystalball.generator.AbstractGraphGenerator;
@@ -19,9 +21,12 @@ public class GenerateGraphTask extends Task {
     /** graph generator bean */
     protected String generatorBean;
     /** report generation start date */
-    protected Date startDate;
+    protected String startDate;
     /** report generation end date */
-    protected Date endDate = null;   
+    protected String endDate = null;   
+    /** date time format for simpleDateFormatter */
+    protected String dateFormat = "MMMM dd yyyy"; 
+    
 	/** process definition Id for which report is generated */
     protected String processDefinitionId;
     /** report filename where generator output is stored.*/
@@ -48,9 +53,12 @@ public class GenerateGraphTask extends Task {
 			
 			// running report generate
 			try {
-				generator.generateReport(processDefinitionId, startDate, endDate, reportFileName);
+				generator.generateReport(processDefinitionId, getStartDate(), getEndDate(), reportFileName);
 			} catch (IOException e) {
 				log("Generator exception", Project.MSG_ERR);
+	            throw new BuildException(e);
+			} catch (ParseException e) {
+				log("Generator exception - parsing dates", Project.MSG_ERR);
 	            throw new BuildException(e);
 			}
 		} finally {
@@ -67,14 +75,6 @@ public class GenerateGraphTask extends Task {
 	public void setGeneratorBean(String generatorBean) {
 		this.generatorBean = generatorBean;
 	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
 	
     public void setProcessDefinitionId(String processDefinitionId) {
 		this.processDefinitionId = processDefinitionId;
@@ -84,5 +84,32 @@ public class GenerateGraphTask extends Task {
 		this.reportFileName = reportFileName;
 	}
 
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
+	protected Date getStartDate() throws ParseException {
+		if (startDate != null)
+			return new SimpleDateFormat(dateFormat).parse(startDate);
+		return null;
+	}
+
+	protected Date getEndDate() throws ParseException {
+		if (endDate != null)
+			return new SimpleDateFormat(dateFormat).parse(endDate);
+		return null;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
 
 }

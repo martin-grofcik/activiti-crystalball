@@ -1,5 +1,7 @@
 package org.activiti.crystalball.anttasks;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.activiti.crystalball.simulator.SimulationRun;
@@ -18,10 +20,13 @@ public class RunSimulationTask extends Task {
     protected String appContext;
     /** simulation run bean */
     protected String simRunBean;
-    /** simulation run start date */
-    protected Date startDate;
-    /** simulation run end date */
-    protected Date endDate;
+
+    /** simulation generation start date string*/
+    protected String startDate;
+    /** simulation generation end date string*/
+    protected String endDate = null;
+    /** date time format for SimpleDateFormatter */
+    protected String dateFormat = "MMMM dd yyyy";  
     
     public void execute() {
     	
@@ -49,7 +54,10 @@ public class RunSimulationTask extends Task {
 			//
 			// execute simulation run
 			//
-			simRun.execute(startDate, endDate);
+			simRun.execute(getStartDate(), getEndDate());
+		} catch (ParseException e) {
+			log("Simulation task exception - parsing dates", Project.MSG_ERR);
+            throw new BuildException(e);
 		} finally {
 			applicationContext.close();
 		}
@@ -66,11 +74,31 @@ public class RunSimulationTask extends Task {
 		this.simRunBean = simRunBean;
 	}
 
-	public void setStartDate(Date startDate) {
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
+	protected Date getStartDate() throws ParseException {
+		if (startDate != null)
+			return new SimpleDateFormat(dateFormat).parse(startDate);
+		return null;
+	}
+
+	protected Date getEndDate() throws ParseException {
+		if (endDate != null)
+			return new SimpleDateFormat(dateFormat).parse(endDate);
+		return null;
+	}
+
+	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
 }

@@ -135,17 +135,20 @@
   							</delete> 
 							
 							<tstamp />
-							
+
 							<runSimulation
 								appContext="${project.build.directory}/test-classes/org/activiti/crystalball/examples/mvn/mortages-h2-context.xml"
 								simRunBean="simulationRun"
-								startDate="${TODAY}" />
+								dateFormat="yyMMddhhmmss"
+								startDate="130403120000" 
+								endDate="130403123000"/>
 								
 							<runGenerator
 								appContext="${project.build.directory}/test-classes/org/activiti/crystalball/examples/mvn/mortages-h2-context.xml"
 								generatorBean="reportInstances" 
 								processDefinitionId="mortagedemo-0:1:4"
-								startDate="${TODAY}"
+								dateFormat="yyMMddhhmmss"
+								startDate="130403120000" 
 								reportFileName="${project.build.directory}/mvn-report.png">
 							</runGenerator>
 						</target>
