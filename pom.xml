@@ -62,6 +62,52 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
+	<profiles>
+		<profile>
+			<id>license-update</id>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>license-maven-plugin</artifactId>
+						<version>1.4</version>
+						<configuration>
+							<verbose>false</verbose>
+							
+						</configuration>
+						<executions>
+							<execution>
+								<id>first</id>
+								<goals>
+									<goal>update-file-header</goal>
+								</goals>
+								<phase>process-sources</phase>
+								<configuration>
+									<licenseName>apache_v2</licenseName>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	
+	<licenses>
+		<license>
+			<name>Apache v2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>crystalball</name>
+		<url>http://gro-mar.github.io/activiti-crystalball/</url>
+	</organization>
+	<url>http://gro-mar.github.io/activiti-crystalball/</url>
+	<inceptionYear>2012</inceptionYear>
 
 </project>
 
