@@ -21,7 +21,6 @@ package org.activiti.crystalball.simulator.impl;
  */
 
 
-import org.activiti.crystalball.simulator.SimulationContext;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
 
@@ -32,12 +31,12 @@ import org.activiti.crystalball.simulator.SimulationEventHandler;
 public class NoopEventHandler implements SimulationEventHandler {
 
 	@Override
-	public void init(SimulationContext context) {
+	public void init() {
 
 	}
 
 	@Override
-	public void handle(SimulationEvent event, SimulationContext context) {
+	public void handle(SimulationEvent event) {
 
 	}
 

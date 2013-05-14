@@ -24,19 +24,16 @@ package org.activiti.crystalball.simulator;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.activiti.crystalball.generator.AbstractProcessEngineGraphGenerator;
+import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.apache.commons.io.FileUtils;
-import org.activiti.crystalball.generator.AbstractGraphGenerator;
-import org.activiti.crystalball.simulator.SimulationResultEvent;
-import org.activiti.crystalball.simulator.SimulationRun;
-import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -47,7 +44,7 @@ public class OptimizeBottleneckTest {
 	protected static final String PROCESS_KEY = "parallelusertaskprocess";
 
 	@Test
-	public void testUser2OverLoadedWithHelp3() throws IOException {
+	public void testUser2OverLoadedWithHelp3() throws Exception {
         System.setProperty("liveDB", LIVE_DB);
         System.setProperty("_SIM_DB_PATH", tempDir+"/simulationRunDB-SimulateBottleNeck-Overload3-"+Thread.currentThread().getId());
         
@@ -84,7 +81,7 @@ public class OptimizeBottleneckTest {
 
 	
 	@Test
-	public void testUser2OverLoadedWithHelp4() throws IOException {
+	public void testUser2OverLoadedWithHelp4() throws Exception {
         System.setProperty("liveDB", LIVE_DB);
         System.setProperty("_SIM_DB_PATH", tempDir+"/simulationRunDB-SimulateBottleNeck-Overload4-"+Thread.currentThread().getId());
         
@@ -121,7 +118,7 @@ public class OptimizeBottleneckTest {
 	}
 
 	@Test
-	public void testUser2OverLoadedWithHelp5() throws IOException {
+	public void testUser2OverLoadedWithHelp5() throws Exception {
         System.setProperty("liveDB", LIVE_DB);
         System.setProperty("_SIM_DB_PATH", tempDir+"/simulationRunDB-SimulateBottleNeck-Overload5-"+Thread.currentThread().getId());
         
@@ -158,7 +155,7 @@ public class OptimizeBottleneckTest {
 	}
 	
 	@Test
-	public void testUser2OverLoadedWithHelp45() throws IOException {
+	public void testUser2OverLoadedWithHelp45() throws Exception {
         System.setProperty("liveDB", LIVE_DB);
         System.setProperty("_SIM_DB_PATH", tempDir+"/simulationRunDB-SimulateBottleNeck-Overload45-"+Thread.currentThread().getId());
         
@@ -199,9 +196,9 @@ public class OptimizeBottleneckTest {
 	 * run simulation for 30 days and generate report
 	 * 
 	 * @param appContext
-	 * @throws IOException
+	 * @throws Exception 
 	 */
-	protected void runSimulation(AbstractApplicationContext appContext, String instancesGeneratedImage, String dueDateGeneratedImage) throws IOException {
+	protected void runSimulation(AbstractApplicationContext appContext, String instancesGeneratedImage, String dueDateGeneratedImage) throws Exception {
 	
 	    SimulationRun simRun = (SimulationRun)appContext.getBean(SimulationRun.class);
 	    
@@ -214,7 +211,7 @@ public class OptimizeBottleneckTest {
 	    Date finishDate = c.getTime();
 	    // run simulation for 30 days
 	    @SuppressWarnings("unused")
-		List<SimulationResultEvent> resultEventList = simRun.execute(startDate, finishDate);
+		List<Result> resultEventList = simRun.execute(startDate, finishDate);
 	    	
 	    RepositoryService simRepositoryService = (RepositoryService) appContext.getBean("simRepositoryService");	    
 	    String processDefinitionId = simRepositoryService.createProcessDefinitionQuery().processDefinitionKey(PROCESS_KEY).singleResult().getId();
@@ -222,11 +219,11 @@ public class OptimizeBottleneckTest {
 	    // GENERATE REPORTS
 	    
 	    // instances report 
-	    AbstractGraphGenerator generator = (AbstractGraphGenerator) appContext.getBean( "reportGenerator");
+	    AbstractProcessEngineGraphGenerator generator = (AbstractProcessEngineGraphGenerator) appContext.getBean( "reportGenerator");
 	    generator.generateReport(processDefinitionId, startDate, finishDate, instancesGeneratedImage);
 	    
 	    // after due date report
-	    generator = (AbstractGraphGenerator) appContext.getBean( "dueDateReportGenerator");
+	    generator = (AbstractProcessEngineGraphGenerator) appContext.getBean( "dueDateReportGenerator");
 	    generator.generateReport(processDefinitionId, startDate, finishDate, dueDateGeneratedImage);
 	}
 }

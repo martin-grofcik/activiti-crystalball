@@ -27,9 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.activiti.crystalball.simulator.SimulationContext;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
+import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
@@ -45,19 +45,19 @@ public class CompleteEventHandler implements SimulationEventHandler {
 	UserTaskExecutor userTaskExecutor;
 	
 	@Override
-	public void handle(SimulationEvent event, SimulationContext context) {
-		TaskService taskService = context.getTaskService();
+	public void handle(SimulationEvent event) {
+		TaskService taskService = SimulationRunContext.getTaskService();
 		long simulationTime = ClockUtil.getCurrentTime().getTime();
 		
 		String taskId = (String) event.getProperty("task");
-		Task task = context.getTaskService().createTaskQuery().taskId( taskId ).singleResult();		
+		Task task = SimulationRunContext.getTaskService().createTaskQuery().taskId( taskId ).singleResult();		
 		String assignee = task.getAssignee();
 		
 		// fulfill variables
 		@SuppressWarnings("unchecked")
 		Map<String, Object> variables = (Map<String, Object>) event.getProperty("variables");		
 
-		context.getTaskService().complete( taskId, variables );
+		SimulationRunContext.getTaskService().complete( taskId, variables );
 		log.debug( SimpleDateFormat.getTimeInstance().format( new Date(event.getSimulationTime())) +": completed {}, {}, {}, {}", task, task.getName(), assignee, variables);
 		
 		//claim new task to assignee
@@ -80,14 +80,14 @@ public class CompleteEventHandler implements SimulationEventHandler {
 
 				SimulationEvent completeEvent = new SimulationEvent( simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
 				//schedule complete task event
-				context.getEventCalendar().addEvent( completeEvent);
+				SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 			}
 		}
 
 	}
 
 	@Override
-	public void init(SimulationContext context) {
+	public void init() {
 		
 	}
 	

@@ -34,7 +34,7 @@ import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DueDateGraphGenerator extends AbstractGraphGenerator {
+public class DueDateGraphGenerator extends AbstractProcessEngineGraphGenerator {
 
 	protected static Logger log = LoggerFactory.getLogger(DueDateGraphGenerator.class);
 	HistoryService historyService;

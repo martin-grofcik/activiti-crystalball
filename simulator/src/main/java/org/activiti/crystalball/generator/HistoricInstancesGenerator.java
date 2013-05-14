@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * highlight nodes from the history which count is in the specified interval with defined color than limit 
  *
  */
-public class HistoricInstancesGenerator extends AbstractGraphGenerator {
+public class HistoricInstancesGenerator extends AbstractProcessEngineGraphGenerator {
 
 	protected static Logger log = LoggerFactory.getLogger(HistoricInstancesGenerator.class);
 	HistoryService historyService;

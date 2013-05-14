@@ -22,12 +22,12 @@ package org.activiti.crystalball.simulator;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngine;
@@ -38,12 +38,11 @@ import org.activiti.engine.identity.User;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.io.FileUtils;
-import org.activiti.crystalball.simulator.SimulationResultEvent;
-import org.activiti.crystalball.simulator.SimulationRun;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
@@ -118,7 +117,7 @@ public class TwoEnginesWithoutProcessTest
 
     @Test
     public void test()
-        throws IOException
+        throws Exception
     {
         String tempDir = "target";
         FileUtils.copyFile(FileUtils.getFile(new String[] {
@@ -127,7 +126,14 @@ public class TwoEnginesWithoutProcessTest
             (new StringBuilder()).append(tempDir).append("/simulationRunDB-aaa-").append(Thread.currentThread().getId()).append(".h2.db").toString()
         }));
         System.setProperty("_SIM_DB_PATH", (new StringBuilder()).append(tempDir).append("/simulationRunDB-aaa-").append(Thread.currentThread().getId()).toString());
-        ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/activiti/crystalball/simulator/SimEngine-h2-context.xml");
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/activiti/crystalball/simulator/SimRun-h2-context.xml");
+		PropertyPlaceholderConfigurer propConfig = new PropertyPlaceholderConfigurer();
+		Properties properties = new Properties();
+		properties.put("simulationRunId", "simulationRunDB-aaa-"+Thread.currentThread().getId());
+		propConfig.setProperties(properties);
+		appContext.addBeanFactoryPostProcessor(propConfig);
+		appContext.refresh();
+        
         SimulationRun simRun = (SimulationRun)appContext.getBean(SimulationRun.class);
         String userId = "user1";
         TaskService taskService = (TaskService)appContext.getBean("taskService");
@@ -140,8 +146,7 @@ public class TwoEnginesWithoutProcessTest
         List<User> users = identityService.createUserQuery().list();
         List<User> simUsers = simIdentityService.createUserQuery().list();
         Assert.assertTrue(users.size() == simUsers.size());
-        List<SimulationResultEvent> resultEventList = simRun.execute(new Date(), null);
-        Assert.assertTrue(resultEventList.size() > 0);
+        simRun.execute(new Date(), null);
         appContext.close();
     }
 

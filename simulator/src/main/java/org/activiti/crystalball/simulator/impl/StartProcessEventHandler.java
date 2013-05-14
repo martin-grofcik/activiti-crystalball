@@ -21,10 +21,10 @@ package org.activiti.crystalball.simulator.impl;
  */
 
 
-import org.activiti.engine.impl.util.ClockUtil;
-import org.activiti.crystalball.simulator.SimulationContext;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
+import org.activiti.crystalball.simulator.SimulationRunContext;
+import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,29 +47,28 @@ public class StartProcessEventHandler implements SimulationEventHandler {
 	protected int count = -1;
 	
 	@Override
-	public void init(SimulationContext context) {
+	public void init() {
 		// schedule new process instance start now
 		long simulationTime = ClockUtil.getCurrentTime().getTime();
-		scheduleNextProcessStart(context, simulationTime);
+		scheduleNextProcessStart(simulationTime);
 	}
 
-	private void scheduleNextProcessStart(SimulationContext context,
-			long simulationTime) {
+	private void scheduleNextProcessStart(long simulationTime) {
 		if (count != 0 ) {
 			if ( count > 0 ) count--;
 			SimulationEvent completeEvent = new SimulationEvent( simulationTime, eventType, null);
 			// add start process event
-			context.getEventCalendar().addEvent( completeEvent);
+			SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 		}
 	}
 
 	@Override
-	public void handle(SimulationEvent event, SimulationContext context) {
+	public void handle(SimulationEvent event) {
 		// start process now
 		log.debug("Starting new processKey[{}]", processToStartKey);
-		context.getRuntimeService().startProcessInstanceByKey( processToStartKey);
+		SimulationRunContext.getRuntimeService().startProcessInstanceByKey( processToStartKey);
 		// schedule next process start in + period time
-		scheduleNextProcessStart( context, event.getSimulationTime() + period);
+		scheduleNextProcessStart( event.getSimulationTime() + period);
 	}
 
 	public String getProcessToStartKey() {

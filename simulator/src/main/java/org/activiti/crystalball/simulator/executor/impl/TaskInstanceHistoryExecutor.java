@@ -23,8 +23,8 @@ package org.activiti.crystalball.simulator.executor.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
+import org.activiti.crystalball.simulator.SimUtils;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -42,14 +42,10 @@ public class TaskInstanceHistoryExecutor implements UserTaskExecutor {
 	/** executor used in the case when there is no user task history which can be used*/
 	private UserTaskExecutor backUpExecutor;	
 	
-	private Random randomGenerator;
-	
 	public TaskInstanceHistoryExecutor() {
-		randomGenerator = new Random();
 	}
 
 	public TaskInstanceHistoryExecutor(HistoryService historyService) {
-		randomGenerator = new Random();
 		this.setHistoryService(historyService);
 	}
 
@@ -68,7 +64,7 @@ public class TaskInstanceHistoryExecutor implements UserTaskExecutor {
 			return backUpExecutor.simulateTaskExecution(execTask, variables);
 		
 		// get random historic instance 
-		HistoricTaskInstance historicTask = historicInstances.get( randomGenerator.nextInt( historicInstances.size() ));
+		HistoricTaskInstance historicTask = historicInstances.get( SimUtils.getRandomInt( historicInstances.size() ));
 		//@TODO in version 5.12 use time spend on task 
 		return historicTask.getDurationInMillis();
 	}

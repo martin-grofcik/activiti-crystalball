@@ -24,7 +24,6 @@ package org.activiti.crystalball.simulator.parse;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.activiti.crystalball.simulator.EventCalendar;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.delegate.AbstractSimulationActivityBehavior;
 import org.activiti.crystalball.simulator.delegate.UserTaskExecutionListener;
@@ -55,11 +54,8 @@ public class SimulationBpmnParseListener extends AbstractBpmnParseListener {
 	public static final String SIMULATION_BEHAVIOR = "behavior";
 
 	private static Logger log = LoggerFactory.getLogger(SimulationBpmnParseListener.class);
-	
-	protected EventCalendar eventCalendar;
-	
-	public SimulationBpmnParseListener(EventCalendar eventCalendar) {
-		this.eventCalendar = eventCalendar;
+		
+	public SimulationBpmnParseListener() {
 	}
 	
 	@Override
@@ -70,7 +66,7 @@ public class SimulationBpmnParseListener extends AbstractBpmnParseListener {
 	public void parseUserTask(Element userTaskElement, ScopeImpl scope, ActivityImpl activity) {
 		    // add create task execution listener to schedule task createEvent
 			UserTaskActivityBehavior userTaskActivity = (UserTaskActivityBehavior) activity.getActivityBehavior();
-			userTaskActivity.getTaskDefinition().addTaskListener( TaskListener.EVENTNAME_CREATE, new  UserTaskExecutionListener(SimulationEvent.TYPE_TASK_CREATE, eventCalendar));
+			userTaskActivity.getTaskDefinition().addTaskListener( TaskListener.EVENTNAME_CREATE, new  UserTaskExecutionListener(SimulationEvent.TYPE_TASK_CREATE));
 		  	
 		  	setSimulationBehavior(userTaskElement, scope, activity);
 	  }	
@@ -108,4 +104,5 @@ public class SimulationBpmnParseListener extends AbstractBpmnParseListener {
 			}
 		}
 	}
+
 }

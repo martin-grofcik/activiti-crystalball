@@ -29,16 +29,16 @@
 	<!-- RUNNING PROCESS ENGINE                  -->
 	<!-- *************************************** -->
 	<import resource="LiveEngine-context.xml"/>
-	
-	<!-- *************************************** -->
-	<!--   SIMULATOR                             -->
-	<!-- *************************************** -->
-	<import resource="Simulator-Playback-context.xml"/>
-	                           
+		                           
     <!-- property placeholder -->
 	<bean id="placeholderConfig"
 	      class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 	</bean>
+
+	<!-- *************************************** -->
+	<!--   SIMULATOR                             -->
+	<!-- *************************************** -->
+	<import resource="Simulator-Playback-context.xml"/>
 
 	<!-- *************************************** -->
 	<!-- SIMULATION PROCESS ENGINE               -->
@@ -67,9 +67,7 @@
 		
 		<property name="preParseListeners">
 			<list>
-				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener">
-					<constructor-arg ref="eventCalendar"/>				
-				</bean>
+				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener"/>
 			</list>
 		</property>
 		

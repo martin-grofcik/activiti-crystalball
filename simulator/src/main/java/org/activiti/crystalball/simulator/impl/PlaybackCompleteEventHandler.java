@@ -25,9 +25,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-import org.activiti.crystalball.simulator.SimulationContext;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
+import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,19 +41,19 @@ public class PlaybackCompleteEventHandler implements SimulationEventHandler {
 	private static Logger log = LoggerFactory.getLogger(PlaybackCompleteEventHandler.class);
 	
 	@Override
-	public void handle(SimulationEvent event, SimulationContext context) {
+	public void handle(SimulationEvent event) {
 		String taskId = (String) event.getProperty("task");
 		
 		// fulfill variables
 		@SuppressWarnings("unchecked")
 		Map<String, Object> variables = (Map<String, Object>) event.getProperty("variables");		
 		
-		context.getTaskService().complete( taskId, variables );
+		SimulationRunContext.getTaskService().complete( taskId, variables );
 		log.debug( SimpleDateFormat.getTimeInstance().format( new Date(event.getSimulationTime())) +": completed taskId "+ taskId + " variable update [" + variables +"]");
 	}
 
 	@Override
-	public void init(SimulationContext context) {
+	public void init() {
 		
 	}
 }

@@ -26,7 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.activiti.crystalball.generator.AbstractGraphGenerator;
+import org.activiti.crystalball.generator.AbstractProcessEngineGraphGenerator;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -64,9 +64,9 @@ public class GenerateGraphTask extends Task {
         FileSystemXmlApplicationContext applicationContext = new FileSystemXmlApplicationContext( appContext );		
 		try {
 			// getting generator
-			AbstractGraphGenerator generator = null;		
+			AbstractProcessEngineGraphGenerator generator = null;		
 			if ( generatorBean != null)
-				generator = (AbstractGraphGenerator) applicationContext.getBean( generatorBean );
+				generator = (AbstractProcessEngineGraphGenerator) applicationContext.getBean( generatorBean );
 			if ( generator == null ) {
 				applicationContext.close();
 	            throw new BuildException("unable to get generator bean");

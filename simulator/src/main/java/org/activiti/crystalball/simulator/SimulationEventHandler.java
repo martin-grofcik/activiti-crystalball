@@ -27,13 +27,12 @@ public interface SimulationEventHandler {
 	 * initialize event handler
 	 * @param context
 	 */
-	void init(SimulationContext context);
+	void init();
 	
 	/**
 	 * execute event in the context
 	 * @param event
-	 * @param context
 	 */
-	void handle(SimulationEvent event, SimulationContext context);
+	void handle(SimulationEvent event);
 
 }

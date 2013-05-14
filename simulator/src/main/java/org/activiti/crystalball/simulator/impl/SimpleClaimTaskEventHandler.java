@@ -26,9 +26,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.activiti.crystalball.simulator.SimulationContext;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
+import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
@@ -54,8 +54,8 @@ public class SimpleClaimTaskEventHandler implements SimulationEventHandler {
 	 * 
 	 */
 	@Override
-	public void init(SimulationContext context) {
-		TaskService taskService = context.getTaskService();
+	public void init() {
+		TaskService taskService = SimulationRunContext.getTaskService();
 		long simulationTime = ClockUtil.getCurrentTime().getTime();
 		
 		for ( Task execTask : taskService.createTaskQuery().list()) {
@@ -74,16 +74,16 @@ public class SimpleClaimTaskEventHandler implements SimulationEventHandler {
 
 				SimulationEvent completeEvent = new SimulationEvent( simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
 				// schedule complete task event
-				context.getEventCalendar().addEvent( completeEvent);
+				SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 			}
 		}
 	}
 
 	@Override
-	public void handle(SimulationEvent event, SimulationContext context) {
+	public void handle(SimulationEvent event) {
 		TaskEntity task = (TaskEntity) event.getProperty();
 		
-		context.getTaskService().claim(task.getId(), DEFAULT_USER);		
+		SimulationRunContext.getTaskService().claim(task.getId(), DEFAULT_USER);		
 		task.setAssignee( DEFAULT_USER );
 		
 		// create complete task event
@@ -95,7 +95,7 @@ public class SimpleClaimTaskEventHandler implements SimulationEventHandler {
 	
 		SimulationEvent completeEvent = new SimulationEvent( ClockUtil.getCurrentTime().getTime() + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
 		// schedule complete task event
-		context.getEventCalendar().addEvent( completeEvent);
+		SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 			
 		log.debug( SimpleDateFormat.getTimeInstance().format( new Date(event.getSimulationTime())) +": claimed {}, name: {}, assignee: {}", task, task.getName(), task.getAssignee());
 

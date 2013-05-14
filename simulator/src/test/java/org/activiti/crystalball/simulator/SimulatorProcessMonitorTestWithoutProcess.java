@@ -34,16 +34,13 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.impl.RepositoryServiceImpl;
-import org.apache.commons.io.FileUtils;
 import org.activiti.crystalball.diagram.BasicProcessDiagramGenerator;
 import org.activiti.crystalball.diagram.HighlightNodeDiagramLayer;
 import org.activiti.crystalball.diagram.MergeLayersGenerator;
 import org.activiti.crystalball.diagram.WriteNodeDescriptionDiagramLayer;
-import org.activiti.crystalball.simulator.SimulationResultEvent;
-import org.activiti.crystalball.simulator.SimulationResultsPostProcessor;
-import org.activiti.crystalball.simulator.SimulationRun;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.impl.RepositoryServiceImpl;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,13 +73,13 @@ public class SimulatorProcessMonitorTestWithoutProcess {
 		SimulationRun simRun = appContext.getBean(SimulationRun.class);
 		RepositoryService repositoryService  = (RepositoryService) appContext.getBean("simRepositoryService");
 		
-		List<SimulationResultEvent> resultEventList = simRun.execute(new Date(), null);
+		List<Result> resultEventList = simRun.execute(new Date(), null);
 
 		
-		Collection<List<SimulationResultEvent>> unfinishedTaskProcesses = SimulationResultsPostProcessor.groupProcessDefinitionKey( SimulationResultsPostProcessor.getEventType("unfinished_task", resultEventList));
+		Collection<List<Result>> unfinishedTaskProcesses = SimulationResultsPostProcessor.groupProcessDefinitionKey( SimulationResultsPostProcessor.getEventType("unfinished_task", resultEventList));
 		
       
-		for (List<SimulationResultEvent> eventList : unfinishedTaskProcesses ) {
+		for (List<Result> eventList : unfinishedTaskProcesses ) {
 			String processDefinitionId=eventList.get(0).getProcessDefinitionKey();
 			List<String> highlightTasks =  SimulationResultsPostProcessor.getTaskDefinitionKeys( eventList);
 			Map<String,String> nodeDescription = SimulationResultsPostProcessor.getNodeDescriptions( eventList);

@@ -26,15 +26,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.activiti.crystalball.simulator.EventCalendar;
 import org.activiti.crystalball.simulator.SimulationEvent;
+import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.engine.ActivitiOptimisticLockingException;
 import org.activiti.engine.impl.Page;
 import org.activiti.engine.impl.interceptor.CommandExecutor;
-import org.activiti.engine.impl.jobexecutor.AcquireJobsRunnable;
-import org.activiti.engine.impl.jobexecutor.AcquiredJobs;
-import org.activiti.engine.impl.jobexecutor.GetUnlockedTimersByDuedateCmd;
-import org.activiti.engine.impl.jobexecutor.JobExecutor;
 import org.activiti.engine.impl.persistence.entity.TimerEntity;
 import org.activiti.engine.impl.util.ClockUtil;
 
@@ -47,17 +43,14 @@ import org.activiti.engine.impl.util.ClockUtil;
 public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 	
 	private static Logger log = Logger.getLogger(SimulationAcquireJobsRunnable.class.getName());
-
-	protected EventCalendar eventCalendar;
 	
 	/**
 	 * 
 	 * @param jobExecutor
 	 * @param eventCalendar - calendar into which next AcqureJobs execution is scheduled 
 	 */
-	public SimulationAcquireJobsRunnable(JobExecutor jobExecutor, EventCalendar eventCalendar) {
+	public SimulationAcquireJobsRunnable(JobExecutor jobExecutor) {
 	    super(jobExecutor);
-	    this.eventCalendar = eventCalendar;
 	}
 	
 	  public synchronized void run() {
@@ -131,7 +124,7 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		            if(!isInterrupted) {
 		              isWaiting.set(true);
 		              
-		              eventCalendar.addEvent( new SimulationEvent(
+		              SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent(
 		            		  ClockUtil.getCurrentTime().getTime() + millisToWait,  
 		            		  SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, 
 		            		  this) );
@@ -148,7 +141,7 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		        }
 		      } else {
 		    	  // schedule run now
-	              eventCalendar.addEvent( new SimulationEvent(
+		    	  SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent(
 	            		  ClockUtil.getCurrentTime().getTime(),  
 	            		  SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, 
 	            		  this) );
@@ -165,10 +158,10 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 	      isInterrupted = true; 
 	      if(isWaiting.compareAndSet(true, false)) { 
 	    	  // Notify is not needed - event is enough
-              eventCalendar.addEvent( new SimulationEvent(
-            		  ClockUtil.getCurrentTime().getTime(),  
-            		  SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, 
-            		  this) );
+//	    	  SimulationContext.getEventCalendar().addEvent( new SimulationEvent(
+//            		  ClockUtil.getCurrentTime().getTime(),  
+//            		  SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, 
+//            		  this) );
               //MONITOR.notifyAll();
 	        }
 	      }
@@ -182,7 +175,7 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		      synchronized (MONITOR) {
 //		        MONITOR.notifyAll();
 		    	//Notify is not needed - event is enough
-                eventCalendar.addEvent( new SimulationEvent(
+		    	  SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent(
 	            	  ClockUtil.getCurrentTime().getTime(),  
 	            	  SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, 
 	            	  this) );

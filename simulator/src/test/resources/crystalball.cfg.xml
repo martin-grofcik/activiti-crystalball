@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  simulator
+  %%
+  Copyright (C) 2012 - 2013 crystalball
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- property placeholder -->
+	<bean id="placeholderConfig"
+	      class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	      <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+	</bean>
+	
+  <bean id="simulationEngineConfiguration" class="org.activiti.crystalball.simulator.impl.cfg.StandaloneSimulationEngineConfiguration">
+  
+    <property name="jdbcUrl" value="jdbc:h2:mem:crystalball;DB_CLOSE_DELAY=1000" />
+    <property name="jdbcDriver" value="org.h2.Driver" />
+    <property name="jdbcUsername" value="sa" />
+    <property name="jdbcPassword" value="" />
+    <property name="jobExecutorActivate" value="true"/>
+    
+    <!-- Database configurations -->
+    <property name="databaseSchemaUpdate" value="create-drop" />
+  </bean>
+
+</beans>

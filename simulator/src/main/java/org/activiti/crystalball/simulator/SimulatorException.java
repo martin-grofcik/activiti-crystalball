@@ -21,7 +21,7 @@ package org.activiti.crystalball.simulator;
  */
 
 
-public class SimulatorException extends Exception {
+public class SimulatorException extends RuntimeException {
 
 	/**
 	 * 

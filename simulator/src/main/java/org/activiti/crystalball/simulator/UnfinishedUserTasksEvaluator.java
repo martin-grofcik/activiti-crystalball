@@ -1,5 +1,3 @@
-package org.activiti.crystalball.simulator;
-
 /*
  * #%L
  * simulator
@@ -19,11 +17,12 @@ package org.activiti.crystalball.simulator;
  * limitations under the License.
  * #L%
  */
+package org.activiti.crystalball.simulator;
 
 
-import java.util.List;
 
-import org.activiti.engine.HistoryService;
+import org.activiti.crystalball.simulator.impl.cmd.StoreResultCmd;
+import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
@@ -39,21 +38,23 @@ public class UnfinishedUserTasksEvaluator implements HistoryEvaluator {
 	 * @see org.activiti.crystalball.simulator.HistoryEvaluator#evaluate(org.activiti.engine.HistoryService, java.util.List)
 	 */
 	@Override
-	public void evaluate(HistoryService historyService,	List<SimulationResultEvent> resultList) {
-		
-		for (ProcessDefinition processDefinition : repositoryService.createProcessDefinitionQuery().active().list() ) {
-			ProcessDefinitionEntity pde = (ProcessDefinitionEntity) repositoryService.getDeployedProcessDefinition( processDefinition.getId());
-			
-			for (ActivityImpl activity : pde.getActivities()) {
-				if ( activity.getProperty("type") != null && activity.getProperty("type") == "userTask" ) {
-					
-					long count = historyService.createHistoricTaskInstanceQuery()
-									.processDefinitionKey( processDefinition.getKey())
-									.taskDefinitionKey( activity.getId())
-									.unfinished()
-									.count();
-					if ( count> 0) {
-						resultList.add(new SimulationResultEvent( type, processDefinition.getKey(), activity.getId(), Long.toString( count)));
+	public void evaluate(SimulationRunEntity simulationRun) {
+		if (simulationRun != null) {
+			for (ProcessDefinition processDefinition : repositoryService.createProcessDefinitionQuery().active().list() ) {
+				ProcessDefinitionEntity pde = (ProcessDefinitionEntity) repositoryService.getDeployedProcessDefinition( processDefinition.getId());
+				
+				for (ActivityImpl activity : pde.getActivities()) {
+					if ( activity.getProperty("type") != null && activity.getProperty("type") == "userTask" ) {
+						
+						long count = SimulationRunContext.getHistoryService().createHistoricTaskInstanceQuery()
+										.processDefinitionKey( processDefinition.getKey())
+										.taskDefinitionKey( activity.getId())
+										.unfinished()
+										.count();
+						if ( count> 0) {
+							org.activiti.crystalball.simulator.impl.context.SimulationContext.
+							getSimulationEngineConfiguration().getCommandExecutorTxRequired().execute( new StoreResultCmd( simulationRun, type, processDefinition.getKey(), activity.getId(), Long.toString( count)) );
+						}
 					}
 				}
 			}

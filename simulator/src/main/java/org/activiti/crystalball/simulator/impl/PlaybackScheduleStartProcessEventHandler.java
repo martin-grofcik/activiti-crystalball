@@ -27,12 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.crystalball.simulator.SimulationEvent;
+import org.activiti.crystalball.simulator.SimulationEventHandler;
+import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.util.ClockUtil;
-import org.activiti.crystalball.simulator.SimulationContext;
-import org.activiti.crystalball.simulator.SimulationEvent;
-import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,17 +76,17 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 	private int delta = 1000;
 	
 	@Override
-	public void init(SimulationContext context) {
+	public void init() {
 		// initialise simulation start
 		simulationRunStart = ClockUtil.getCurrentTime();
 		
 		// determine when to start new process
-		List<HistoricProcessInstance> processInstances = getPlaybackProcessInstances( playBackStart, context);
+		List<HistoricProcessInstance> processInstances = getPlaybackProcessInstances( playBackStart);
 		
 		if (!processInstances.isEmpty()) {		
 			// schedule new process instance start now
 			for (HistoricProcessInstance processInstance : processInstances )
-				scheduleNextProcessStart(context, simulationRunStart.getTime() + getSimulationTimeDelta(processInstance.getStartTime()), processInstance.getId());
+				scheduleNextProcessStart(simulationRunStart.getTime() + getSimulationTimeDelta(processInstance.getStartTime()), processInstance.getId());
 		}
 		
 	}
@@ -114,19 +114,18 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 	 * @param simulationTime
 	 * @param processInstanceId 
 	 */
-	private void scheduleNextProcessStart(SimulationContext context,
-			long simulationTime, String processInstanceId) {
+	private void scheduleNextProcessStart(long simulationTime, String processInstanceId) {
 		Map<String,Object> properties = new HashMap<String, Object>();
 		properties.put(PROCESS_INSTANCE_ID, processInstanceId);
 		
 		SimulationEvent completeEvent = new SimulationEvent( simulationTime, eventTypeToSchedule, properties);
 		// add start process event
-		context.getEventCalendar().addEvent( completeEvent);
+		SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 		log.debug("Scheduling new process start simtime [" + simulationTime + "] properties["+properties+"]");
 	}
 
 	@Override
-	public void handle(SimulationEvent event, SimulationContext context) {
+	public void handle(SimulationEvent event) {
 		//
 		// determine next process instance start
 		//
@@ -142,12 +141,12 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 		Date playbackPositionDate = new Date( playBackStart.getTime() + timeDelta ); 
 		
 		// determine new process instances to start from playback
-		List<HistoricProcessInstance> processInstances = getPlaybackProcessInstances(playbackPositionDate, context);
+		List<HistoricProcessInstance> processInstances = getPlaybackProcessInstances(playbackPositionDate);
 					
 		// schedule new process instance start now
 		if (!processInstances.isEmpty())
 			for (HistoricProcessInstance processInstance : processInstances)
-				scheduleNextProcessStart(context, simulationRunStart.getTime() + playbackRepeated * playBackTime + (processInstance.getStartTime().getTime() - playBackStart.getTime() ), processInstance.getId() );
+				scheduleNextProcessStart(simulationRunStart.getTime() + playbackRepeated * playBackTime + (processInstance.getStartTime().getTime() - playBackStart.getTime() ), processInstance.getId() );
 
 	}
 
@@ -158,7 +157,7 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 	 * @param context
 	 * @return
 	 */
-	protected List<HistoricProcessInstance> getPlaybackProcessInstances( Date playBackPosition, SimulationContext context ) {
+	protected List<HistoricProcessInstance> getPlaybackProcessInstances( Date playBackPosition) {
 		// set end time for the query
 		Date end = playBackEnd;
 		Calendar c = Calendar.getInstance();
@@ -168,14 +167,14 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 			end = c.getTime();
 			// add schedule process event after selected process instances
 			SimulationEvent scheduleEvent = new SimulationEvent( ClockUtil.getCurrentTime().getTime() + delta + 1, eventType, null);
-			context.getEventCalendar().addEvent( scheduleEvent);
+			SimulationRunContext.getEventCalendar().addEvent( scheduleEvent);
 		} else {
 			long playBackTime = playBackEnd.getTime() - playBackStart.getTime();  
 			long simulationTimeDelta = ClockUtil.getCurrentTime().getTime() - simulationRunStart.getTime();
 			long playbackRepeated = simulationTimeDelta/ playBackTime +1 ;
 			
 			SimulationEvent scheduleEvent = new SimulationEvent( simulationRunStart.getTime()+ playBackTime * playbackRepeated + 1, eventType, null);
-			context.getEventCalendar().addEvent( scheduleEvent);			
+			SimulationRunContext.getEventCalendar().addEvent( scheduleEvent);			
 		}
 		
 		// determine process instances to be played back

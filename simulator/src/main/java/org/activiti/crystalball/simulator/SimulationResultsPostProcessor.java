@@ -40,10 +40,10 @@ public class SimulationResultsPostProcessor {
 	 * @param resultList
 	 * @return
 	 */
-	static public List<SimulationResultEvent> getEventType( String type, List<SimulationResultEvent> resultList  ) {
-		List<SimulationResultEvent> list = new ArrayList<SimulationResultEvent>();
+	static public List<Result> getEventType( String type, List<Result> resultList  ) {
+		List<Result> list = new ArrayList<Result>();
 		if (type != null) {
-			for( SimulationResultEvent event : resultList ) {
+			for( Result event : resultList ) {
 				if (type.equals( event.getType()))  {
 					list.add(event);
 				}
@@ -58,20 +58,20 @@ public class SimulationResultsPostProcessor {
 	 * @param resultList
 	 * @return
 	 */
-	static public Collection<List<SimulationResultEvent>> groupProcessDefinitionKey( List<SimulationResultEvent> resultList ) {
-		Map<String, List<SimulationResultEvent>> processMap = new HashMap<String, List<SimulationResultEvent>>();
-		for ( SimulationResultEvent event : resultList) {
+	static public Collection<List<Result>> groupProcessDefinitionKey( List<Result> resultList ) {
+		Map<String, List<Result>> processMap = new HashMap<String, List<Result>>();
+		for ( Result event : resultList) {
 			if ( processMap.containsKey( event.getProcessDefinitionKey()) ) {
 				// add event to the list
 				processMap.get( event.getProcessDefinitionKey() ).add( event );
 			} else {
-				List<SimulationResultEvent> list = new ArrayList<SimulationResultEvent>();
+				List<Result> list = new ArrayList<Result>();
 				list.add(event);
  				processMap.put(event.getProcessDefinitionKey(), list);
 			}
 		}
 
-		return new ArrayList<List<SimulationResultEvent>>(processMap.values());
+		return new ArrayList<List<Result>>(processMap.values());
 	}
 	
 	/**
@@ -79,9 +79,9 @@ public class SimulationResultsPostProcessor {
 	 * @param resultList
 	 * @return
 	 */
-	static public List<String> getTaskDefinitionKeys(List<SimulationResultEvent> resultList) {
+	static public List<String> getTaskDefinitionKeys(List<Result> resultList) {
 		List<String> keys = new ArrayList<String>();
-		for (SimulationResultEvent event : resultList) {
+		for (Result event : resultList) {
 			if (!keys.contains( event.getTaskDefinitionKey())) {
 				keys.add( event.getTaskDefinitionKey() );
 			}
@@ -94,9 +94,9 @@ public class SimulationResultsPostProcessor {
 	 * @param resultList
 	 * @return
 	 */
-	static public Map<String, String> getNodeDescriptions(List<SimulationResultEvent> resultList) {
+	static public Map<String, String> getNodeDescriptions(List<Result> resultList) {
 		Map<String, String> desc = new HashMap<String,String>();
-		for (SimulationResultEvent event : resultList) {
+		for (Result event : resultList) {
 			desc.put( event.getTaskDefinitionKey(), event.getDescription() );
 		}
 		return desc;

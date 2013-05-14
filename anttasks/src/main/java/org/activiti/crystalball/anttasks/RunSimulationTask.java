@@ -79,6 +79,9 @@ public class RunSimulationTask extends Task {
 		} catch (ParseException e) {
 			log("Simulation task exception - parsing dates", Project.MSG_ERR);
             throw new BuildException(e);
+		} catch (Exception e) {
+			log("Simulation task exception - simulation run error", Project.MSG_ERR);
+            throw new BuildException(e);
 		} finally {
 			applicationContext.close();
 		}

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.activiti.crystalball.simulator.SimUtils;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
 
@@ -62,7 +63,7 @@ public abstract class AbstractRandomVariableMapUsertaskExecutor implements UserT
 		if (taskVariablesMap.containsKey( execTask.getTaskDefinitionKey())) {
 			List<Map<String, Object>> variablesList = taskVariablesMap.get( execTask.getTaskDefinitionKey());
 			if (!variablesList.isEmpty()) {
-				return variablesList.get( randomGenerator.nextInt(variablesList.size()));
+				return variablesList.get( SimUtils.getRandomInt(variablesList.size()));
 			}
 		}
 		return null;

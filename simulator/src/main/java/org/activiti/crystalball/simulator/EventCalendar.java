@@ -33,7 +33,7 @@ public class EventCalendar {
 	Integer minIndex = null;
 	Comparator<SimulationEvent> eventComparator;
 	
-	public EventCalendar( Comparator<SimulationEvent> eventComparator) {
+	protected EventCalendar( Comparator<SimulationEvent> eventComparator) {
 		this.eventComparator = eventComparator;		
 	}
 	

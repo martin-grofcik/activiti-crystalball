@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * highlight user tasks with running process instances higher than limit 
  *
  */
-public class ProcessInstancesGenerator extends AbstractGraphGenerator {
+public class ProcessInstancesGenerator extends AbstractProcessEngineGraphGenerator {
 
 	protected static Logger log = LoggerFactory.getLogger(ProcessInstancesGenerator.class);
 	RuntimeService runtimeService;

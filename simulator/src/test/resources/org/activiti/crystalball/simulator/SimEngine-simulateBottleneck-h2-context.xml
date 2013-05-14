@@ -63,9 +63,7 @@
 		<!-- property name="jobExecutor" ref="simDefaultJobExecutor"/-->		
 		<property name="preParseListeners">
 			<list>
-				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener">
-					<constructor-arg ref="eventCalendar"/>
-				</bean>
+				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener"/>
 			</list>
 		</property>
 	</bean>
@@ -82,7 +80,6 @@
     <bean id="simIdentityService" factory-bean="simProcessEngine" factory-method="getIdentityService"/>
 
 	<!-- bean id="simDefaultJobExecutor" class="org.activiti.crystalball.simulator.processengine.jobexecutor.SimulationDefaultJobExecutor">
-		<constructor-arg ref="eventCalendar"/>
 	</bean-->
 	
 	<bean id="reportGenerator" class="org.activiti.crystalball.generator.ProcessInstancesGenerator">

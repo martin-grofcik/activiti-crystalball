@@ -21,9 +21,7 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import java.util.List;
-
-import org.activiti.engine.HistoryService;
+import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
 
 public interface HistoryEvaluator {
 
@@ -39,7 +37,6 @@ public interface HistoryEvaluator {
 	 * @param historyService
 	 * @param resultList
 	 */
-	public void evaluate(HistoryService historyService,
-			List<SimulationResultEvent> resultList);
+	public void evaluate(SimulationRunEntity simulationRun);
 
 }

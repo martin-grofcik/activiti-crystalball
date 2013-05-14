@@ -1,4 +1,4 @@
-package org.activiti.crystalball.simulator;
+package org.activiti.crystalball.simulator.impl;
 
 /*
  * #%L
@@ -24,6 +24,9 @@ package org.activiti.crystalball.simulator;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.activiti.crystalball.simulator.SimulationEvent;
+import org.activiti.crystalball.simulator.SimulationEventHandler;
+import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,20 +49,20 @@ public class LogTimeEventHandler implements SimulationEventHandler {
 	}
 	
 	@Override
-	public void init(SimulationContext context) {
+	public void init() {
 		simulationStart = System.currentTimeMillis();
-		context.getEventCalendar().addEvent( new SimulationEvent( ClockUtil.getCurrentTime().getTime(), type, null));
+		SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent( ClockUtil.getCurrentTime().getTime(), type, null));
 	}
 
 	@Override
-	public void handle(SimulationEvent event, SimulationContext context) {
+	public void handle(SimulationEvent event) {
 		Date simulationTime = new Date( event.getSimulationTime());
 		log.info("SimExec {} sec, Simulation time [{}]", (System.currentTimeMillis() - simulationStart)/1000f, simulationTime);
 		
 		Calendar c = Calendar.getInstance();
 		c.setTime(simulationTime);
 		c.add( Calendar.MINUTE, logDelta);
-		context.getEventCalendar().addEvent( new SimulationEvent( c.getTimeInMillis(), type, null));
+		SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent( c.getTimeInMillis(), type, null));
 	}
 
 }

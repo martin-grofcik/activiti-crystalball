@@ -49,7 +49,7 @@ public class TheFirstSimulationTest {
 	}
 	
 	@Test
-	public void testFirstRun() {
+	public void testFirstRun() throws Exception {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("org/activiti/crystalball/examples/mortages/firstsimulation/mortages-h2-context.xml");
 		SimulationRun simRun = (SimulationRun) appContext.getBean("simulationRun");
 		ProcessEngine simProcessEngine = (ProcessEngine) appContext.getBean("simProcessEngine");

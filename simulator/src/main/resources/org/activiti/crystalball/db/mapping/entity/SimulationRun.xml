@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+  
+<mapper namespace="org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity">
+  
+  <!-- SIMULATION INSERT -->
+  <insert id="insertSimulationRun" parameterType="org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity">
+    insert into ${prefix}CRB_RU_SIMULATION_RUN(ID_, SIMULATION_ID_, SUSPENSION_STATE_, REPLICATION_)
+    values (#{id, jdbcType=VARCHAR},
+    		#{simulationId, jdbcType=VARCHAR},
+            #{suspensionState, jdbcType=INTEGER},
+            #{replication, jdbcType=INTEGER})
+  </insert>
+  
+  <select id="selectSimulationRunById" parameterType="string" resultMap="simulationRunWithReferencesResultMap">
+    select * from ${prefix}CRB_RU_SIMULATION_RUN where ID_ = #{simulationRunId}
+  </select>
+  
+  <select id="selectSimulationRunWithReferencesById" parameterType="string" resultMap="simulationRunWithReferencesResultMap">
+    select 
+    	RUN.ID_ as RUN_ID_,
+    	RUN.SIMULATION_ID_ as SIMULATION_ID_,
+	    RUN.SIMULATION_TIME_ as SIMULATION_TIME_,
+	    RUN.REPLICATION_ as REPLICATION_,
+	    RUN.SUSPENSION_STATE_ as SUSPENSION_STATE_,
+	    SIM.ID_ as SIM_ID_,
+	    SIM.NAME_ as SIM_NAME_,
+	    SIM.DESCRIPTION_ as SIM_DESCRIPTION_,
+	    SIM.AUTHOR_ as SIM_AUTHOR_,
+	    SIM.START_ as SIM_START_,
+	    SIM.END_ as SIM_END_,
+	    SIM.SEED_ SIM_SEED_,
+	    SIM.SIMULATION_CONFIG_URL_ as SIM_CONFIG_URL_,
+	    SIM.REPLICATION_ as SIM_REPLICATION,
+	    SIM.REPLICATION_COUNTER_ as SIM_COUNTER,
+	    SIM.SUSPENSION_STATE_ as SIM_SUSPENSION_STATE_   
+     from ${prefix}CRB_RU_SIMULATION_RUN RUN 
+     	inner join ${prefix}CRB_RU_SIMULATION SIM on RUN.SIMULATION_ID_ = SIM.ID_ 
+     where RUN.ID_ = #{simulationRunId}
+  </select>
+  
+  
+    <!-- PROCESSDEFINITION UPDATE -->
+
+  <update id="updateProcessDefinition" parameterType="org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity">
+    update ${prefix}ACT_RE_PROCDEF set
+      REV_ = #{revisionNext, jdbcType=INTEGER},    
+      SUSPENSION_STATE_ = #{suspensionState, jdbcType=INTEGER}
+    where ID_ = #{id, jdbcType=VARCHAR}
+      and REV_ = #{revision, jdbcType=INTEGER}
+  </update>
+
+  <!-- PROCESSDEFINITION DELETE -->
+
+  <delete id="deleteProcessDefinitionsByDeploymentId" parameterType="string">
+    delete from ${prefix}ACT_RE_PROCDEF where DEPLOYMENT_ID_ = #{deploymenId} 
+  </delete>
+  
+  <!-- SIMULATION RESULTMAP -->
+
+  <resultMap id="simulationRunResultMap" type="org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity">
+    <id property="id" column="ID_" jdbcType="VARCHAR" />
+    <result property="simulationId" column="SIMULATION_ID_" jdbcType="VARCHAR" />
+    <result property="suspensionState" column="SUSPENSION_STATE_" jdbcType="INTEGER"/>
+    <result property="simulationTime" column="SIMULATION_TIME_" jdbcType="TIMESTAMP"/>
+    <result property="replication" column="REPLICATION_" jdbcType="INTEGER"/>
+  </resultMap>
+
+  <resultMap id="simulationRunWithReferencesResultMap" type="org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity">
+    <id property="id" column="RUN_ID_" jdbcType="VARCHAR" />
+    <result property="simulationId" column="SIMULATION_ID_" jdbcType="VARCHAR" />
+    <result property="suspensionState" column="SUSPENSION_STATE_" jdbcType="INTEGER"/>
+    <result property="simulationTime" column="SIMULATION_TIME_" jdbcType="TIMESTAMP"/>
+    <result property="replication" column="REPLICATION_" jdbcType="INTEGER"/>
+    <association property="simulation" column="blog_author_id" javaType="org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntity">
+		<id property="id" column="SIM_ID_" jdbcType="VARCHAR" />
+	    <result property="name" column="SIM_NAME_" />
+	    <result property="description" column="SIM_DESCRIPTION_" jdbcType="VARCHAR" />
+	    <result property="author" column="SIM_AUTHOR_" jdbcType="VARCHAR"/>
+	    <result property="suspensionState" column="SIM_SUSPENSION_STATE_" jdbcType="INTEGER"/>
+	    <result property="start" column="SIM_START_" jdbcType="TIMESTAMP"/>
+	    <result property="end" column="SIM_END_" jdbcType="TIMESTAMP"/>
+	    <result property="replication" column="SIM_REPLICATION_" jdbcType="INTEGER"/>
+	    <result property="replicationCounter" column="SIM_REPLICATION_COUNTER_" jdbcType="INTEGER"/>
+	    <result property="seed" column="SIM_SEED_" jdbcType="BIGINT"/>
+	    <result property="simulationConfigUrl" column="SIM_CONFIG_URL_" jdbcType="VARCHAR" />
+	  </association>
+  </resultMap>
+  
+  
+  <!-- PROCESSDEFINITION SELECT -->
+  
+
+<!-- 
+  <select id="selectProcessDefinitionsByQueryCriteria" parameterType="org.activiti.engine.impl.ProcessDefinitionQueryImpl" resultMap="processDefinitionResultMap">
+  	${limitBefore}
+    select RES.* ${limitBetween}
+    <include refid="selectProcessDefinitionsByQueryCriteriaSql"/>
+    ${orderBy}
+    ${limitAfter}
+  </select>
+ -->
+  <select id="selectProcessDefinitionCountByQueryCriteria" parameterType="org.activiti.engine.impl.ProcessDefinitionQueryImpl" resultType="long">
+    select count(RES.ID_)
+    <include refid="selectProcessDefinitionsByQueryCriteriaSql"/>
+  </select>
+  
+  <sql id="selectProcessDefinitionsByQueryCriteriaSql">  
+    from ${prefix}ACT_RE_PROCDEF RES
+    <if test="eventSubscriptionType != null">
+    	inner join ${prefix}ACT_RU_EVENT_SUBSCR EVT on RES.ID_ = EVT.CONFIGURATION_
+    </if>
+    <where>
+      <if test="id != null">
+        RES.ID_ = #{id}
+      </if>
+      <if test="category != null">
+        and RES.CATEGORY_ = #{category}
+      </if>
+      <if test="categoryLike != null">
+        and RES.CATEGORY_ like #{categoryLike}
+      </if>
+      <if test="categoryNotEquals != null">
+        and ( RES.CATEGORY_ &lt;&gt; #{categoryNotEquals} OR RES.CATEGORY_ is null )
+      </if>
+      <if test="name != null">
+        and RES.NAME_ = #{name}
+      </if>
+      <if test="nameLike != null">
+        and RES.NAME_ like #{nameLike}
+      </if>
+      <if test="key != null">
+        and RES.KEY_ = #{key}
+      </if>
+      <if test="keyLike != null">
+        and RES.KEY_ like #{keyLike}
+      </if>
+      <if test="resourceName != null">
+        and RES.RESOURCE_NAME_ = #{resourceName}
+      </if>
+      <if test="resourceNameLike != null">
+        and RES.RESOURCE_NAME_ like #{resourceNameLike}
+      </if>
+      <if test="version != null">
+        and RES.VERSION_ = #{version}
+      </if>
+      <if test="deploymentId != null">
+        and RES.DEPLOYMENT_ID_ = #{deploymentId}
+      </if>
+      <if test="latest">
+        and RES.VERSION_ = (select max(VERSION_) from ${prefix}ACT_RE_PROCDEF where KEY_ = RES.KEY_)
+      </if>
+      <if test="suspensionState != null">
+        and (RES.SUSPENSION_STATE_ = #{suspensionState.stateCode})
+      </if>
+      <if test="eventSubscriptionType != null">
+      	and (EVT.EVENT_TYPE_ = #{eventSubscriptionType} and EVT.EVENT_NAME_ = #{eventSubscriptionName}) 
+      </if>
+      <if test="authorizationUserId != null">
+        AND (exists (select ID_  from ${prefix} ACT_RU_IDENTITYLINK  IDN where IDN.PROC_DEF_ID_ = RES.ID_ and IDN.USER_ID_ = #{authorizationUserId})
+        <if test="authorizationGroups != null &amp;&amp; authorizationGroups.size() &gt; 0">
+         OR exists (select ID_ from ${prefix} ACT_RU_IDENTITYLINK  IDN where IDN.PROC_DEF_ID_ = RES.ID_ and IDN.GROUP_ID_ IN
+            <foreach item="group" index="index" collection="authorizationGroups" 
+                     open="(" separator="," close=")">
+              #{group}
+            </foreach>
+         )
+         </if>
+        )
+      </if>
+    </where>
+  </sql>
+    
+<!--   <select id="selectProcessDefinitionByDeploymentAndKey" parameterType="map" resultMap="processDefinitionResultMap">
+    select * 
+    from ${prefix}ACT_RE_PROCDEF 
+    where DEPLOYMENT_ID_ = #{deploymentId}
+      and KEY_ = #{processDefinitionKey}
+  </select>
+    
+  <select id="selectLatestProcessDefinitionByKey" parameterType="string" resultMap="processDefinitionResultMap">
+    select *
+    from ${prefix}ACT_RE_PROCDEF 
+    where KEY_ = #{key} and
+          VERSION_ = (select max(VERSION_) from ${prefix}ACT_RE_PROCDEF where KEY_ = #{processDefinitionKey})
+  </select>
+
+  mysql specific sql
+  <select id="selectProcessDefinitionsByQueryCriteria_mysql" parameterType="org.activiti.engine.impl.ProcessDefinitionQueryImpl" resultMap="processDefinitionResultMap">
+  	${limitBefore}
+    select distinct RES.* ${limitBetween}
+    <include refid="selectProcessDefinitionsByQueryCriteriaSql"/>
+    ${orderBy}
+    ${limitAfter}
+  </select>
+ -->
+  <!-- mysql specific sql -->
+  <select id="selectProcessDefinitionCountByQueryCriteria_mysql" parameterType="org.activiti.engine.impl.ProcessDefinitionQueryImpl" resultType="long">
+    select distinct count(RES.ID_)
+    <include refid="selectProcessDefinitionsByQueryCriteriaSql"/>
+  </select>
+</mapper>

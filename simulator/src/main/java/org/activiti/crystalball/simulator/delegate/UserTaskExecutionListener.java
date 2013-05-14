@@ -21,8 +21,8 @@ package org.activiti.crystalball.simulator.delegate;
  */
 
 
-import org.activiti.crystalball.simulator.EventCalendar;
 import org.activiti.crystalball.simulator.SimulationEvent;
+import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.TaskListener;
 import org.activiti.engine.impl.util.ClockUtil;
@@ -36,15 +36,13 @@ public class UserTaskExecutionListener implements TaskListener {
 
 	private static Logger log = LoggerFactory.getLogger(UserTaskExecutionListener.class);
 	
-	protected EventCalendar eventCalendar;
 	protected String type;
 	
 	public UserTaskExecutionListener() {
 		
 	}
 
-	public UserTaskExecutionListener(String type, EventCalendar eventCalendar) {
-		this.eventCalendar = eventCalendar;
+	public UserTaskExecutionListener(String type) {
 		this.type = type;
 	}
 
@@ -52,15 +50,7 @@ public class UserTaskExecutionListener implements TaskListener {
 	public void notify(DelegateTask delegateTask) {
 		SimulationEvent e = new SimulationEvent(ClockUtil.getCurrentTime().getTime(), type, delegateTask);
 		log.debug("Sim time [{}] adding sim event [{}] to calendar ", ClockUtil.getCurrentTime(), e);
-		eventCalendar.addEvent(e);
-	}
-
-	public EventCalendar getEventCalendar() {
-		return eventCalendar;
-	}
-
-	public void setEventCalendar(EventCalendar eventCalendar) {
-		this.eventCalendar = eventCalendar;
+		SimulationRunContext.getEventCalendar().addEvent(e);
 	}
 
 	public String getType() {

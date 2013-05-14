@@ -23,7 +23,6 @@ package org.activiti.crystalball.simulator.processengine.jobexecutor;
 
 import java.util.List;
 
-import org.activiti.crystalball.simulator.EventCalendar;
 import org.activiti.engine.impl.cmd.AcquireJobsCmd;
 import org.activiti.engine.impl.jobexecutor.AcquireJobsRunnable;
 import org.activiti.engine.impl.jobexecutor.DefaultJobExecutor;
@@ -36,11 +35,8 @@ import org.activiti.engine.impl.jobexecutor.SimulationAcquireJobsRunnable;
  *
  */
 public class SimulationDefaultJobExecutor extends DefaultJobExecutor {
-
-	protected EventCalendar eventCalendar;
 	
-	public SimulationDefaultJobExecutor(EventCalendar eventCalendar) {
-		this.eventCalendar = eventCalendar;		
+	public SimulationDefaultJobExecutor() {
 	}
 	
 	/**
@@ -50,7 +46,7 @@ public class SimulationDefaultJobExecutor extends DefaultJobExecutor {
 	@Override
 	protected void ensureInitialization() { 
 	    acquireJobsCmd = new AcquireJobsCmd(this);
-	    acquireJobsRunnable = new SimulationAcquireJobsRunnable(this, eventCalendar);  
+	    acquireJobsRunnable = new SimulationAcquireJobsRunnable(this);  
 	}
 	
 	/**

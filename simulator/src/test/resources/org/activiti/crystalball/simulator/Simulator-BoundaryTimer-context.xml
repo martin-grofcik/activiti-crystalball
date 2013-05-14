@@ -30,24 +30,16 @@
 	<!-- *************************************** -->
 	<bean id="simulationRun" class="org.activiti.crystalball.simulator.SimulationRun">
 
-		<constructor-arg>
-			<bean class="org.activiti.crystalball.simulator.SimulationContext">
-	       		<property name="runtimeService" ref="simRuntimeService"/>
-	       		<property name="taskService" ref="simTaskService"/>
-	       		<!-- simulation run audit is logged into simEngine history log -->
-	       		<property name="historyService" ref="simHistoryService"/>
-	       		<property name="eventCalendar" ref="eventCalendar"/>
-			</bean>
-		</constructor-arg>
+		<constructor-arg ref="&amp;eventCalendar"/>
+		<constructor-arg ref="&amp;simProcessEngine"/>
 		<constructor-arg>
 			<map>
 				<entry key="TASK_CREATE"><bean class="org.activiti.crystalball.simulator.impl.NoopEventHandler"/></entry>
 				<entry key="START_PROCESS" value-ref="startProcessEventHandler"/>
 				<entry key="LOG">
-					<bean class="org.activiti.crystalball.simulator.LogTimeEventHandler">
-						<constructor-arg value="LOG"/>
-						<!-- log delta in minutes (24*60=1440) -->
-						<constructor-arg value="30"/>
+					<bean class="org.activiti.crystalball.simulator.impl.LogTimeEventHandler">
+						<constructor-arg value="LOG" />
+						<constructor-arg value="30" />
 					</bean>
 				</entry>
 			</map>
@@ -63,7 +55,7 @@
 		<constructor-arg ref="simDefaultJobExecutor"/>
 	</bean>
 	
-	<bean id="eventCalendar" class="org.activiti.crystalball.simulator.EventCalendar">
+	<bean id="eventCalendar" class="org.activiti.crystalball.simulator.SimpleEventCalendarFactory">
 		<constructor-arg>
 			<bean class="org.activiti.crystalball.simulator.SimulationEventComparator"/>
 		</constructor-arg>

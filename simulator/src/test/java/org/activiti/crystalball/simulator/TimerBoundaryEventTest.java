@@ -24,7 +24,6 @@ package org.activiti.crystalball.simulator;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +40,7 @@ public class TimerBoundaryEventTest {
 	protected static final String PROCESS_KEY = "boundarytimereventtest";
 
 	@Test
-	public void testTimerBoundaryEvent() throws IOException {
+	public void testTimerBoundaryEvent() throws Exception {
         System.setProperty("liveDB", LIVE_DB);
         System.setProperty("_SIM_DB_PATH", tempDir+"/"+TimerBoundaryEventTest.class.getName() + "-sim-"+Thread.currentThread().getId());
 	    // delete database file
@@ -67,7 +66,7 @@ public class TimerBoundaryEventTest {
 	    
 	    // run simulation for 5 minutes
 	    @SuppressWarnings("unused")
-		List<SimulationResultEvent> resultEventList = simRun.execute(startDate, finishDate);
+		List<Result> resultEventList = simRun.execute(startDate, finishDate);
 	    
 	    TaskService simTaskService = processEngine.getTaskService();
 	    // in 5 minutes 11 processes will be started (0 is included too)

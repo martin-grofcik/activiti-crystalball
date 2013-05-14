@@ -24,7 +24,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:activiti="http://www.activiti.org/schema/spring/components"
        xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
-                           http://www.activiti.org/schema/spring/components http://www.activiti.org/schema/spring/components/activiti.xsd">
+                           http://www.activiti.org/schema/spring/components http://www.activiti.org/schema/spring/components/activiti.xsd"
+                           
+       default-lazy-init="true">
 	<!-- *************************************** -->
 	<!-- RUNNING PROCESS ENGINE                  -->
 	<!-- *************************************** -->
@@ -34,20 +36,20 @@
 	<!--   SIMULATOR                             -->
 	<!-- *************************************** -->
 	<import resource="Simulator-context.xml"/>
-	                           
-    <!-- property placeholder -->
+	                
+	    <!-- property placeholder -->
 	<bean id="placeholderConfig"
 	      class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 	</bean>
-
+	           
 	<!-- *************************************** -->
 	<!-- SIMULATION PROCESS ENGINE               -->
 	<!-- *************************************** -->    
-	<bean id="simDataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+	<bean id="simDataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy" >
         <property name="targetDataSource">
             <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
                 <property name="driverClass" value="org.h2.Driver"/>
-                <property name="url" value="jdbc:h2:${_SIM_DB_PATH};DB_CLOSE_DELAY=1000"/>
+                <property name="url" value="jdbc:h2:${tempDir:target}/${simulationRunId:default};DB_CLOSE_DELAY=1000"/>
                 <property name="username" value="sa"/>
                 <property name="password" value=""/>
             </bean>
@@ -65,11 +67,10 @@
 		<property name="jobExecutorActivate" value="false" />
 		<property name="preParseListeners">
 			<list>
-				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener">
-					<constructor-arg ref="eventCalendar"/>				
-				</bean>
+				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener"/>
 			</list>
 		</property>
+		<property name="processEngineName" value="${simulationRunId:default}"/>
 	</bean>
 
     <bean id="simProcessEngine" class="org.activiti.spring.ProcessEngineFactoryBean" >

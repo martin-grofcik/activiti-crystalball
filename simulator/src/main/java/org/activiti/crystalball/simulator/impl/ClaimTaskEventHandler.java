@@ -27,9 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.activiti.crystalball.simulator.SimulationContext;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
+import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.TaskService;
@@ -53,7 +53,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 	 *  everybody should start to work on something
 	 */
 	@Override
-	public void init(SimulationContext context) {
+	public void init() {
 		List<User> users = identityService.createUserQuery().list();
 		long simulationTime = ClockUtil.getCurrentTime().getTime();
 		for (User user : users) {
@@ -69,7 +69,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 					// TODO simulateTaskExecution simulates new task execution - does not take into account work in the progress. It should be changed
 					SimulationEvent completeEvent = new SimulationEvent( simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
 					// add complete task event
-					context.getEventCalendar().addEvent( completeEvent);
+					SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 				}
 			} else {
 				// schedule complete event
@@ -92,7 +92,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 
 						SimulationEvent completeEvent = new SimulationEvent( simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
 						// schedule complete task event
-						context.getEventCalendar().addEvent( completeEvent);
+						SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 					}
 				}
 			}
@@ -100,7 +100,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 	}
 
 	@Override
-	public void handle(SimulationEvent event, SimulationContext context) {
+	public void handle(SimulationEvent event) {
 		TaskEntity task = (TaskEntity) event.getProperty();
 		
 		if (claimTask(task)) {
@@ -114,7 +114,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 	
 			SimulationEvent completeEvent = new SimulationEvent( ClockUtil.getCurrentTime().getTime() + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
 			// schedule complete task event
-			context.getEventCalendar().addEvent( completeEvent);
+			SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 			
 			log.debug( SimpleDateFormat.getTimeInstance().format( new Date(event.getSimulationTime())) +": claimed {}, name: {}, assignee: {}", task, task.getName(), task.getAssignee());
 		}

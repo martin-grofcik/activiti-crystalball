@@ -24,19 +24,16 @@ package org.activiti.crystalball.simulator;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.activiti.crystalball.simulator.impl.PlaybackScheduleStartProcessEventHandler;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricVariableInstance;
-import org.activiti.crystalball.simulator.SimulationResultEvent;
-import org.activiti.crystalball.simulator.SimulationRun;
-import org.activiti.crystalball.simulator.impl.PlaybackScheduleStartProcessEventHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +50,7 @@ public class PlaybackTest {
 	}
 
 	@Test
-	public void testPlaybackRun() throws IOException {
+	public void testPlaybackRun() throws Exception {
 		System.setProperty("_SIM_DB_PATH", System.getProperty("tempDir", "target") + "/Playback-test");
 		System.setProperty("liveDB", "target/Playback");
 
@@ -83,8 +80,7 @@ public class PlaybackTest {
 	    c.add( Calendar.SECOND, 10);
 	    Date finishDate = c.getTime();
 	    // run simulation for 10 seconds
-	    @SuppressWarnings("unused")
-		List<SimulationResultEvent> resultEventList = simRun.execute(startDate, finishDate);
+	    simRun.execute(startDate, finishDate);
 	
 	    assertEquals( 3, simHistoryService.createHistoricProcessInstanceQuery().count());
 	    List<HistoricProcessInstance> processInstances = simHistoryService.createHistoricProcessInstanceQuery()
@@ -116,10 +112,10 @@ public class PlaybackTest {
 
 	/**
 	 * repeat playback 2 times + 2 seconds (2 new processes are started0
-	 * @throws IOException
+	 * @throws Exception 
 	 */
 	@Test
-	public void testPlayback2Run() throws IOException {
+	public void testPlayback2Run() throws Exception {
 		System.setProperty("_SIM_DB_PATH", System.getProperty("tempDir", "target") + "/Playback-test2");
 		System.setProperty("liveDB", "target/Playback");
 
@@ -149,8 +145,7 @@ public class PlaybackTest {
 	    c.add( Calendar.SECOND, 12);
 	    Date finishDate = c.getTime();
 	    // run simulation for 12 seconds
-	    @SuppressWarnings("unused")
-		List<SimulationResultEvent> resultEventList = simRun.execute(startDate, finishDate);
+	    simRun.execute(startDate, finishDate);
 
 	    assertEquals( 8, historyService.createHistoricProcessInstanceQuery().count());
 	    List<HistoricProcessInstance> processInstances = historyService.createHistoricProcessInstanceQuery()
