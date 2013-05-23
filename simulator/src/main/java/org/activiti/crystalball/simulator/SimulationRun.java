@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.crystalball.simulator.evaluator.HistoryEvaluator;
 import org.activiti.crystalball.simulator.impl.AcquireJobNotificationEventHandler;
 import org.activiti.crystalball.simulator.impl.NoopEventHandler;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
@@ -78,9 +79,7 @@ public class SimulationRun {
 				
 		// add context in which simulation run is executed
 		SimulationRunContext.setEventCalendar(eventCalendarFactory.getObject());
-		SimulationRunContext.setHistoryService(processEngine.getHistoryService());
-		SimulationRunContext.setRuntimeService(processEngine.getRuntimeService());
-		SimulationRunContext.setTaskService(processEngine.getTaskService());
+		SimulationRunContext.setProcessEngine(processEngine);
 
 		// run simulation
 		// init context and task calendar and simulation time is set to current 
@@ -108,9 +107,7 @@ public class SimulationRun {
 		
 		// remove simulation from simulation context
 		SimulationRunContext.removeEventCalendar();
-		SimulationRunContext.removeHistoryService();
-		SimulationRunContext.removeRuntimeService();
-		SimulationRunContext.removeTaskService();
+		SimulationRunContext.removeProcessEngine();
 		processEngine.close();
 		
 		return simulationResults;
@@ -128,14 +125,14 @@ public class SimulationRun {
 				
 		// add context in which simulation run is executed
 		SimulationRunContext.setEventCalendar(eventCalendarFactory.getObject());
-		SimulationRunContext.setHistoryService(processEngine.getHistoryService());
-		SimulationRunContext.setRuntimeService(processEngine.getRuntimeService());
-		SimulationRunContext.setTaskService(processEngine.getTaskService());
+		SimulationRunContext.setProcessEngine(processEngine);
 
 		// run simulation
 		// init context and task calendar and simulation time is set to current 
 		ClockUtil.setCurrentTime( simulationRun.getSimulation().getStart());
-
+		if (simulationRun.getSimulation().getSeed() != null)
+			SimUtils.setSeed(simulationRun.getSimulation().getSeed() + Long.parseLong(simulationRun.getId()));
+		
 		Date endDate = simulationRun.getSimulation().getEnd(); 
 		if (simulationRun.getSimulation().getEnd() != null)
 			SimulationRunContext.getEventCalendar().addEvent(new SimulationEvent( endDate.getTime(), SimulationEvent.TYPE_END_SIMULATION, null));
@@ -159,9 +156,7 @@ public class SimulationRun {
 		
 		// remove simulation from simulation context
 		SimulationRunContext.removeEventCalendar();
-		SimulationRunContext.removeHistoryService();
-		SimulationRunContext.removeRuntimeService();
-		SimulationRunContext.removeTaskService();
+		SimulationRunContext.removeProcessEngine();
 		processEngine.close();
 		
 	}

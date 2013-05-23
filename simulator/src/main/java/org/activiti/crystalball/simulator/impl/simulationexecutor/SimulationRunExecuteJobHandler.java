@@ -54,7 +54,9 @@ public class SimulationRunExecuteJobHandler implements JobHandler {
 	  appContext.addBeanFactoryPostProcessor(propConfig);
 	  appContext.refresh();
 	  
-	  SimulationRunHelper runHelper = (SimulationRunHelper) appContext.getBean("simulationRunHelper");
+	  SimulationRunHelper runHelper = new NoopSimulationRunHelper();
+	  if (appContext.containsBean("simulationRunHelper"))
+		  runHelper = (SimulationRunHelper) appContext.getBean("simulationRunHelper");
 
 	  try {
 		  runHelper.before( configuration);

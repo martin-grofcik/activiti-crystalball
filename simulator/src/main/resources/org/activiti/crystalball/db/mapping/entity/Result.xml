@@ -59,7 +59,7 @@
   </select>
 
   <select id="selectResultsCountByQueryCriteria" parameterType="org.activiti.crystalball.simulator.impl.ResultQueryImpl" resultType="long">
-    select count(distinct RES.ID_)
+    select count(RES.ID_)
     <include refid="selectResultsByQueryCriteriaSql"/>
   </select>
   
@@ -83,7 +83,12 @@
       <if test="simulationInstanceId != null">
         RUN.SIMULATION_ID_ = #{simulationInstanceId}
       </if>
-      
+      <if test="type != null">
+        and RES.TYPE_ = #{type}
+      </if>
+      <if test="processDefinitionKey != null">
+        and RES.PROC_DEF_KEY_ = #{processDefinitionKey}
+      </if>      
 <!--      <if test="type != null">
         and RES.TYPE_ = #{type}
       </if>

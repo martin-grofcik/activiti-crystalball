@@ -25,13 +25,11 @@ public class ResultEntityManager extends AbstractManager {
 
 	
 	public long findResultCountByQueryCriteria( ResultQueryImpl executionQuery) {
-		return (Long) getDbSqlSession().selectOne(
-				"selectResultsCountByQueryCriteria", executionQuery);
+		return (Long) getDbSqlSession().selectOne("selectResultsCountByQueryCriteria", executionQuery);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<ResultEntity> findResultsByQueryCriteria(ResultQueryImpl executionQuery, Page page) {
-		return getDbSqlSession().selectList("selectResultsByQueryCriteria",
-				executionQuery, page);
+		return getDbSqlSession().selectList("selectResultsByQueryCriteria",	executionQuery, page);
 	}
 }

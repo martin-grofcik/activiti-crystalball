@@ -1,4 +1,4 @@
-package org.activiti.crystalball.simulator;
+package org.activiti.crystalball.simulator.evaluator;
 
 /*
  * #%L

@@ -49,5 +49,9 @@ public interface SimulationInstance {
 	   */ 
 	  String getSimulationConfigurationId();
 	  
-  
+	  /**
+	   * get count for replications
+	   * @return
+	   */
+	  int getReplication();  
 }

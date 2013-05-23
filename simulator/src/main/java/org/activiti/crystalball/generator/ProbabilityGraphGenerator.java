@@ -15,9 +15,10 @@ import org.activiti.engine.ProcessEngine;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SimulationResultsGraphGenerator extends AbstractGraphGenerator {
+public class ProbabilityGraphGenerator extends SimulationResultsGraphGenerator {
 
-	public void generateGraph( RuntimeService runtimeService, SimulationInstance simulationInstance, String processDefinitionId, String resultType, String fileName) throws Exception {
+	
+	public void generateGraph( RuntimeService runtimeService, SimulationInstance simulationInstance, String processDefinitionId, String processDefinitionKey, String resultType, String fileName) throws Exception {
 		
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(
 				simulationInstance.getSimulationConfigurationId());
@@ -49,7 +50,7 @@ public class SimulationResultsGraphGenerator extends AbstractGraphGenerator {
 					processDefinitionId, resultType, highlighActivitiesMap,
 					counts);
 
-			reportGraph(fileName, processDefinitionId, highlighActivitiesMap,
+			reportGraph(fileName, processDefinitionKey, highlighActivitiesMap,
 					counts);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -60,22 +61,31 @@ public class SimulationResultsGraphGenerator extends AbstractGraphGenerator {
 		}
 
 	}
-
+	
 	protected void processResults(RuntimeService runtimeService,
 			SimulationInstance simulationInstance, String processDefinitionId,
 			String resultType, Map<Color, List<String>> highlighActivitiesMap,
 			Map<String, String> counts) {
-		List<ResultEntity> resultList = runtimeService.createResultQuery()
+		Long count = runtimeService.createResultQuery()
 				.resultProcessDefinitionKey(processDefinitionId)
 				.simulationInstanceId(simulationInstance.getId())
-				.resultType(resultType).list();
+				.resultType(resultType)
+				.count();
+		List<ResultEntity> resultList =runtimeService.createResultQuery()
+				.resultProcessDefinitionKey(processDefinitionId)
+				.simulationInstanceId(simulationInstance.getId())
+				.resultType(resultType)
+				.list();
 
-		for (ResultEntity r : resultList) {
-			Color c = getColorToHighlight(Float.parseFloat(r
-					.getDescription()));
-			addToHighlighted(highlighActivitiesMap, c,
-					r.getTaskDefinitionKey());
-			counts.put(r.getTaskDefinitionKey(), r.getDescription());
+		if ( count != 0) {
+			
+			long percentage = (long) (((float)count / (float) simulationInstance.getReplication()) * 100);
+			
+			
+			ResultEntity r = resultList.get(0);
+			Color c = getColorToHighlight(Float.parseFloat(r.getDescription()));
+			addToHighlighted(highlighActivitiesMap, c, r.getTaskDefinitionKey());
+			counts.put(r.getTaskDefinitionKey(), percentage + "%");
 		}
 	}
 

@@ -40,8 +40,6 @@ public abstract class AbstractRandomVariableMapUsertaskExecutor implements UserT
 	 */
 	protected Map<String, List<Map<String, Object>>> taskVariablesMap;
 
-	protected Random randomGenerator = new Random();
-
 	public AbstractRandomVariableMapUsertaskExecutor() {
 		super();
 	}

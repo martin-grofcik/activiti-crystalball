@@ -63,9 +63,10 @@ public class ResultQueryImpl extends AbstractVariableQueryImpl<ResultQuery, Resu
 	}
 	@Override
 	public long executeCount(CommandContext commandContext) {
-		// TODO Auto-generated method stub
-		return 0;
+	    checkQueryOk();
+	    return commandContext.getResultEntityManager().findResultCountByQueryCriteria( this);
 	}
+	
 	@Override
 	public List<ResultEntity> executeList(CommandContext commandContext, Page page) {
 	    checkQueryOk();

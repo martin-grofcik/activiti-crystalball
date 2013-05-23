@@ -66,8 +66,9 @@ slide 32</documentation>
       </extensionElements>
     </serviceTask>
     <endEvent id="endevent3" name="End"></endEvent>
-    <userTask id="escalation" name="Escalation"></userTask>
-    <endEvent id="endevent4" name="End"></endEvent>
+    <scriptTask id="escalation" name="Escalation" scriptFormat="javascript">
+      <script></script>
+    </scriptTask>    <endEvent id="endevent4" name="End"></endEvent>
     <sequenceFlow id="flow1" name="" sourceRef="startevent1" targetRef="preliminary_judgement"></sequenceFlow>
     <sequenceFlow id="flow2" name="" sourceRef="preliminary_judgement" targetRef="loan_app_doc"></sequenceFlow>
     <sequenceFlow id="flow3" name="" sourceRef="loan_app_doc" targetRef="exclusivegateway1"></sequenceFlow>

@@ -23,6 +23,7 @@ package org.activiti.crystalball.simulator.executor.impl;
 
 import java.util.Map;
 
+import org.activiti.crystalball.simulator.SimUtils;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
 
 /**
@@ -43,7 +44,7 @@ public class RandomUserMapTaskExecutor extends AbstractRandomVariableMapUsertask
 	@Override
 	protected long getExecutionTime(TaskEntity execTask,
 			Map<String, Object> variables) {
-		return randomGenerator.nextInt(max - min ) + min;
+		return SimUtils.getRandomInt(max - min ) + min;
 	}
 
 }

@@ -42,8 +42,7 @@
 		</constructor-arg>
 		<constructor-arg>
 			<list>
-				<bean class="org.activiti.crystalball.simulator.UnfinishedUserTasksEvaluator">
-					<property name="repositoryService" ref="simRepositoryService" />
+				<bean class="org.activiti.crystalball.simulator.evaluator.UnfinishedUserTasksEvaluator">
 					<property name="type" value="unfinished_task" />
 				</bean>
 			</list>

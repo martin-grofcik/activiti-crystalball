@@ -17,10 +17,11 @@
  * limitations under the License.
  * #L%
  */
-package org.activiti.crystalball.simulator;
+package org.activiti.crystalball.simulator.evaluator;
 
 
 
+import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.impl.cmd.StoreResultCmd;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
 import org.activiti.engine.impl.RepositoryServiceImpl;
@@ -31,17 +32,16 @@ import org.activiti.engine.repository.ProcessDefinition;
 public class UnfinishedUserTasksEvaluator implements HistoryEvaluator {
 
 	public String type = "unfinished_task";
-	
-	private RepositoryServiceImpl repositoryService;
-	
+		
 	/* (non-Javadoc)
 	 * @see org.activiti.crystalball.simulator.HistoryEvaluator#evaluate(org.activiti.engine.HistoryService, java.util.List)
 	 */
 	@Override
 	public void evaluate(SimulationRunEntity simulationRun) {
 		if (simulationRun != null) {
-			for (ProcessDefinition processDefinition : repositoryService.createProcessDefinitionQuery().active().list() ) {
-				ProcessDefinitionEntity pde = (ProcessDefinitionEntity) repositoryService.getDeployedProcessDefinition( processDefinition.getId());
+			for (ProcessDefinition processDefinition : SimulationRunContext.getRepositoryService().createProcessDefinitionQuery().active().list() ) {
+				ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ((RepositoryServiceImpl)SimulationRunContext.getRepositoryService())
+																		.getDeployedProcessDefinition( processDefinition.getId());
 				
 				for (ActivityImpl activity : pde.getActivities()) {
 					if ( activity.getProperty("type") != null && activity.getProperty("type") == "userTask" ) {
@@ -59,14 +59,6 @@ public class UnfinishedUserTasksEvaluator implements HistoryEvaluator {
 				}
 			}
 		}
-	}
-
-	public RepositoryServiceImpl getRepositoryService() {
-		return repositoryService;
-	}
-
-	public void setRepositoryService(RepositoryServiceImpl repositoryService) {
-		this.repositoryService = repositoryService;
 	}
 
 	@Override

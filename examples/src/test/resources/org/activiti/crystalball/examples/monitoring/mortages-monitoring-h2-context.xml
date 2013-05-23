@@ -24,7 +24,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:activiti="http://www.activiti.org/schema/spring/components"
        xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
-                           http://www.activiti.org/schema/spring/components http://www.activiti.org/schema/spring/components/activiti.xsd">
+                           http://www.activiti.org/schema/spring/components http://www.activiti.org/schema/spring/components/activiti.xsd"
+    default-lazy-init="true">
+    
     <!-- property placeholder -->
 	<bean id="placeholderConfig"
 	      class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -46,11 +48,13 @@
 		</constructor-arg>
 		<constructor-arg>
 			<list>
-				<bean class="org.activiti.crystalball.simulator.evaluator.UnfinishedUserTasksEvaluator">
-					<property name="type" value="unfinished_task" />
+				<bean class="org.activiti.crystalball.simulator.evaluator.ActivityExistsEvaluator">
+					<property name="processDefinitionId" value="mortagedemo-0:1:4" />
+					<property name="activityId" value="escalation" />
 				</bean>
 			</list>
 		</constructor-arg>
+		<constructor-arg ref="simDefaultJobExecutor"/>
 	</bean>
 	
 	<bean id="eventCalendar" class="org.activiti.crystalball.simulator.SimpleEventCalendarFactory">
@@ -58,11 +62,14 @@
 			<bean class="org.activiti.crystalball.simulator.SimulationEventComparator"/>
 		</constructor-arg>
 	</bean>
-				
+	
+	<bean id="simulationRunHelper" class="org.activiti.crystalball.simulator.impl.NoopSimulationRunHelper"/>
+			
 	<!--   simulation event handlers              -->
 	<bean id="startProcessEventHandler" class="org.activiti.crystalball.simulator.impl.StartProcessEventHandler">
-	 		<property name="count" value="1" /> <!-- start one process instance -->
-	 		<property name="eventType" value="START_PROCESS" /> 
+	 		<property name="count" value="1" /> <!-- start 15 process instances -->
+	 		<property name="eventType" value="START_PROCESS" />
+	 		<property name="period" value="3000" /> 
 	 		<property name="processToStartKey" value="mortagedemo-0" />	 		
 	</bean>
 	
@@ -75,8 +82,9 @@
 	</bean>
 
 	<!--  User tasks executors                    -->      
-    <bean id="userTaskExecutor" class="org.activiti.crystalball.simulator.executor.impl.ConstantUserTaskExecutor">
-     		<constructor-arg value="1000"/>
+    <bean id="userTaskExecutor" class="org.activiti.crystalball.simulator.executor.impl.RandomUserMapTaskExecutor">
+     		<constructor-arg index="0" value="300000"/> <!-- from 5mins to 1100 sec  -->
+     		<constructor-arg index="1" value="1100000"/>
      		<property name="taskVariablesMap">
      			<map>
      				<!-- TASK preliminary_judgement possibilities -->
@@ -86,7 +94,7 @@
      							<entry key="approved"><value type="java.lang.Boolean">True</value></entry>
      						</map>
      						<map>
-     							<entry key="approved"><value type="java.lang.Boolean">False</value></entry>
+     							<entry key="approved"><value type="java.lang.Boolean">True</value></entry>
      						</map>
      					</list>
      				</entry>
@@ -111,7 +119,7 @@
         <property name="targetDataSource">
             <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
                 <property name="driverClass" value="org.h2.Driver"/>
-                <property name="url" value="jdbc:h2:${_SIM_DB_PATH};DB_CLOSE_DELAY=1000"/>
+                <property name="url" value="jdbc:h2:${tempDir:target}/${simulationRunId:default};DB_CLOSE_DELAY=1000"/>
                 <property name="username" value="sa"/>
                 <property name="password" value=""/>
             </bean>
@@ -127,9 +135,16 @@
 		<property name="transactionManager" ref="simTransactionManager" />
 		<property name="databaseSchemaUpdate" value="true" />
 		<property name="jobExecutorActivate" value="false" />
+		<property name="jobExecutor" ref="simDefaultJobExecutor"/>
 		<property name="preParseListeners">
 			<list>
 				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener"/>
+			</list>
+		</property>
+		<property name="processEngineName" value="${simulationRunId:default}"/>
+		<property name="deploymentResources">
+			<list>
+				<value>org/activiti/crystalball/examples/mortages/MortageDemo-1-monitoring.bpmn</value>
 			</list>
 		</property>
 	</bean>
@@ -144,5 +159,8 @@
     <bean id="simHistoryService" factory-bean="simProcessEngine" factory-method="getHistoryService"/>
     <bean id="simManagementService" factory-bean="simProcessEngine" factory-method="getManagementService"/>
     <bean id="simIdentityService" factory-bean="simProcessEngine" factory-method="getIdentityService"/>
-
+    
+	<bean id="simDefaultJobExecutor" class="org.activiti.crystalball.simulator.processengine.jobexecutor.SimulationDefaultJobExecutor">
+		<property name="waitTimeInMillis" value="300000"/>
+	</bean>
 </beans>

@@ -49,10 +49,7 @@ public class SimulationEngineTest extends PvmTestCase {
       
       RuntimeService runtimeService = simulationEngine.getRuntimeService();
 	  SimulationInstance simInstance = runtimeService.startSimulationInstanceByKey("test", "test-desc", "test-author", new Date(), new Date(), 1, 20L, "test-url");
-      assertNotNull( simInstance.getId());
-      
-      Thread.sleep(10000);
-      
+      assertNotNull( simInstance.getId());      
       simulationEngine.close();      	  
   }
 }

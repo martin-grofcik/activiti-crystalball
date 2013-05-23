@@ -24,6 +24,8 @@ package org.activiti.crystalball.simulator;
 import java.util.Stack;
 
 import org.activiti.engine.HistoryService;
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 
@@ -37,9 +39,7 @@ public abstract class SimulationRunContext {
 	//
 	//  Process engine on which simulation will be executed
 	//
-	protected static ThreadLocal<Stack<RuntimeService>> runtimeServiceThreadLocal = new ThreadLocal<Stack<RuntimeService>>();
-	protected static ThreadLocal<Stack<TaskService>> taskServiceThreadLocal = new ThreadLocal<Stack<TaskService>>();
-	protected static ThreadLocal<Stack<HistoryService>> historyServiceThreadLocal = new ThreadLocal<Stack<HistoryService>>();
+	protected static ThreadLocal<Stack<ProcessEngine>> processEngineThreadLocal = new ThreadLocal<Stack<ProcessEngine>>();
 
     //
     // Simulation objects
@@ -47,35 +47,27 @@ public abstract class SimulationRunContext {
 	protected static ThreadLocal<Stack<EventCalendar>> eventCalendarThreadLocal = new ThreadLocal<Stack<EventCalendar>>();
     
 	public static RuntimeService getRuntimeService() {
-		Stack<RuntimeService> stack = getStack(runtimeServiceThreadLocal);
+		Stack<ProcessEngine> stack = getStack(processEngineThreadLocal);
 		if (stack.isEmpty()) {
 			return null;
 		}
-		return stack.peek();
+		return stack.peek().getRuntimeService();
 	}
 
-	public static void setRuntimeService(RuntimeService runtimeService) {
-	    getStack(runtimeServiceThreadLocal).push(runtimeService);
+	public static void setProcessEngine(ProcessEngine processEngine) {
+	    getStack(processEngineThreadLocal).push(processEngine);
 	}
 
-	public static void removeRuntimeService() {
-	    getStack(runtimeServiceThreadLocal).pop();
+	public static void removeProcessEngine() {
+	    getStack(processEngineThreadLocal).pop();
 	}
 
 	public static TaskService getTaskService() {
-		Stack<TaskService> stack = getStack(taskServiceThreadLocal);
+		Stack<ProcessEngine> stack = getStack(processEngineThreadLocal);
 		if (stack.isEmpty()) {
 			return null;
 		}
-		return stack.peek();
-	}
-
-	public static void setTaskService(TaskService taskService) {
-	    getStack(taskServiceThreadLocal).push(taskService);
-	}
-
-	public static void removeTaskService() {
-	    getStack(taskServiceThreadLocal).pop();
+		return stack.peek().getTaskService();
 	}
 	
 	public static EventCalendar getEventCalendar() {
@@ -95,21 +87,21 @@ public abstract class SimulationRunContext {
 	}
 
 	public static HistoryService getHistoryService() {
-		Stack<HistoryService> stack = getStack(historyServiceThreadLocal);
+		Stack<ProcessEngine> stack = getStack(processEngineThreadLocal);
 		if (stack.isEmpty()) {
 			return null;
 		}
-		return stack.peek();
+		return stack.peek().getHistoryService();
 	}
 
-	public static void setHistoryService(HistoryService historyService) {
-	    getStack(historyServiceThreadLocal).push(historyService);
+	public static RepositoryService getRepositoryService() {
+		Stack<ProcessEngine> stack = getStack(processEngineThreadLocal);
+		if (stack.isEmpty()) {
+			return null;
+		}
+		return stack.peek().getRepositoryService();
 	}
-
-	public static void removeHistoryService() {
-	    getStack(historyServiceThreadLocal).pop();
-	}
-		
+	
 	protected static <T> Stack<T> getStack(ThreadLocal<Stack<T>> threadLocal) {
 		Stack<T> stack = threadLocal.get();
 		if (stack == null) {
