@@ -36,11 +36,19 @@ import org.activiti.engine.runtime.ProcessInstance;
  */
 public interface RuntimeService {
   
-  /** 
-   * Starts a new process instance in the latest version of the process definition with the given key.
-   * @param processDefinitionKey key of process definition, cannot be null.
-   * @throws ActivitiException when no process definition is deployed with the given key.
-   */
+	/**
+	 * Starts a new simulation instance 
+	 * 
+	 * @param name
+	 * @param description
+	 * @param author
+	 * @param start
+	 * @param end
+	 * @param replication
+	 * @param seed - pseudo random number generator seed.
+	 * @param simulationConfigUrl - repository service is not copied form activiti engine - claspath resources are used.
+	 * @return
+	 */
   SimulationInstance startSimulationInstanceByKey(String name, String description, String author, Date start, Date end, int replication, Long seed, String simulationConfigUrl);
   
 
