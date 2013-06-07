@@ -29,6 +29,11 @@ import org.activiti.engine.impl.util.xml.Element;
 
 public abstract class AbstractSimulationActivityBehavior implements ActivityBehavior {
 
+	  /**
+	   * The namespace of the CrystalBall custom BPMN extensions.
+	   */
+	  public static final String CRYSTALBALL_BPMN_EXTENSIONS_NS = "http://crystalball.org/simulation";
+	  
 	public AbstractSimulationActivityBehavior(Element scriptTaskElement, ScopeImpl scope, ActivityImpl activity) {
 		
 	}

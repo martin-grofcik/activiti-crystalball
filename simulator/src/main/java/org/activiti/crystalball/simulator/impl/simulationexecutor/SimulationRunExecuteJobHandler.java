@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 
 import org.activiti.crystalball.simulator.SimulationRun;
 import org.activiti.crystalball.simulator.SimulationRunHelper;
+import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.crystalball.simulator.impl.persistence.entity.JobEntity;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntity;
@@ -44,6 +45,7 @@ public class SimulationRunExecuteJobHandler implements JobHandler {
 	  log.log(Level.INFO,"Starting simulation experiment [" + simulationInstance + "] configuration ["+ configuration+"]");
 
 	  SimulationRunEntity simulationRun = commandContext.getSimulationRunManager().findSimulationRunWithReferencesById(configuration);
+	  SimulationContext.setSimulationRun(simulationRun);
 	  
 	  //initializeSimulationRun
 	  ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(simulationRun.getSimulation().getSimulationConfigUrl());
@@ -71,6 +73,9 @@ public class SimulationRunExecuteJobHandler implements JobHandler {
 		appContext.close();
 	  	}
 	  job.delete();
+
+	  SimulationContext.removeSimulationRun();
+
 	  // check whether all jobs for given simulationInstance were already executed.
 	  simulationInstance.checkActivity();
 	  
