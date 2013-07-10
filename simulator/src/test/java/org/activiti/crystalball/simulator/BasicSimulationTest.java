@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.crystalball.generator.SimulationResultsGraphGenerator;
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
 import org.activiti.crystalball.simulator.result.ResultQuery;
@@ -38,8 +39,7 @@ public class BasicSimulationTest extends PvmTestCase{
 	public void testBasicSimulationRun() throws Exception {
 		System.setProperty("liveDB", "target/basicSimulation");
 		
-//		SimulationEngine simulationEngine= SimulationEngineConfigurationImpl.createStandaloneInMemSimulationEngineConfiguration().buildSimulationEngine();
-		SimulationEngine simulationEngine= SimulationEngineConfigurationImpl.createStandaloneSimulationEngineConfiguration().buildSimulationEngine();
+		SimulationEngine simulationEngine= SimulationEngineConfigurationImpl.createStandaloneInMemSimulationEngineConfiguration().buildSimulationEngine();
 		SimulationInstance simulationInstance = simulationEngine.getRuntimeService().startSimulationInstanceByKey("test - simulationRun", (String) null, (String) null, new Date(), (Date) null, 1, 1L, "/org/activiti/crystalball/simulator/SimRun-h2-context.xml");
 		
 		// wait to finish simulation asynchronously
@@ -59,7 +59,7 @@ public class BasicSimulationTest extends PvmTestCase{
 		assertEquals("10", variables.get("description"));
 		assertEquals("threetasksprocess", variables.get("processDefinitionKey"));
 		assertEquals("usertask3", variables.get("taskDefinitionKey"));		
-//		SimulationResultsGraphGenerator generator = new SimulationResultsGraphGenerator();
-//		generator.generateGraph(simulationEngine.getRuntimeService(), simulationInstance, "threetasksprocess", "unfinished_task", System.getProperty("tempDir", "target") + "basicTest.jpg");
+		SimulationResultsGraphGenerator generator = new SimulationResultsGraphGenerator();
+		generator.generateGraph(simulationEngine.getRuntimeService(), simulationInstance, "threetasksprocess", "unfinished_task", System.getProperty("tempDir", "target") + "basicTest.jpg");
 	}
 }
