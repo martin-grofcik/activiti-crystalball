@@ -39,6 +39,7 @@ import org.activiti.crystalball.simulator.impl.SimulationEngineImpl;
 import org.activiti.crystalball.simulator.impl.cfg.standalone.StandaloneMybatisTransactionContextFactory;
 import org.activiti.crystalball.simulator.impl.db.DbIdGenerator;
 import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSessionFactory;
+import org.activiti.crystalball.simulator.impl.db.IbatisVariableTypeHandler;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContextFactory;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutorImpl;
@@ -48,6 +49,7 @@ import org.activiti.crystalball.simulator.impl.persistence.entity.PropertyManage
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntityManager;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntityManager;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntityManager;
+import org.activiti.crystalball.simulator.impl.persistence.entity.VariableInstanceManager;
 import org.activiti.crystalball.simulator.impl.simulationexecutor.CallerRunsRejectedJobsHandler;
 import org.activiti.crystalball.simulator.impl.simulationexecutor.DefaultFailedJobCommandFactory;
 import org.activiti.crystalball.simulator.impl.simulationexecutor.DefaultJobExecutor;
@@ -62,7 +64,6 @@ import org.activiti.engine.impl.bpmn.data.ItemInstance;
 import org.activiti.engine.impl.bpmn.webservice.MessageInstance;
 import org.activiti.engine.impl.cfg.IdGenerator;
 import org.activiti.engine.impl.cfg.JpaHelper;
-import org.activiti.engine.impl.db.IbatisVariableTypeHandler;
 import org.activiti.engine.impl.delegate.DefaultDelegateInterceptor;
 import org.activiti.engine.impl.el.ExpressionManager;
 import org.activiti.engine.impl.event.CompensationEventHandler;
@@ -546,6 +547,7 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
       addSessionFactory(new GenericManagerFactory(PropertyManager.class));
       addSessionFactory(new GenericManagerFactory(JobManager.class));
       addSessionFactory(new GenericManagerFactory(ResultEntityManager.class));
+      addSessionFactory(new GenericManagerFactory(VariableInstanceManager.class));
       
 //      addSessionFactory(new GenericManagerFactory(AttachmentManager.class));
 //      addSessionFactory(new GenericManagerFactory(CommentManager.class));
@@ -566,7 +568,6 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
 //      addSessionFactory(new GenericManagerFactory(TableDataManager.class));
 //      addSessionFactory(new GenericManagerFactory(TaskManager.class));
 //      addSessionFactory(new GenericManagerFactory(UserManager.class));
-//      addSessionFactory(new GenericManagerFactory(VariableInstanceManager.class));
 //      addSessionFactory(new GenericManagerFactory(EventSubscriptionManager.class));
 //      addSessionFactory(new GenericManagerFactory(HistoryManager.class));
     }

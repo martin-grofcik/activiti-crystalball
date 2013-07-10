@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
+
 /**
  * Post process simulation results
  * (prepare data for image generator) 
@@ -40,10 +42,10 @@ public class SimulationResultsPostProcessor {
 	 * @param resultList
 	 * @return
 	 */
-	static public List<Result> getEventType( String type, List<Result> resultList  ) {
-		List<Result> list = new ArrayList<Result>();
+	static public List<ResultEntity> getEventType( String type, List<ResultEntity> resultList  ) {
+		List<ResultEntity> list = new ArrayList<ResultEntity>();
 		if (type != null) {
-			for( Result event : resultList ) {
+			for( ResultEntity event : resultList ) {
 				if (type.equals( event.getType()))  {
 					list.add(event);
 				}
@@ -58,20 +60,20 @@ public class SimulationResultsPostProcessor {
 	 * @param resultList
 	 * @return
 	 */
-	static public Collection<List<Result>> groupProcessDefinitionKey( List<Result> resultList ) {
-		Map<String, List<Result>> processMap = new HashMap<String, List<Result>>();
-		for ( Result event : resultList) {
-			if ( processMap.containsKey( event.getProcessDefinitionKey()) ) {
+	static public Collection<List<ResultEntity>> groupProcessDefinitionKey( List<ResultEntity> resultList ) {
+		Map<String, List<ResultEntity>> processMap = new HashMap<String, List<ResultEntity>>();
+		for ( ResultEntity event : resultList) {
+			if ( processMap.containsKey( (String) event.getVariable( "processDefinitionKey")) ) {
 				// add event to the list
-				processMap.get( event.getProcessDefinitionKey() ).add( event );
+				processMap.get( (String) event.getVariable( "processDefinitionKey") ).add( event );
 			} else {
-				List<Result> list = new ArrayList<Result>();
+				List<ResultEntity> list = new ArrayList<ResultEntity>();
 				list.add(event);
- 				processMap.put(event.getProcessDefinitionKey(), list);
+ 				processMap.put((String) event.getVariable( "processDefinitionKey"), list);
 			}
 		}
 
-		return new ArrayList<List<Result>>(processMap.values());
+		return new ArrayList<List<ResultEntity>>(processMap.values());
 	}
 	
 	/**
@@ -79,11 +81,11 @@ public class SimulationResultsPostProcessor {
 	 * @param resultList
 	 * @return
 	 */
-	static public List<String> getTaskDefinitionKeys(List<Result> resultList) {
+	static public List<String> getTaskDefinitionKeys(List<ResultEntity> resultList) {
 		List<String> keys = new ArrayList<String>();
-		for (Result event : resultList) {
-			if (!keys.contains( event.getTaskDefinitionKey())) {
-				keys.add( event.getTaskDefinitionKey() );
+		for (ResultEntity event : resultList) {
+			if (!keys.contains( (String) event.getVariable( "taskDefinitionKey") )) {
+				keys.add( (String) event.getVariable( "taskDefinitionKey") );
 			}
 		}
 		return keys;
@@ -94,10 +96,10 @@ public class SimulationResultsPostProcessor {
 	 * @param resultList
 	 * @return
 	 */
-	static public Map<String, String> getNodeDescriptions(List<Result> resultList) {
+	static public Map<String, String> getNodeDescriptions(List<ResultEntity> resultList) {
 		Map<String, String> desc = new HashMap<String,String>();
-		for (Result event : resultList) {
-			desc.put( event.getTaskDefinitionKey(), event.getDescription() );
+		for (ResultEntity event : resultList) {
+			desc.put( (String) event.getVariable( "taskDefinitionKey"), (String) event.getVariable("description") );
 		}
 		return desc;
 	}

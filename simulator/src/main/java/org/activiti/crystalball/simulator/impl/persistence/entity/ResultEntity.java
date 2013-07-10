@@ -23,13 +23,14 @@ package org.activiti.crystalball.simulator.impl.persistence.entity;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.activiti.crystalball.simulator.Result;
+import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.engine.impl.db.PersistentObject;
 
-
-public class ResultEntity implements Serializable, Result, PersistentObject {
+public class ResultEntity extends VariableScopeImpl implements Serializable, Result, PersistentObject {
 	/**
 	 * 
 	 */
@@ -38,36 +39,33 @@ public class ResultEntity implements Serializable, Result, PersistentObject {
 	protected String id;
 	protected String runId;
 	protected String type;
-	protected String processDefinitionKey;
-	protected String taskDefinitionKey;
-	protected String description;
+
+	/** loaded sim run according runId */
+	protected SimulationRunEntity simulationRun;
 	
 	public ResultEntity() {
 	}
 
-	public ResultEntity(String runId, String type, String processDefinitionKey, String taskDefinitionKey, String description) {
+	public ResultEntity(String runId, String type) {
 		this.runId = runId;
 		this.type = type;
-		this.processDefinitionKey = processDefinitionKey;
-		this.taskDefinitionKey = taskDefinitionKey;
-		this.description = description;
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof ResultEntity))
-			return false;
-		ResultEntity ev = (ResultEntity) obj;
-		
-		return  type != null && type.equals(ev.getType())
-				&& processDefinitionKey != null && processDefinitionKey.equals( ev.getProcessDefinitionKey() ) 
-				&& taskDefinitionKey != null && taskDefinitionKey.equals( ev.taskDefinitionKey) 
-				&& description != null && description.equals( ev.description);
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (obj == null || !(obj instanceof ResultEntity))
+//			return false;
+//		ResultEntity ev = (ResultEntity) obj;
+//		
+//		return  type != null && type.equals(ev.getType())
+//				&& processDefinitionKey != null && processDefinitionKey.equals( ev.getProcessDefinitionKey() ) 
+//				&& taskDefinitionKey != null && taskDefinitionKey.equals( ev.taskDefinitionKey) 
+//				&& description != null && description.equals( ev.description);
+//	}
 	
 	@Override
 	public int hashCode() {
-		return type.hashCode() + taskDefinitionKey.hashCode() + processDefinitionKey.hashCode() + description.hashCode();
+		return runId.hashCode() + type.hashCode() + variableInstances.hashCode();
 		
 	}
 
@@ -88,51 +86,8 @@ public class ResultEntity implements Serializable, Result, PersistentObject {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.activiti.crystalball.simulator.model.SimulationResult#setProcessDefinitionKey(java.lang.String)
-	 */
-	@Override
-	public void setProcessDefinitionKey(String processDefinitionKey) {
-		this.processDefinitionKey = processDefinitionKey;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.activiti.crystalball.simulator.model.SimulationResult#setTaskDefinitionKey(java.lang.String)
-	 */
-	@Override
-	public void setTaskDefinitionKey(String taskDefinitionKey) {
-		this.taskDefinitionKey = taskDefinitionKey;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.activiti.crystalball.simulator.model.SimulationResult#getTaskDefinitionKey()
-	 */
-	@Override
-	public String getTaskDefinitionKey() {
-		return taskDefinitionKey;
-	}
-	/* (non-Javadoc)
-	 * @see org.activiti.crystalball.simulator.model.SimulationResult#getProcessDefinitionKey()
-	 */
-	@Override
-	public String getProcessDefinitionKey() {
-		return processDefinitionKey;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.activiti.crystalball.simulator.model.SimulationResult#getDescription()
 	 */
-	@Override
-	public String getDescription() {
-		return description;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.activiti.crystalball.simulator.model.SimulationResult#setDescription(java.lang.String)
-	 */
-	@Override
-	public void setDescription(String description) {
-		this.description = description;
-	}
 	
 	public String getRunId() {
 		return runId;
@@ -141,12 +96,16 @@ public class ResultEntity implements Serializable, Result, PersistentObject {
 	public void setRunId(String runId) {
 		this.runId = runId;
 	}
-
+	
+	public Map<String, VariableInstanceEntity> getVariableInstances() {
+		ensureVariableInstancesInitialized();
+	    return variableInstances;
+    }
+	  
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("type[");
-		sb.append( type ).append("] process[").append(processDefinitionKey).append( "] taskDefinitionKey[").append(taskDefinitionKey)
-		.append("] description[").append(description).append("]");
+		StringBuilder sb = new StringBuilder("runId[");
+		sb.append(runId).append("] type[").append( type ).append("] variables[").append(variableInstances).append("]");
 		return sb.toString();
 	}
 
@@ -163,11 +122,43 @@ public class ResultEntity implements Serializable, Result, PersistentObject {
 	@Override
 	public Object getPersistentState() {
 	    Map<String, Object> persistentState = new  HashMap<String, Object>();
-	    persistentState.put("processDefinitionKey", this.processDefinitionKey);
-	    persistentState.put("taskDefinitionKey", this.taskDefinitionKey);
-	    persistentState.put("description", this.description);
+	    persistentState.put("variables", this.variableInstances);
 	    persistentState.put("runId", this.runId);
-	    
+	    if (id != null)
+	    	persistentState.put("id", this.getId());
 	    return persistentState;
 	}
+
+	// variables
+	@Override
+	protected List<VariableInstanceEntity> loadVariableInstances() {
+	    return SimulationContext
+	    	      .getCommandContext()
+	    	      .getVariableInstanceManager()
+	    	      .findVariableInstancesByResultId(id);
+	}
+
+	@Override
+	protected VariableScopeImpl getParentVariableScope() {
+		// parent variable scope is not implemented yet
+//		getSimulationRun();
+		return null;
+	}
+
+	  @Override
+	  protected void initializeVariableInstanceBackPointer(VariableInstanceEntity variableInstance) {
+	    variableInstance.setResultId(this.id);
+	    variableInstance.setRunId(runId);
+	  }
+	
+    public SimulationRunEntity getSimulationRun() {
+	    if ( (simulationRun ==null) && (runId!=null) ) {
+		      this.simulationRun = SimulationContext
+		        .getCommandContext()
+		        .getSimulationRunManager()
+		        .findSimulationRunById(runId);
+		}
+	    return simulationRun;
+	}
+
 }

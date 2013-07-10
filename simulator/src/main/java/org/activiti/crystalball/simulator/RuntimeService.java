@@ -14,6 +14,7 @@ package org.activiti.crystalball.simulator;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.activiti.crystalball.simulator.result.ResultQuery;
 import org.activiti.crystalball.simulator.runtime.SimulationInstance;
@@ -126,5 +127,20 @@ public interface RuntimeService {
 
 
   ResultQuery createResultQuery();
+  
+	/**
+	 * Saves the new result to the persistent data store.
+	 *  
+	 * @param type
+	 * @param resultVariables
+	 */
+	void saveResult(String type, Map<String, Object> resultVariables);
+
+	/**
+	 * get variables for given resultId
+	 * @param resultId
+	 * @return
+	 */
+	Map<String, Object> getResultVariables(String resultId);
 
 }

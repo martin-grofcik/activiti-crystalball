@@ -23,7 +23,6 @@ package org.activiti.crystalball.simulator.executor.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.activiti.crystalball.simulator.SimUtils;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;

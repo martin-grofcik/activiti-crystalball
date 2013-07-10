@@ -1,5 +1,6 @@
 package org.activiti.crystalball.simulator.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.activiti.crystalball.simulator.SimulatorException;
@@ -8,6 +9,7 @@ import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
 import org.activiti.crystalball.simulator.result.ResultQuery;
 import org.activiti.engine.impl.Page;
+import org.activiti.engine.impl.TaskQueryVariableValue;
 
 
 public class ResultQueryImpl extends AbstractVariableQueryImpl<ResultQuery, ResultEntity> implements ResultQuery {
@@ -19,8 +21,8 @@ public class ResultQueryImpl extends AbstractVariableQueryImpl<ResultQuery, Resu
 	  protected String type;
 	  protected String processDefinitionKey;
 	  protected String taskDefinitionKey;
-
-
+	  protected List<TaskQueryVariableValue> variables = new ArrayList<TaskQueryVariableValue>();
+	  
 	  public ResultQueryImpl() {
 	  }
 	  
@@ -42,9 +44,9 @@ public class ResultQueryImpl extends AbstractVariableQueryImpl<ResultQuery, Resu
 	}
 	  
 	@Override
-	public ResultQuery resultRunId(String type) {
-		// TODO Auto-generated method stub
-		return null;
+	public ResultQuery resultRunId(String runId) {
+		this.runId = runId;
+		return this;
 	}
 	@Override
 	public ResultQuery resultType(String type) {
@@ -100,5 +102,11 @@ public class ResultQueryImpl extends AbstractVariableQueryImpl<ResultQuery, Resu
 	public ResultQuery simulationInstanceId(String simulationInstanceId) {
 		this.simulationInstanceId = simulationInstanceId;
 		return this;
+	}
+	
+	@Override
+	public ResultQuery resultVariableValueEquals(String variableName,Object variableValue) {
+		variableValueEquals(variableName, variableValue);
+	    return this;
 	}
 }

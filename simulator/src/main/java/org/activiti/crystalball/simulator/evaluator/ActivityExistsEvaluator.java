@@ -1,7 +1,11 @@
 package org.activiti.crystalball.simulator.evaluator;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.SimulationRunContext;
-import org.activiti.crystalball.simulator.impl.cmd.StoreResultCmd;
+import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
 
 /**
@@ -30,8 +34,12 @@ public class ActivityExistsEvaluator implements HistoryEvaluator {
 										.activityId(activityId)
 										.count();
 			if ( count> 0) {
-				org.activiti.crystalball.simulator.impl.context.SimulationContext.
-				getSimulationEngineConfiguration().getCommandExecutorTxRequired().execute( new StoreResultCmd( simulationRun, type, processDefinitionId, activityId, Long.toString( count)) );
+				RuntimeService runtimeService = SimulationContext.getSimulationEngineConfiguration().getRuntimeService();
+				Map<String, Object> resultVariables = new HashMap<String, Object>();
+				resultVariables.put("processDefinitionKey", processDefinitionId);
+				resultVariables.put("taskDefinitionKey", activityId);
+				resultVariables.put( "description", Long.toString( count));
+				runtimeService.saveResult(type, resultVariables);
 			}
 		}
 	}

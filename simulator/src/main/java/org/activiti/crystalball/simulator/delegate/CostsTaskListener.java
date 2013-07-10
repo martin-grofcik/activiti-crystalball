@@ -1,6 +1,9 @@
 package org.activiti.crystalball.simulator.delegate;
 
-import org.activiti.crystalball.simulator.impl.cmd.StoreResultCmd;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.DelegateTask;
@@ -35,8 +38,12 @@ public class CostsTaskListener implements TaskListener, ExecutionListener {
 		// log result only in the simulation context
 		if (SimulationContext.getSimulationRun() != null) {
 			// log costs 		
-			SimulationContext.getSimulationEngineConfiguration().getCommandExecutorTxRequired()
-			.execute( new StoreResultCmd( SimulationContext.getSimulationRun() , (String) costsId.getValue(execution), execution.getProcessDefinitionId(), execution.getCurrentActivityId(), (String) costsValue.getValue(execution)) );
+			RuntimeService runtimeService = SimulationContext.getSimulationEngineConfiguration().getRuntimeService();
+			Map<String, Object> resultVariables = new HashMap<String, Object>();
+			resultVariables.put("processDefinitionKey", execution.getProcessDefinitionId());
+			resultVariables.put("taskDefinitionKey", execution.getCurrentActivityId());
+			resultVariables.put( "description", (String) costsValue.getValue(execution));
+			runtimeService.saveResult((String) costsId.getValue(execution), resultVariables);
 		}
 	}
 

@@ -30,6 +30,7 @@ import java.util.Map;
 import org.activiti.crystalball.simulator.evaluator.HistoryEvaluator;
 import org.activiti.crystalball.simulator.impl.AcquireJobNotificationEventHandler;
 import org.activiti.crystalball.simulator.impl.NoopEventHandler;
+import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.impl.jobexecutor.JobExecutor;
@@ -72,7 +73,7 @@ public class SimulationRun {
 		eventHandlerMap.put( SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, new AcquireJobNotificationEventHandler(jobExecutor) );
 	}
 
-	public List<Result> execute(Date simDate, Date dueDate) throws Exception {
+	public List<ResultEntity> execute(Date simDate, Date dueDate) throws Exception {
 		
 		// init new process engine
 		ProcessEngine processEngine = processEngineFactory.getObject();
@@ -103,7 +104,7 @@ public class SimulationRun {
 				ClockUtil.setCurrentTime( new Date( event.getSimulationTime()));
 		}
 		
-		List<Result> simulationResults = evaluate(null);
+		List<ResultEntity> simulationResults = evaluate(null);
 		
 		// remove simulation from simulation context
 		SimulationRunContext.removeEventCalendar();
@@ -184,8 +185,8 @@ public class SimulationRun {
 	 * @param context 
 	 * @return
 	 */
-	private List<Result> evaluate(SimulationRunEntity simulationRun) {
-		List<Result> resultList = new ArrayList<Result>();
+	private List<ResultEntity> evaluate(SimulationRunEntity simulationRun) {
+		List<ResultEntity> resultList = new ArrayList<ResultEntity>();
 		for ( HistoryEvaluator evaluator : historyEvaluators ) {
 			evaluator.evaluate( simulationRun);
 		}

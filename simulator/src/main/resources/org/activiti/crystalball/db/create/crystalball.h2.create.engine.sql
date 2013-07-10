@@ -111,9 +111,6 @@ create table CRB_RU_RESULT (
     ID_ varchar(64) NOT NULL,
     RUN_ID_ varchar(64),
     TYPE_ varchar(255),
-    PROC_DEF_KEY_ varchar(255) NOT NULL,
-    TASK_DEF_KEY_ varchar(255) NOT NULL,
-    DESCRIPTION_ varchar(4000),
     primary key (ID_)
 );
 
@@ -123,6 +120,7 @@ create table CRB_RU_VARIABLE (
     TYPE_ varchar(255) not null,
     NAME_ varchar(255) not null,
     RUN_ID_ varchar(64),
+    RESULT_ID_ varchar(64),
     SIMULATION_INST_ID_ varchar(64),
     BYTEARRAY_ID_ varchar(64),
     DOUBLE_ double,
@@ -132,7 +130,7 @@ create table CRB_RU_VARIABLE (
     primary key (ID_)
 );
 
-create index ACT_IDX_EXEC_BUSKEY on CRB_RU_SIMULATION(NAME_);
+create index CRB_IDX_SIM_BUSKEY on CRB_RU_SIMULATION(NAME_);
 
 alter table ACT_GE_BYTEARRAY
     add constraint ACT_FK_BYTEARR_DEPL
@@ -174,10 +172,16 @@ alter table CRB_RU_RESULT
     references CRB_RU_SIMULATION_RUN;
 
 alter table CRB_RU_VARIABLE
-    add constraint CRB_FK_VAR_EXE
+    add constraint CRB_FK_VAR_SIM_RUN
     foreign key (RUN_ID_)
     references CRB_RU_SIMULATION_RUN;
 
+alter table CRB_RU_VARIABLE
+    add constraint CRB_FK_VAR_RESULT
+    foreign key (RESULT_ID_)
+    references CRB_RU_RESULT;
+
+    
 alter table CRB_RU_VARIABLE
     add constraint CRB_FK_VAR_SIMULATION_INSTANCE
     foreign key (SIMULATION_INST_ID_)

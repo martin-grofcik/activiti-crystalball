@@ -1,9 +1,12 @@
 package org.activiti.crystalball.simulator.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
-import org.activiti.crystalball.simulator.impl.cmd.StoreResultCmd;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.engine.impl.util.ClockUtil;
 
@@ -35,8 +38,13 @@ public class StaticCostsEventHandler implements SimulationEventHandler {
 		// schedule new process instance start now
 		scheduleNextCosts();
 		// log costs result
-		SimulationContext.getSimulationEngineConfiguration().getCommandExecutorTxRequired()
-		.execute( new StoreResultCmd( SimulationContext.getSimulationRun() , costsId, "static-costs", "", costsValue) );
+		
+		RuntimeService runtimeService = SimulationContext.getSimulationEngineConfiguration().getRuntimeService();
+		
+		Map<String, Object> resultVariables = new HashMap<String, Object>();
+		resultVariables.put( "description", costsValue);
+		runtimeService.saveResult("costId", resultVariables);	
+				
 	}	
 	
 	protected void scheduleNextCosts() {

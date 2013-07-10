@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.TaskService;
 import org.junit.Test;
@@ -66,7 +67,7 @@ public class TimerBoundaryEventTest {
 	    
 	    // run simulation for 5 minutes
 	    @SuppressWarnings("unused")
-		List<Result> resultEventList = simRun.execute(startDate, finishDate);
+		List<ResultEntity> resultEventList = simRun.execute(startDate, finishDate);
 	    
 	    TaskService simTaskService = processEngine.getTaskService();
 	    // in 5 minutes 11 processes will be started (0 is included too)

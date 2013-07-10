@@ -12,6 +12,7 @@
     <mapper resource="org/activiti/crystalball/db/mapping/entity/SimulationRun.xml" />
     <mapper resource="org/activiti/crystalball/db/mapping/entity/Job.xml" />
     <mapper resource="org/activiti/crystalball/db/mapping/entity/Result.xml" />
+    <mapper resource="org/activiti/crystalball/db/mapping/entity/VariableInstance.xml" />
 
 
 <!--     <mapper resource="org/activiti/db/mapping/entity/Attachment.xml" />
@@ -33,7 +34,6 @@
     <mapper resource="org/activiti/db/mapping/entity/TableData.xml" />
     <mapper resource="org/activiti/db/mapping/entity/Task.xml" />
     <mapper resource="org/activiti/db/mapping/entity/User.xml" />
-    <mapper resource="org/activiti/db/mapping/entity/VariableInstance.xml" />
     <mapper resource="org/activiti/db/mapping/entity/EventSubscription.xml" />
  -->
  	</mappers>

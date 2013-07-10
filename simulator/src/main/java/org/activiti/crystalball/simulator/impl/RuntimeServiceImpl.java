@@ -14,10 +14,13 @@ package org.activiti.crystalball.simulator.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.executor.impl.ServiceImpl;
+import org.activiti.crystalball.simulator.impl.cmd.GetResultVariablesCmd;
 import org.activiti.crystalball.simulator.impl.cmd.IsRunningSimulationInstanceCmd;
+import org.activiti.crystalball.simulator.impl.cmd.SaveResultCmd;
 import org.activiti.crystalball.simulator.impl.cmd.StartSimulationInstanceCmd;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntity;
 import org.activiti.crystalball.simulator.result.ResultQuery;
@@ -88,4 +91,14 @@ public class RuntimeServiceImpl extends ServiceImpl implements RuntimeService {
 		return commandExecutor.execute(new IsRunningSimulationInstanceCmd<Boolean>(simulationInstanceId));
 	}
 
+	@Override
+	public void saveResult(String type, Map<String, Object> variables) {
+	    commandExecutor.execute(new SaveResultCmd(type, variables));
+	}
+
+	@Override
+	public Map<String, Object> getResultVariables(String resultId) {
+	    return commandExecutor.execute(new GetResultVariablesCmd(resultId, null , false));
+	}
+		  
 }

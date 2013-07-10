@@ -25,4 +25,7 @@ public interface ResultQuery extends Query<ResultQuery, ResultEntity>{
 	  /** Only select results for given simulationInstanceId*/
 	  ResultQuery simulationInstanceId(String simulationInstanceId);
 
+	  /** Only select results with given variable and value*/
+	  ResultQuery resultVariableValueEquals(String variableName, Object variableValue);
+
 }

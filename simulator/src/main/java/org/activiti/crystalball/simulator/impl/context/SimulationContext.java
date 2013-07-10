@@ -103,8 +103,7 @@ public class SimulationContext {
 		return simulationRunThreadLocal.get();
 	}
 
-	public static void setSimulationRun(
-			SimulationRunEntity simulationRun) {
+	public static void setSimulationRun(SimulationRunEntity simulationRun) {
 		simulationRunThreadLocal.set(simulationRun);
 	}
 

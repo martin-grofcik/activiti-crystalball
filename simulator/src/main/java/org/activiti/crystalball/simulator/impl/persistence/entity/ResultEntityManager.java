@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.activiti.crystalball.simulator.impl.ResultQueryImpl;
 import org.activiti.crystalball.simulator.impl.persistence.AbstractManager;
+import org.activiti.engine.ActivitiException;
 import org.activiti.engine.impl.Page;
 
 
@@ -31,5 +32,12 @@ public class ResultEntityManager extends AbstractManager {
 	@SuppressWarnings("unchecked")
 	public List<ResultEntity> findResultsByQueryCriteria(ResultQueryImpl executionQuery, Page page) {
 		return getDbSqlSession().selectList("selectResultsByQueryCriteria",	executionQuery, page);
+	}
+
+	public ResultEntity findResultById(String resultId) {
+	    if (resultId == null) {
+	        throw new ActivitiException("Invalid result id : null");
+	      }
+	      return (ResultEntity) getDbSqlSession().selectOne("selectResult", resultId);
 	}
 }

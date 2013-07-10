@@ -83,9 +83,9 @@ public class ProbabilityGraphGenerator extends SimulationResultsGraphGenerator {
 			
 			
 			ResultEntity r = resultList.get(0);
-			Color c = getColorToHighlight(Float.parseFloat(r.getDescription()));
-			addToHighlighted(highlighActivitiesMap, c, r.getTaskDefinitionKey());
-			counts.put(r.getTaskDefinitionKey(), percentage + "%");
+			Color c = getColorToHighlight(Float.parseFloat((String)r.getVariable("description")));
+			addToHighlighted(highlighActivitiesMap, c, (String) r.getVariable("taskDefinitionKey"));
+			counts.put((String) r.getVariable("taskDefinitionKey"), percentage + "%");
 		}
 	}
 

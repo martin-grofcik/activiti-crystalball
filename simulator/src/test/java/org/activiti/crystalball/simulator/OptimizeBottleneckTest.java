@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.activiti.crystalball.generator.AbstractProcessEngineGraphGenerator;
 import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
+import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
@@ -211,7 +212,7 @@ public class OptimizeBottleneckTest {
 	    Date finishDate = c.getTime();
 	    // run simulation for 30 days
 	    @SuppressWarnings("unused")
-		List<Result> resultEventList = simRun.execute(startDate, finishDate);
+		List<ResultEntity> resultEventList = simRun.execute(startDate, finishDate);
 	    	
 	    RepositoryService simRepositoryService = (RepositoryService) appContext.getBean("simRepositoryService");	    
 	    String processDefinitionId = simRepositoryService.createProcessDefinitionQuery().processDefinitionKey(PROCESS_KEY).singleResult().getId();

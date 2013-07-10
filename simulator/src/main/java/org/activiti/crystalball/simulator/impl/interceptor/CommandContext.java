@@ -26,6 +26,7 @@ import org.activiti.crystalball.simulator.impl.persistence.entity.PropertyManage
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntityManager;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntityManager;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntityManager;
+import org.activiti.crystalball.simulator.impl.persistence.entity.VariableInstanceManager;
 import org.activiti.crystalball.simulator.impl.simulationexecutor.FailedJobCommandFactory;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ActivitiTaskAlreadyClaimedException;
@@ -223,6 +224,10 @@ public class CommandContext {
   
   public JobManager getJobManager() {
     return getSession(JobManager.class);
+  }
+  
+  public VariableInstanceManager getVariableInstanceManager() {
+	    return getSession(VariableInstanceManager.class);
   }
 
   public TableDataManager getTableDataManager() {

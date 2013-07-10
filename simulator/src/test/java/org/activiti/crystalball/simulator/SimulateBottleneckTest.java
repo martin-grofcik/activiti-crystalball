@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.activiti.crystalball.generator.AbstractProcessEngineGraphGenerator;
 import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
+import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.apache.commons.io.FileUtils;
@@ -119,7 +120,7 @@ public class SimulateBottleneckTest {
 	    Date finishDate = c.getTime();
 	    // run simulation for 30 days
 	    @SuppressWarnings("unused")
-		List<Result> resultEventList = simRun.execute(startDate, finishDate);
+		List<ResultEntity> resultEventList = simRun.execute(startDate, finishDate);
 	    
 	    AbstractProcessEngineGraphGenerator generator = (AbstractProcessEngineGraphGenerator) appContext.getBean( "reportGenerator");
 	

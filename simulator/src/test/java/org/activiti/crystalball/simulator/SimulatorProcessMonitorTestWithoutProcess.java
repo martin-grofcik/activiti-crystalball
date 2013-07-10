@@ -38,6 +38,7 @@ import org.activiti.crystalball.diagram.BasicProcessDiagramGenerator;
 import org.activiti.crystalball.diagram.HighlightNodeDiagramLayer;
 import org.activiti.crystalball.diagram.MergeLayersGenerator;
 import org.activiti.crystalball.diagram.WriteNodeDescriptionDiagramLayer;
+import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.apache.commons.io.FileUtils;
@@ -73,14 +74,14 @@ public class SimulatorProcessMonitorTestWithoutProcess {
 		SimulationRun simRun = appContext.getBean(SimulationRun.class);
 		RepositoryService repositoryService  = (RepositoryService) appContext.getBean("simRepositoryService");
 		
-		List<Result> resultEventList = simRun.execute(new Date(), null);
+		List<ResultEntity> resultEventList = simRun.execute(new Date(), null);
 
 		
-		Collection<List<Result>> unfinishedTaskProcesses = SimulationResultsPostProcessor.groupProcessDefinitionKey( SimulationResultsPostProcessor.getEventType("unfinished_task", resultEventList));
+		Collection<List<ResultEntity>> unfinishedTaskProcesses = SimulationResultsPostProcessor.groupProcessDefinitionKey( SimulationResultsPostProcessor.getEventType("unfinished_task", resultEventList));
 		
       
-		for (List<Result> eventList : unfinishedTaskProcesses ) {
-			String processDefinitionId=eventList.get(0).getProcessDefinitionKey();
+		for (List<ResultEntity> eventList : unfinishedTaskProcesses ) {
+			String processDefinitionId=(String) eventList.get(0).getVariable("processDefinitionKey");
 			List<String> highlightTasks =  SimulationResultsPostProcessor.getTaskDefinitionKeys( eventList);
 			Map<String,String> nodeDescription = SimulationResultsPostProcessor.getNodeDescriptions( eventList);
 
