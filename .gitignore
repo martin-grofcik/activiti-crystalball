@@ -7,3 +7,7 @@ target/
 **/.settings/
 **/.bpmn/
 .project
+.idea
+**/*.iws
+**/*.ipr
+**/*.iml
