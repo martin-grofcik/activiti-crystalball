@@ -21,9 +21,6 @@ package org.activiti.crystalball.simulator.parse;
  */
 
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.delegate.AbstractSimulationActivityBehavior;
 import org.activiti.crystalball.simulator.delegate.UserTaskExecutionListener;
@@ -36,6 +33,9 @@ import org.activiti.engine.impl.pvm.process.ScopeImpl;
 import org.activiti.engine.impl.util.xml.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * parse listener to change behavior of script tasks..., to support simulation

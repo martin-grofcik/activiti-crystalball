@@ -1,10 +1,10 @@
 package org.activiti.crystalball.simulator.impl;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.activiti.crystalball.simulator.SimulationRunHelper;
 import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * copy/delete DB file after or before simulation run

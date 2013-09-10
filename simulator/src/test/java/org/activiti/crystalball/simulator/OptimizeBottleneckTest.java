@@ -21,13 +21,6 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.activiti.crystalball.generator.AbstractProcessEngineGraphGenerator;
 import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
@@ -38,6 +31,13 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.io.File;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class OptimizeBottleneckTest {
 	protected static final String tempDir = System.getProperty("tempDir", "target");
@@ -66,11 +66,11 @@ public class OptimizeBottleneckTest {
         processEngine.close();
         appContext.close();        
 
-        File expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest3.png" );   
+        File expected = new File(System.getProperty("baseDir", ".") + "/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest3.png" );
 		File generated = new File(tempDir + "/OptimizeBottleneckTest3.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	          
 
-        expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest3-dueDate.png" );   
+        expected = new File(System.getProperty("baseDir", ".") + "/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest3-dueDate.png" );
 		generated = new File(tempDir + "/OptimizeBottleneckTest3-dueDate.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	          
 
@@ -104,11 +104,11 @@ public class OptimizeBottleneckTest {
         processEngine.close();
         appContext.close();        
 
-        File expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest4.png" );   
+        File expected = new File(System.getProperty("baseDir", ".") + "/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest4.png" );
 		File generated = new File(tempDir + "/OptimizeBottleneckTest4.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	
 	    
-        expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest4-dueDate.png" );   
+        expected = new File(System.getProperty("baseDir", ".") + "/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest4-dueDate.png" );
 		generated = new File(tempDir + "/OptimizeBottleneckTest4-dueDate.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	          
 
@@ -141,11 +141,11 @@ public class OptimizeBottleneckTest {
         processEngine.close();
         appContext.close();        
 
-        File expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest5.png" );   
+        File expected = new File(System.getProperty("baseDir", ".") + "/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest5.png" );
 		File generated = new File(tempDir + "/OptimizeBottleneckTest5.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));
 	    
-        expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest5-dueDate.png" );   
+        expected = new File(System.getProperty("baseDir", ".") + "/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest5-dueDate.png" );
 		generated = new File(tempDir + "/OptimizeBottleneckTest5-dueDate.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	          
 
@@ -179,11 +179,11 @@ public class OptimizeBottleneckTest {
         processEngine.close();
         appContext.close();        
 
-        File expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest45.png" );   
+        File expected = new File(System.getProperty("baseDir", ".") + "/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest45.png" );
 		File generated = new File(tempDir + "/OptimizeBottleneckTest45.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));
 	    
-        expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest45-dueDate.png" );   
+        expected = new File(System.getProperty("baseDir", ".") + "/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/simulator/OptimizeBottleneckTest45-dueDate.png" );
 		generated = new File(tempDir + "/OptimizeBottleneckTest45-dueDate.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	          
 

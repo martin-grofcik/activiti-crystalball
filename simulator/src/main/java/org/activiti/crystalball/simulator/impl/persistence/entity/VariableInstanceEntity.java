@@ -12,16 +12,15 @@
  */
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
+import org.activiti.crystalball.simulator.impl.context.SimulationContext;
+import org.activiti.crystalball.simulator.impl.db.HasRevision;
+import org.activiti.crystalball.simulator.impl.db.PersistentObject;
+import org.activiti.crystalball.simulator.impl.variable.ValueFields;
+import org.activiti.crystalball.simulator.impl.variable.VariableType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.activiti.crystalball.simulator.impl.context.SimulationContext;
-import org.activiti.engine.impl.db.HasRevision;
-import org.activiti.engine.impl.db.PersistentObject;
-import org.activiti.engine.impl.persistence.entity.ByteArrayEntity;
-import org.activiti.engine.impl.variable.ValueFields;
-import org.activiti.engine.impl.variable.VariableType;
 
 /**
  * @author Tom Baeyens
@@ -53,6 +52,7 @@ public class VariableInstanceEntity implements ValueFields, PersistentObject, Ha
   
   // Default constructor for SQL mapping
   protected VariableInstanceEntity() {
+      type = null;
   }
 
   public static VariableInstanceEntity createAndInsert(String name, VariableType type, Object value) {

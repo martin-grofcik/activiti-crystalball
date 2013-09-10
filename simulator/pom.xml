@@ -17,7 +17,7 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		<liveDB>${project.build.directory}/basicSimulation</liveDB>
+		<liveDB>${project.build.directory}/BasicSimulation</liveDB>
 	</properties>
 
 	<dependencies>
@@ -31,7 +31,7 @@
 			<groupId>org.subethamail</groupId>
 			<artifactId>subethasmtp-wiser</artifactId>
 			<version>1.2</version>
-			<scope>test</scope>
+			<scope>org.activiti.crystalball.processengine.wrapper.test</scope>
 		</dependency>
 
 		<dependency>
@@ -40,11 +40,6 @@
 			<version>1.8.6</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.activiti</groupId>
-			<artifactId>activiti-spring</artifactId>
-			<version>${activiti.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -65,28 +60,36 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+            <scope>org.activiti.crystalball.processengine.wrapper.test</scope>
+        </dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
+			<artifactId>spring-org.activiti.crystalball.processengine.wrapper.test</artifactId>
 			<version>${spring.framework.version}</version>
-			<scope>test</scope>
+			<scope>org.activiti.crystalball.processengine.wrapper.test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.2</version>
-			<!-- scope>test</scope -->
-		</dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.1</version>
+        </dependency>
+
 	</dependencies>
 
 	<build>
 		<directory>target</directory>
 		<outputDirectory>target/classes</outputDirectory>
 		<finalName>${artifactId}-${version}</finalName>
-		<testOutputDirectory>target/test-classes</testOutputDirectory>
+		<testOutputDirectory>target/org.activiti.crystalball.processengine.wrapper.test-classes</testOutputDirectory>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
-		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<testSourceDirectory>src/org.activiti.crystalball.processengine.wrapper.test/java</testSourceDirectory>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -97,10 +100,10 @@
 		</resources>
 		<testResources>
 			<testResource>
-				<directory>src/test/resources</directory>
+				<directory>src/org.activiti.crystalball.processengine.wrapper.test/resources</directory>
 			</testResource>
 			<testResource>
-				<directory>src/test/process</directory>
+				<directory>src/org.activiti.crystalball.processengine.wrapper.test/process</directory>
 			</testResource>
 		</testResources>
 		<plugins>
@@ -112,12 +115,12 @@
 				<executions>
 					<execution>
 						<id>generate</id>
-						<phase>process-test-classes</phase>
+						<phase>process-org.activiti.crystalball.processengine.wrapper.test-classes</phase>
 						<goals>
 							<goal>java</goal>
 						</goals>
 						<configuration>
-							<classpathScope>test</classpathScope>
+							<classpathScope>org.activiti.crystalball.processengine.wrapper.test</classpathScope>
 							<cleanupDaemonThreads>true</cleanupDaemonThreads>
 							<stopUnresponsiveDaemonThreads>true</stopUnresponsiveDaemonThreads>
 							<mainClass>org.activiti.crystalball.simulator.GenerateProcessEngineState</mainClass>
@@ -128,7 +131,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- test config -->
+			<!-- org.activiti.crystalball.processengine.wrapper.test config -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>

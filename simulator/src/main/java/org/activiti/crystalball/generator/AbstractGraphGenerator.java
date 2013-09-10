@@ -1,6 +1,13 @@
 package org.activiti.crystalball.generator;
 
-import java.awt.Color;
+import org.activiti.crystalball.diagram.BasicProcessDiagramGenerator;
+import org.activiti.crystalball.diagram.HighlightNodeDiagramLayer;
+import org.activiti.crystalball.diagram.MergeLayersGenerator;
+import org.activiti.crystalball.diagram.WriteNodeDescriptionDiagramLayer;
+import org.activiti.crystalball.processengine.wrapper.RepositoryServiceWrapper;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -9,18 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
-import org.activiti.crystalball.diagram.BasicProcessDiagramGenerator;
-import org.activiti.crystalball.diagram.HighlightNodeDiagramLayer;
-import org.activiti.crystalball.diagram.MergeLayersGenerator;
-import org.activiti.crystalball.diagram.WriteNodeDescriptionDiagramLayer;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.impl.RepositoryServiceImpl;
-
 public class AbstractGraphGenerator {
 
-	protected RepositoryService repositoryService;
+	protected RepositoryServiceWrapper repositoryService;
 	
 	/**
 	 * limits for highlighting node - find interval into which count fits and highlight with color
@@ -40,12 +38,9 @@ public class AbstractGraphGenerator {
 		writeCountParams.put("processDefinitionId", processDefinitionKey);
 
 		writeCountParams.putAll(counts);
-		BasicProcessDiagramGenerator basicGenerator = new BasicProcessDiagramGenerator(
-				(RepositoryServiceImpl) repositoryService);
-		HighlightNodeDiagramLayer highlightGenerator = new HighlightNodeDiagramLayer(
-				(RepositoryServiceImpl) repositoryService);
-		WriteNodeDescriptionDiagramLayer countGenerator = new WriteNodeDescriptionDiagramLayer(
-				(RepositoryServiceImpl) repositoryService);
+		BasicProcessDiagramGenerator basicGenerator = new BasicProcessDiagramGenerator( repositoryService);
+		HighlightNodeDiagramLayer highlightGenerator = new HighlightNodeDiagramLayer( repositoryService);
+		WriteNodeDescriptionDiagramLayer countGenerator = new WriteNodeDescriptionDiagramLayer( repositoryService);
 		MergeLayersGenerator mergeGenerator = new MergeLayersGenerator();
 
 		Map<String, Object> mergeL = new HashMap<String, Object>();
@@ -81,11 +76,11 @@ public class AbstractGraphGenerator {
 	
 
 
-	public RepositoryService getRepositoryService() {
+	public RepositoryServiceWrapper getRepositoryService() {
 		return repositoryService;
 	}
 
-	public void setRepositoryService(RepositoryService repositoryService) {
+	public void setRepositoryService(RepositoryServiceWrapper repositoryService) {
 		this.repositoryService = repositoryService;
 	}
 	

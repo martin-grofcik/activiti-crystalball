@@ -141,26 +141,26 @@
   
   <sql id="selectJobByQueryCriteriaSql">
     from ${prefix}ACT_RU_JOB RES
-    <if test="executable">
+    <if org.activiti.crystalball.processengine.wrapper.test="executable">
         LEFT OUTER JOIN ${prefix}ACT_RU_EXECUTION PI ON PI.ID_ = RES.PROCESS_INSTANCE_ID_
     </if>
     <where>
-      <if test="id != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="id != null">
         RES.ID_ = #{id}
       </if>
-      <if test="processInstanceId != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="processInstanceId != null">
         and RES.PROCESS_INSTANCE_ID_ = #{processInstanceId}
       </if>
-      <if test="executionId != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="executionId != null">
         and RES.EXECUTION_ID_ = #{executionId}
       </if>
-      <if test="processDefinitionId != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="processDefinitionId != null">
         and RES.PROC_DEF_ID_ = #{processDefinitionId}
       </if>
-      <if test="retriesLeft">
+      <if org.activiti.crystalball.processengine.wrapper.test="retriesLeft">
         and RES.RETRIES_ &gt; 0
       </if>
-      <if test="executable">
+      <if org.activiti.crystalball.processengine.wrapper.test="executable">
         and (RES.RETRIES_ &gt; 0)
         and (RES.DUEDATE_ is null or RES.DUEDATE_ &lt;= #{now, jdbcType=TIMESTAMP})
         and (
@@ -169,28 +169,28 @@
             (PI.SUSPENSION_STATE_ = 1)     
       )
       </if>
-      <if test="onlyTimers">
+      <if org.activiti.crystalball.processengine.wrapper.test="onlyTimers">
         and RES.TYPE_ = 'timer'
       </if>
-      <if test="onlyMessages">
+      <if org.activiti.crystalball.processengine.wrapper.test="onlyMessages">
         and RES.TYPE_ = 'message'
       </if>
-      <if test="duedateHigherThen != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="duedateHigherThen != null">
         and RES.DUEDATE_ &gt; #{duedateHigherThen}
       </if>
-      <if test="duedateLowerThen != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="duedateLowerThen != null">
         and RES.DUEDATE_ &lt; #{duedateLowerThen}
       </if>
-      <if test="duedateHigherThenOrEqual != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="duedateHigherThenOrEqual != null">
         and RES.DUEDATE_ &gt;= #{duedateHigherThenOrEqual}
       </if>
-      <if test="duedateLowerThenOrEqual != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="duedateLowerThenOrEqual != null">
         and RES.DUEDATE_ &lt;= #{duedateLowerThenOrEqual}
       </if>
-      <if test="withException">
+      <if org.activiti.crystalball.processengine.wrapper.test="withException">
       	and (RES.EXCEPTION_MSG_ is not null or RES.EXCEPTION_STACK_ID_ is not null)
       </if>
-      <if test="exceptionMessage">
+      <if org.activiti.crystalball.processengine.wrapper.test="exceptionMessage">
       	and RES.EXCEPTION_MSG_ = #{exceptionMessage}
       </if>
     </where>
@@ -262,7 +262,7 @@
       and (RES.DUEDATE_ &lt; #{parameter, jdbcType=TIMESTAMP})
       and (RES.LOCK_OWNER_ is null or RES.LOCK_EXP_TIME_ &lt; #{parameter, jdbcType=TIMESTAMP})
       and (RES.RETRIES_  &gt; 0)
-      and (PI.SUSPENSION_STATE_ = 1)
+      and (SI.SUSPENSION_STATE_ = 1)
     order by DUEDATE_
   </select>
 

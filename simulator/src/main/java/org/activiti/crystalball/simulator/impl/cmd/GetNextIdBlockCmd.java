@@ -12,10 +12,10 @@
  */
 package org.activiti.crystalball.simulator.impl.cmd;
 
+import org.activiti.crystalball.simulator.impl.db.IdBlock;
 import org.activiti.crystalball.simulator.impl.interceptor.Command;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.crystalball.simulator.impl.persistence.entity.PropertyEntity;
-import org.activiti.engine.impl.db.IdBlock;
 
 
 

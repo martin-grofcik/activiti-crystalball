@@ -1,9 +1,9 @@
 package org.activiti.crystalball.simulator.result;
 
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
-import org.activiti.engine.query.Query;
+import org.activiti.crystalball.simulator.query.Query;
 
-public interface ResultQuery extends Query<ResultQuery, ResultEntity>{
+public interface ResultQuery extends Query<ResultQuery, ResultEntity> {
 	  /**
 	   * Only select result with the given result id (in practice, there will be
 	   * maximum one of this kind)

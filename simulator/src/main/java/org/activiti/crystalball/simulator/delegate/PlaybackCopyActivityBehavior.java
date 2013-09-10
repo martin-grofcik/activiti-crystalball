@@ -21,10 +21,7 @@ package org.activiti.crystalball.simulator.delegate;
  */
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.activiti.crystalball.simulator.impl.PlaybackStartProcessEventHandler;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricDetail;
@@ -35,7 +32,10 @@ import org.activiti.engine.impl.pvm.delegate.ActivityExecution;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.pvm.process.ScopeImpl;
 import org.activiti.engine.impl.util.xml.Element;
-import org.activiti.crystalball.simulator.impl.PlaybackStartProcessEventHandler;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Copy updated variables from the playback and take the first transition. 

@@ -12,24 +12,17 @@
  */
 package org.activiti.crystalball.simulator;
 
+import org.activiti.crystalball.simulator.result.ResultQuery;
+import org.activiti.crystalball.simulator.runtime.SimulationInstance;
+import org.activiti.crystalball.simulator.runtime.SimulationInstanceQuery;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.activiti.crystalball.simulator.result.ResultQuery;
-import org.activiti.crystalball.simulator.runtime.SimulationInstance;
-import org.activiti.crystalball.simulator.runtime.SimulationInstanceQuery;
-import org.activiti.engine.ActivitiException;
-import org.activiti.engine.repository.Deployment;
-import org.activiti.engine.runtime.Execution;
-import org.activiti.engine.runtime.ExecutionQuery;
-import org.activiti.engine.runtime.NativeExecutionQuery;
-import org.activiti.engine.runtime.NativeProcessInstanceQuery;
-import org.activiti.engine.runtime.ProcessInstance;
 
-
-/** Service which provides access to {@link Deployment}s,
- * {@link SimulationDefinition}s and {@link SimulationInstance}s.
+/** Service which provides access to {@//link Deployment}s,
+ * {@//link SimulationDefinition}s and {@link SimulationInstance}s.
  * 
  * @author Tom Baeyens
  * @author Joram Barrez
@@ -63,7 +56,7 @@ public interface RuntimeService {
   /** Finds the activity ids for all executions that are waiting in activities. 
    * This is a list because a single activity can be active multiple times.
    * @param executionId id of the execution, cannot be null.
-   * @throws ActivitiException when no execution exists with the given executionId. 
+   * @throws ActivitiException when no execution exists with the given executionId.
    */
   List<String> getActiveSimulationIds(String executionId);
 
@@ -71,13 +64,13 @@ public interface RuntimeService {
   
   /** Creates a new {@link ExecutionQuery} instance, 
    * that can be used to query the executions and process instances. */
-  ExecutionQuery createExecutionQuery();
+//  ExecutionQuery createExecutionQuery();
   
   /**
    * creates a new {@link NativeExecutionQuery} to query {@link Execution}s
    * by SQL directly
    */
-  NativeExecutionQuery createNativeExecutionQuery();
+//  NativeExecutionQuery createNativeExecutionQuery();
   
   /**
    * Creates a new {@link SimulationInstanceQuery} instance, that can be used
@@ -89,7 +82,7 @@ public interface RuntimeService {
    * creates a new {@link NativeProcessInstanceQuery} to query {@link ProcessInstance}s 
    * by SQL directly
    */
-  NativeProcessInstanceQuery createNativeProcessInstanceQuery();
+//  NativeProcessInstanceQuery createNativeProcessInstanceQuery();
   
   // Process instance state //////////////////////////////////////////
     

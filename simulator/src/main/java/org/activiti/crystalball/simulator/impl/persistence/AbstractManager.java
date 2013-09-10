@@ -15,15 +15,9 @@ package org.activiti.crystalball.simulator.impl.persistence;
 
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSession;
-import org.activiti.engine.impl.db.PersistentObject;
-import org.activiti.engine.impl.history.HistoryManager;
-import org.activiti.engine.impl.interceptor.Session;
-import org.activiti.engine.impl.persistence.entity.ByteArrayManager;
-import org.activiti.engine.impl.persistence.entity.DeploymentManager;
-import org.activiti.engine.impl.persistence.entity.ModelManager;
-import org.activiti.engine.impl.persistence.entity.ProcessDefinitionManager;
-import org.activiti.engine.impl.persistence.entity.ResourceManager;
-
+import org.activiti.crystalball.simulator.impl.db.PersistentObject;
+import org.activiti.crystalball.simulator.impl.interceptor.Session;
+import org.activiti.crystalball.simulator.impl.persistence.entity.ByteArrayManager;
 
 /**
  * @author Tom Baeyens
@@ -47,30 +41,30 @@ public abstract class AbstractManager implements Session {
     return SimulationContext.getCommandContext().getSession(sessionClass);
   }
 
-  protected DeploymentManager getDeploymentManager() {
-    return getSession(DeploymentManager.class);
-  }
+//  protected DeploymentManager getDeploymentManager() {
+//    return getSession(DeploymentManager.class);
+//  }
 
-  protected ResourceManager getResourceManager() {
-    return getSession(ResourceManager.class);
-  }
+//  protected ResourceManager getResourceManager() {
+//    return getSession(ResourceManager.class);
+//  }
   
   protected ByteArrayManager getByteArrayManager() {
     return getSession(ByteArrayManager.class);
   }
   
-  protected ProcessDefinitionManager getProcessDefinitionManager() {
-    return getSession(ProcessDefinitionManager.class);
-  }
+//  protected ProcessDefinitionManager getProcessDefinitionManager() {
+//    return getSession(ProcessDefinitionManager.class);
+//  }
   
-  protected ModelManager getModelManager() {
-    return getSession(ModelManager.class);
-  }
+//  protected ModelManager getModelManager() {
+//    return getSession(ModelManager.class);
+//  }
 
   
-  protected HistoryManager getHistoryManager() {
-    return getSession(HistoryManager.class);
-  }
+//  protected HistoryManager getHistoryManager() {
+//    return getSession(HistoryManager.class);
+//  }
   
   public void close() {
   }

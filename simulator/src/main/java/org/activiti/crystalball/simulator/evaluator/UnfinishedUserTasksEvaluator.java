@@ -20,34 +20,31 @@
 package org.activiti.crystalball.simulator.evaluator;
 
 
-
-import java.util.HashMap;
-import java.util.Map;
-
+import org.activiti.crystalball.processengine.wrapper.queries.ActivityWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.ProcessDefinitionWrapper;
 import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
-import org.activiti.engine.impl.RepositoryServiceImpl;
-import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
-import org.activiti.engine.impl.pvm.process.ActivityImpl;
-import org.activiti.engine.repository.ProcessDefinition;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UnfinishedUserTasksEvaluator implements HistoryEvaluator {
 
 	public String type = "unfinished_task";
 		
 	/* (non-Javadoc)
-	 * @see org.activiti.crystalball.simulator.HistoryEvaluator#evaluate(org.activiti.engine.HistoryService, java.util.List)
+	 * @see org.activiti.crystalball.simulator.HistoryEvaluator#evaluate(org.activiti.engine.HistoryServiceWrapper, java.util.List)
 	 */
 	@Override
 	public void evaluate(SimulationRunEntity simulationRun) {
 		if (simulationRun != null) {
-			for (ProcessDefinition processDefinition : SimulationRunContext.getRepositoryService().createProcessDefinitionQuery().active().list() ) {
-				ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ((RepositoryServiceImpl)SimulationRunContext.getRepositoryService())
+			for (ProcessDefinitionWrapper processDefinition : SimulationRunContext.getRepositoryService().createProcessDefinitionQuery().active().list() ) {
+				ProcessDefinitionWrapper pde = (SimulationRunContext.getRepositoryService())
 																		.getDeployedProcessDefinition( processDefinition.getId());
 				
-				for (ActivityImpl activity : pde.getActivities()) {
+				for (ActivityWrapper activity : pde.getActivities()) {
 					if ( activity.getProperty("type") != null && activity.getProperty("type") == "userTask" ) {
 						
 						long count = SimulationRunContext.getHistoryService().createHistoricTaskInstanceQuery()

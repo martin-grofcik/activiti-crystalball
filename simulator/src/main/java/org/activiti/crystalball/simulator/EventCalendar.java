@@ -21,11 +21,11 @@ package org.activiti.crystalball.simulator;
  */
 
 
+import org.activiti.engine.impl.util.ClockUtil;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-import org.activiti.engine.impl.util.ClockUtil;
 
 public class EventCalendar {
 	

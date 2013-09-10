@@ -12,28 +12,24 @@
  */
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
+import org.activiti.crystalball.simulator.ActivitiException;
+import org.activiti.crystalball.simulator.impl.context.SimulationContext;
+import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSession;
+import org.activiti.crystalball.simulator.impl.db.HasRevision;
+import org.activiti.crystalball.simulator.impl.db.PersistentObject;
+import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
+import org.activiti.crystalball.simulator.impl.simulationexecutor.JobHandler;
+import org.activiti.crystalball.simulator.runtime.Job;
+
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.activiti.crystalball.simulator.impl.context.SimulationContext;
-import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSession;
-import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.JobHandler;
-import org.activiti.crystalball.simulator.runtime.Job;
-import org.activiti.engine.ActivitiException;
-import org.activiti.engine.impl.context.Context;
-import org.activiti.engine.impl.db.HasRevision;
-import org.activiti.engine.impl.db.PersistentObject;
-import org.activiti.engine.impl.persistence.entity.ByteArrayEntity;
-import org.activiti.engine.impl.persistence.entity.MessageEntity;
-import org.activiti.engine.impl.persistence.entity.TimerEntity;
-
 /**
  * Stub of the common parts of a Job. You will normally work with a subclass of
- * JobEntity, such as {@link TimerEntity} or {@link MessageEntity}.
+ * JobEntity
  *
  * @author Tom Baeyens
  * @author Nick Burch
@@ -106,7 +102,7 @@ public class JobEntity implements Serializable, Job, PersistentObject, HasRevisi
 
     // Also delete the job's exception byte array
     if (exceptionByteArrayId != null) {
-      Context.getCommandContext().getByteArrayManager().deleteByteArrayById(exceptionByteArrayId);
+      SimulationContext.getCommandContext().getByteArrayManager().deleteByteArrayById(exceptionByteArrayId);
     }
     
     // remove link to execution
@@ -217,7 +213,7 @@ public class JobEntity implements Serializable, Job, PersistentObject, HasRevisi
     ByteArrayEntity byteArray = getExceptionByteArray();
     if(byteArray == null) {
       byteArray = new ByteArrayEntity("job.exceptionByteArray", exceptionBytes);
-      Context
+      SimulationContext
         .getCommandContext()
         .getDbSqlSession()
         .insert(byteArray);

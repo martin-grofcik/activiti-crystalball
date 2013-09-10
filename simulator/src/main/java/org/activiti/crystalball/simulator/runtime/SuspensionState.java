@@ -12,8 +12,8 @@
  */
 package org.activiti.crystalball.simulator.runtime;
 
+import org.activiti.crystalball.simulator.ActivitiException;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntity;
-import org.activiti.engine.ActivitiException;
 
 /**
  * Contains a predefined set of states for process definitions and process instances

@@ -13,10 +13,9 @@
 
 package org.activiti.crystalball.simulator.impl.db;
 
+import org.activiti.crystalball.simulator.impl.cfg.IdGenerator;
 import org.activiti.crystalball.simulator.impl.cmd.GetNextIdBlockCmd;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
-import org.activiti.engine.impl.cfg.IdGenerator;
-import org.activiti.engine.impl.db.IdBlock;
 
 
 /**

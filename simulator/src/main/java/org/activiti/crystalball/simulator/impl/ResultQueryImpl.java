@@ -1,15 +1,13 @@
 package org.activiti.crystalball.simulator.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.activiti.crystalball.simulator.SimulatorException;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
 import org.activiti.crystalball.simulator.result.ResultQuery;
-import org.activiti.engine.impl.Page;
-import org.activiti.engine.impl.TaskQueryVariableValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ResultQueryImpl extends AbstractVariableQueryImpl<ResultQuery, ResultEntity> implements ResultQuery {

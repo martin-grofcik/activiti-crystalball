@@ -13,15 +13,15 @@
 
 package org.activiti.crystalball.simulator.impl;
 
+import org.activiti.crystalball.simulator.query.QueryProperty;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.activiti.engine.query.QueryProperty;
-import org.activiti.engine.runtime.ProcessInstanceQuery;
 
 
 /**
- * Contains the possible properties that can be used in a {@link ProcessInstanceQuery}.
+ * Contains the possible properties that can be used in a {@link SimulationInstanceQuery}.
  * 
  * @author Joram Barrez
  */

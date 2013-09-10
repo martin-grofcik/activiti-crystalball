@@ -136,7 +136,7 @@
         <property name="dataSource" ref="simDataSource"/>
     </bean>
 
-	<bean id="simProcessEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+	<bean id="simProcessEngineConfiguration" class="org.activiti.crystalball.simulator.spring.SpringSimulationEngineConfiguration">
 		<property name="dataSource" ref="simDataSource" />
 		<property name="transactionManager" ref="simTransactionManager" />
 		<property name="databaseSchemaUpdate" value="true" />
@@ -166,7 +166,7 @@
     <bean id="simManagementService" factory-bean="simProcessEngine" factory-method="getManagementService"/>
     <bean id="simIdentityService" factory-bean="simProcessEngine" factory-method="getIdentityService"/>
     
-	<bean id="simDefaultJobExecutor" class="org.activiti.crystalball.simulator.processengine.jobexecutor.SimulationDefaultJobExecutor">
+	<bean id="simDefaultJobExecutor" class="org.activiti.engine.impl.jobexecutor.SimulationDefaultJobExecutor">
 		<property name="waitTimeInMillis" value="300000"/>
 	</bean>
 </beans>

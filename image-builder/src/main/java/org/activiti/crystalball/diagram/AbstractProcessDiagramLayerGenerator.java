@@ -31,12 +31,14 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import org.activiti.engine.impl.RepositoryServiceImpl;
+import org.activiti.crystalball.processengine.wrapper.ProcessDiagramService;
+import org.activiti.crystalball.processengine.wrapper.RepositoryServiceWrapper;
 
 public abstract class AbstractProcessDiagramLayerGenerator implements DiagramLayerGenerator{
 
 	public static String PROCESS_DEFINITION_ID = "processDefinitionId";
-	protected RepositoryServiceImpl repositoryService;
+	protected RepositoryServiceWrapper repositoryService;
+    protected ProcessDiagramService diagramService;
 	protected static Logger log = Logger.getLogger(AbstractProcessDiagramLayerGenerator.class.getName());
 
 	public AbstractProcessDiagramLayerGenerator() {
@@ -74,13 +76,22 @@ public abstract class AbstractProcessDiagramLayerGenerator implements DiagramLay
 		return imageInByte;
 	}
 
-	public RepositoryServiceImpl getRepositoryService() {
+	public RepositoryServiceWrapper getRepositoryService() {
 		return repositoryService;
 	}
 
-	public void setRepositoryService(RepositoryServiceImpl repositoryService) {
+	public void setRepositoryService(RepositoryServiceWrapper repositoryService) {
 		this.repositoryService = repositoryService;
 	}
 
-	abstract public byte[] generateLayer(String imageType, Map<String, Object> params);
+    public ProcessDiagramService getDiagramService() {
+        return diagramService;
+    }
+
+    public void setDiagramService(ProcessDiagramService diagramService) {
+        this.diagramService = diagramService;
+    }
+
+
+    abstract public byte[] generateLayer( String imageType, Map<String, Object> params);
 }

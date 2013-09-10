@@ -13,12 +13,12 @@
 
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.activiti.crystalball.simulator.impl.cfg.IdGenerator;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.persistence.AbstractManager;
-import org.activiti.engine.impl.cfg.IdGenerator;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 

@@ -1,12 +1,12 @@
 package org.activiti.crystalball.simulator.evaluator;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Did process instance reach given activity in the process execution or not?  

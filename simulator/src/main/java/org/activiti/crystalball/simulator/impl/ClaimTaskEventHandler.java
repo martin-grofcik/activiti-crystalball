@@ -21,12 +21,9 @@ package org.activiti.crystalball.simulator.impl;
  */
 
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.activiti.crystalball.processengine.wrapper.IdentityServiceWrapper;
+import org.activiti.crystalball.processengine.wrapper.TaskServiceWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.TaskWrapper;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
@@ -41,12 +38,18 @@ import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class ClaimTaskEventHandler implements SimulationEventHandler {
 
 	private static Logger log = LoggerFactory.getLogger(ClaimTaskEventHandler.class);
 	
-	TaskService taskService;
-	IdentityService identityService;
+	TaskServiceWrapper taskService;
+	IdentityServiceWrapper identityService;
 	UserTaskExecutor userTaskExecutor;
 	
 	/**
@@ -101,7 +104,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 
 	@Override
 	public void handle(SimulationEvent event) {
-		TaskEntity task = (TaskEntity) event.getProperty();
+		TaskWrapper task = (TaskWrapper) event.getProperty();
 		
 		if (claimTask(task)) {
 		
@@ -125,7 +128,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 	 * 
 	 * @param task
 	 */
-	private boolean claimTask(TaskEntity task) {
+	private boolean claimTask(TaskWrapper task) {
 		if (task.getAssignee() != null && isUserFree( task.getAssignee() )) {
 			taskService.claim(task.getId(), task.getAssignee());		
 			return true;

@@ -21,9 +21,9 @@ package org.activiti.crystalball.simulator.executor.impl;
  */
 
 
-import java.util.Map;
+import org.activiti.crystalball.processengine.wrapper.queries.TaskWrapper;
 
-import org.activiti.engine.impl.persistence.entity.TaskEntity;
+import java.util.Map;
 
 /**
  * execute any user task in constant time,
@@ -51,7 +51,7 @@ public class ConstantUserTaskExecutor extends AbstractRandomVariableMapUsertaskE
 	}
 
 	@Override
-	protected long getExecutionTime(TaskEntity execTask, Map<String, Object> variables) {
+	protected long getExecutionTime(TaskWrapper execTask, Map<String, Object> variables) {
 		return constantExecutionTime;
 	}
 

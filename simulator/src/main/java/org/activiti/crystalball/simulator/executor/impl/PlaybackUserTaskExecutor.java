@@ -21,9 +21,6 @@ package org.activiti.crystalball.simulator.executor.impl;
  */
 
 
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
 import org.activiti.crystalball.simulator.impl.PlaybackStartProcessEventHandler;
 import org.activiti.engine.HistoryService;
@@ -33,6 +30,9 @@ import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricDetail;
 import org.activiti.engine.history.HistoricVariableUpdate;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Playback user task execution. Task execution takes exactly the same time 

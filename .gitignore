@@ -1,5 +1,9 @@
 **/.project
 **/.classpath
+**/*.iml
+**/*.ipr
+**/*.iws
+**/.idea
 simulator/target/
 image-builder/target/
 examples/target/
@@ -7,7 +11,3 @@ target/
 **/.settings/
 **/.bpmn/
 .project
-.idea
-**/*.iws
-**/*.ipr
-**/*.iml

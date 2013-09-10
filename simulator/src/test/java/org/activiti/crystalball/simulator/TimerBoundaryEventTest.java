@@ -21,18 +21,16 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.TaskService;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.io.File;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class TimerBoundaryEventTest {
 	protected static final String tempDir = System.getProperty("tempDir", "target");

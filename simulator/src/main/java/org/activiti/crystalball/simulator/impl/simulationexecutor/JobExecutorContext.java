@@ -12,10 +12,10 @@
  */
 package org.activiti.crystalball.simulator.impl.simulationexecutor;
 
+import org.activiti.crystalball.simulator.impl.persistence.entity.JobEntity;
+
 import java.util.LinkedList;
 import java.util.List;
-
-import org.activiti.crystalball.simulator.impl.persistence.entity.JobEntity;
 
 
 /**

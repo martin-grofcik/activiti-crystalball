@@ -122,7 +122,7 @@
         <property name="dataSource" ref="simDataSource"/>
     </bean>
 
-	<bean id="simProcessEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+	<bean id="simProcessEngineConfiguration" class="org.activiti.crystalball.simulator.spring.SpringSimulationEngineConfiguration">
 		<property name="dataSource" ref="simDataSource" />
 		<property name="transactionManager" ref="simTransactionManager" />
 		<property name="databaseSchemaUpdate" value="true" />

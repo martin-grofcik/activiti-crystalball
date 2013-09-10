@@ -21,7 +21,7 @@ package org.activiti.crystalball.generator;
  */
 
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 

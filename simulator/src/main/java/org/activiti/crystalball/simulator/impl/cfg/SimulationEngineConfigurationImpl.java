@@ -13,90 +13,28 @@
 
 package org.activiti.crystalball.simulator.impl.cfg;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
-
+import org.activiti.crystalball.simulator.ActivitiException;
 import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.SimulationEngine;
 import org.activiti.crystalball.simulator.SimulationEngineConfiguration;
 import org.activiti.crystalball.simulator.executor.impl.ServiceImpl;
 import org.activiti.crystalball.simulator.impl.RuntimeServiceImpl;
 import org.activiti.crystalball.simulator.impl.SimulationEngineImpl;
+import org.activiti.crystalball.simulator.impl.calendar.*;
 import org.activiti.crystalball.simulator.impl.cfg.standalone.StandaloneMybatisTransactionContextFactory;
 import org.activiti.crystalball.simulator.impl.db.DbIdGenerator;
 import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSessionFactory;
 import org.activiti.crystalball.simulator.impl.db.IbatisVariableTypeHandler;
-import org.activiti.crystalball.simulator.impl.interceptor.CommandContextFactory;
-import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
-import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutorImpl;
-import org.activiti.crystalball.simulator.impl.interceptor.CommandInterceptor;
-import org.activiti.crystalball.simulator.impl.persistence.entity.JobManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.PropertyManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntityManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntityManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntityManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.VariableInstanceManager;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.CallerRunsRejectedJobsHandler;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.DefaultFailedJobCommandFactory;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.DefaultJobExecutor;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.FailedJobCommandFactory;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.JobExecutor;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.JobHandler;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.RejectedJobsHandler;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.SimulationRunExecuteJobHandler;
-import org.activiti.engine.ActivitiException;
-import org.activiti.engine.ProcessEngineConfiguration;
-import org.activiti.engine.impl.bpmn.data.ItemInstance;
-import org.activiti.engine.impl.bpmn.webservice.MessageInstance;
-import org.activiti.engine.impl.cfg.IdGenerator;
-import org.activiti.engine.impl.cfg.JpaHelper;
-import org.activiti.engine.impl.delegate.DefaultDelegateInterceptor;
-import org.activiti.engine.impl.el.ExpressionManager;
-import org.activiti.engine.impl.event.CompensationEventHandler;
-import org.activiti.engine.impl.event.EventHandler;
-import org.activiti.engine.impl.event.MessageEventHandler;
-import org.activiti.engine.impl.event.SignalEventHandler;
-import org.activiti.engine.impl.interceptor.DelegateInterceptor;
-import org.activiti.engine.impl.interceptor.SessionFactory;
-import org.activiti.engine.impl.persistence.GenericManagerFactory;
-import org.activiti.engine.impl.scripting.BeansResolverFactory;
-import org.activiti.engine.impl.scripting.ResolverFactory;
-import org.activiti.engine.impl.scripting.ScriptBindingsFactory;
-import org.activiti.engine.impl.scripting.ScriptingEngines;
-import org.activiti.engine.impl.scripting.VariableScopeResolverFactory;
-import org.activiti.engine.impl.util.IoUtil;
-import org.activiti.engine.impl.util.ReflectUtil;
-import org.activiti.engine.impl.variable.BooleanType;
-import org.activiti.engine.impl.variable.ByteArrayType;
-import org.activiti.engine.impl.variable.CustomObjectType;
-import org.activiti.engine.impl.variable.DateType;
-import org.activiti.engine.impl.variable.DefaultVariableTypes;
-import org.activiti.engine.impl.variable.DoubleType;
-import org.activiti.engine.impl.variable.EntityManagerSession;
-import org.activiti.engine.impl.variable.EntityManagerSessionFactory;
-import org.activiti.engine.impl.variable.IntegerType;
-import org.activiti.engine.impl.variable.JPAEntityVariableType;
-import org.activiti.engine.impl.variable.LongType;
-import org.activiti.engine.impl.variable.NullType;
-import org.activiti.engine.impl.variable.SerializableType;
-import org.activiti.engine.impl.variable.ShortType;
-import org.activiti.engine.impl.variable.StringType;
-import org.activiti.engine.impl.variable.VariableType;
-import org.activiti.engine.impl.variable.VariableTypes;
+import org.activiti.crystalball.simulator.impl.delegate.DefaultDelegateInterceptor;
+import org.activiti.crystalball.simulator.impl.el.ExpressionManager;
+import org.activiti.crystalball.simulator.impl.interceptor.*;
+import org.activiti.crystalball.simulator.impl.persistence.GenericManagerFactory;
+import org.activiti.crystalball.simulator.impl.persistence.entity.*;
+import org.activiti.crystalball.simulator.impl.scripting.*;
+import org.activiti.crystalball.simulator.impl.simulationexecutor.*;
+import org.activiti.crystalball.simulator.impl.util.IoUtil;
+import org.activiti.crystalball.simulator.impl.util.ReflectUtil;
+import org.activiti.crystalball.simulator.impl.variable.*;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
@@ -107,6 +45,17 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
 import org.apache.ibatis.type.JdbcType;
+
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.logging.Logger;
 
 
 public abstract class SimulationEngineConfigurationImpl extends SimulationEngineConfiguration {  
@@ -150,7 +99,14 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
   protected List<SessionFactory> customSessionFactories;
   protected DbSimulatorSqlSessionFactory dbSqlSessionFactory;
   protected Map<Class<?>, SessionFactory> sessionFactories;
-  
+
+  // DEPLOYERS ////////////////////////////////////////////////////////////////
+
+//  protected List<Deployer> customPreDeployers;
+//  protected List<Deployer> customPostDeployers;
+//  protected List<Deployer> deployers;
+//  protected DeploymentCache deploymentCache;
+
   // SIMULATION EXECUTOR /////////////////////////////////////////////////////////////
   
   protected List<JobHandler> customJobHandlers;
@@ -178,7 +134,9 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
   protected List<String> customScriptingEngineClasses;
   protected ScriptingEngines scriptingEngines;
   protected List<ResolverFactory> resolverFactories;
-  
+
+  protected BusinessCalendarManager businessCalendarManager;
+
   protected String wsSyncFactoryClassName = DEFAULT_WS_SYNC_FACTORY;
 
   protected CommandContextFactory commandContextFactory;
@@ -194,9 +152,6 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
   protected RejectedJobsHandler customRejectedJobsHandler;
 
   protected CommandInterceptor actualCommandExecutor;
-    
-  protected Map<String, EventHandler> eventHandlers;
-  protected List<EventHandler> customEventHandlers;
 
   protected FailedJobCommandFactory failedJobCommandFactory;
 
@@ -239,6 +194,7 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
     initCommandExecutors();
     initServices();
     initIdGenerator();
+//    initDeployers();
     initJobExecutor();
     initDataSource();
     initTransactionFactory();
@@ -273,6 +229,17 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
   protected void initActualCommandExecutor() {
     actualCommandExecutor = new CommandExecutorImpl();
   }
+
+  protected void initBusinessCalendarManager() {
+      if (businessCalendarManager==null) {
+          MapBusinessCalendarManager mapBusinessCalendarManager = new MapBusinessCalendarManager();
+          mapBusinessCalendarManager.addBusinessCalendar(DurationBusinessCalendar.NAME, new DurationBusinessCalendar());
+          mapBusinessCalendarManager.addBusinessCalendar(DueDateBusinessCalendar.NAME, new DueDateBusinessCalendar());
+          mapBusinessCalendarManager.addBusinessCalendar(CycleBusinessCalendar.NAME, new CycleBusinessCalendar());
+
+          businessCalendarManager = mapBusinessCalendarManager;
+      }
+    }
 
   protected void initCommandInterceptorsTxRequired() {
     if (commandInterceptorsTxRequired==null) {
@@ -581,8 +548,70 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
   protected void addSessionFactory(SessionFactory sessionFactory) {
     sessionFactories.put(sessionFactory.getSessionType(), sessionFactory);
   }
-  
-  // id generator /////////////////////////////////////////////////////////////
+
+    // deployers ////////////////////////////////////////////////////////////////
+
+//    protected void initDeployers() {
+//        if (this.deployers==null) {
+//            this.deployers = new ArrayList<Deployer>();
+//            if (customPreDeployers!=null) {
+//                this.deployers.addAll(customPreDeployers);
+//            }
+//            this.deployers.addAll(getDefaultDeployers());
+//            if (customPostDeployers!=null) {
+//                this.deployers.addAll(customPostDeployers);
+//            }
+//        }
+//        if (deploymentCache==null) {
+//            List<Deployer> deployers = new ArrayList<Deployer>();
+//            if (customPreDeployers!=null) {
+//                deployers.addAll(customPreDeployers);
+//            }
+//            deployers.addAll(getDefaultDeployers());
+//            if (customPostDeployers!=null) {
+//                deployers.addAll(customPostDeployers);
+//            }
+//
+//            deploymentCache = new DeploymentCache();
+//            deploymentCache.setDeployers(deployers);
+//        }
+//    }
+//
+//    protected Collection< ? extends Deployer> getDefaultDeployers() {
+//        List<Deployer> defaultDeployers = new ArrayList<Deployer>();
+//
+//        BpsimDeployer bpsimDeployer = new BpsimDeployer();
+//        bpsimDeployer.setExpressionManager(expressionManager);
+//        bpsimDeployer.setIdGenerator(idGenerator);
+//
+//        if (bpsimParseFactory == null) {
+//            bpsimParseFactory = new DefaultBpsimParseFactory();
+//        }
+//
+//        BpsimParser bpsimParser= new BpsimParser(expressionManager, bpsimParseFactory);
+//
+//        if(preParseListeners != null) {
+//            bpsimParser.getParseListeners().addAll(preParseListeners);
+//        }
+//        bpsimParser.getParseListeners().addAll(getDefaultBPSIMParseListeners());
+//        if(postParseListeners != null) {
+//            bpsimParser.getParseListeners().addAll(postParseListeners);
+//        }
+//
+//        bpsimDeployer.setBpsimParser(bpsimParser);
+//
+//        defaultDeployers.add(bpsimDeployer);
+//        return defaultDeployers;
+//    }
+//
+//    protected List<BpsimParseListener> getDefaultBPSIMParseListeners() {
+//        List<BpsimParseListener> defaultListeners = new ArrayList<BpsimParseListener>();
+////        defaultListeners.add(new HistoryParseListener());
+//        // default listener can be added in the future.
+//        return defaultListeners;
+//    }
+
+    // id generator /////////////////////////////////////////////////////////////
   
   protected void initIdGenerator() {
     if (idGenerator==null) {
@@ -643,8 +672,8 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
 	      variableTypes.addType(new DoubleType());
 	      variableTypes.addType(new ByteArrayType());
 	      variableTypes.addType(new SerializableType());
-	      variableTypes.addType(new CustomObjectType("item", ItemInstance.class));
-	      variableTypes.addType(new CustomObjectType("message", MessageInstance.class));
+//	      variableTypes.addType(new CustomObjectType("item", ItemInstance.class));
+//	      variableTypes.addType(new CustomObjectType("message", MessageInstance.class));
 	      if (customPostVariableTypes!=null) {
 	        for (VariableType customVariableType: customPostVariableTypes) {
 	          variableTypes.addType(customVariableType);
@@ -675,28 +704,7 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
       delegateInterceptor = new DefaultDelegateInterceptor();
     }
   }
-  
-  protected void initEventHandlers() {
-    if(eventHandlers == null) {
-      eventHandlers = new HashMap<String, EventHandler>();
-      
-      SignalEventHandler signalEventHander = new SignalEventHandler();
-      eventHandlers.put(signalEventHander.getEventHandlerType(), signalEventHander);
-      
-      CompensationEventHandler compensationEventHandler = new CompensationEventHandler();
-      eventHandlers.put(compensationEventHandler.getEventHandlerType(), compensationEventHandler);
-      
-      MessageEventHandler messageEventHandler = new MessageEventHandler();
-      eventHandlers.put(messageEventHandler.getEventHandlerType(), messageEventHandler);
-      
-    }
-    if(customEventHandlers != null) {
-      for (EventHandler eventHandler : customEventHandlers) {
-        eventHandlers.put(eventHandler.getEventHandlerType(), eventHandler);        
-      }
-    }
-  }
-  
+
   // JPA //////////////////////////////////////////////////////////////////////
   
   protected void initJpa() {
@@ -870,8 +878,18 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
     this.commandContextFactory = commandContextFactory;
     return this;
   }
-  
-  public TransactionContextFactory getTransactionContextFactory() {
+
+  public BusinessCalendarManager getBusinessCalendarManager() {
+      return businessCalendarManager;
+  }
+
+  public SimulationEngineConfigurationImpl setBusinessCalendarManager(BusinessCalendarManager businessCalendarManager) {
+      this.businessCalendarManager = businessCalendarManager;
+      return this;
+  }
+
+
+    public TransactionContextFactory getTransactionContextFactory() {
     return transactionContextFactory;
   }
   
@@ -1101,27 +1119,6 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
   public DelegateInterceptor getDelegateInterceptor() {
     return delegateInterceptor;
   }
-    
-  public EventHandler getEventHandler(String eventType) {
-    return eventHandlers.get(eventType);
-  }
-  
-  public void setEventHandlers(Map<String, EventHandler> eventHandlers) {
-    this.eventHandlers = eventHandlers;
-  }
-    
-  public Map<String, EventHandler> getEventHandlers() {
-    return eventHandlers;
-  }
-    
-  public List<EventHandler> getCustomEventHandlers() {
-    return customEventHandlers;
-  }
-    
-  public void setCustomEventHandlers(List<EventHandler> customEventHandlers) {
-    this.customEventHandlers = customEventHandlers;
-  }
-  
   
   /**
    * Allows configuring a database table prefix which is used for all runtime operations of the process engine.
@@ -1130,8 +1127,8 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
    * 
    * <p />
    * <strong>NOTE: the prefix is not respected by automatic database schema management. If you use 
-   * {@link ProcessEngineConfiguration#DB_SCHEMA_UPDATE_CREATE_DROP} 
-   * or {@link ProcessEngineConfiguration#DB_SCHEMA_UPDATE_TRUE}, activiti will create the database tables 
+   * {@link SimulationEngineConfiguration#DB_SCHEMA_UPDATE_CREATE_DROP}
+   * or {@link SimulationEngineConfiguration#DB_SCHEMA_UPDATE_TRUE}, activiti will create the database tables
    * using the default names, regardless of the prefix configured here.</strong>  
    * 
    * @since 5.9
@@ -1188,6 +1185,11 @@ public abstract class SimulationEngineConfigurationImpl extends SimulationEngine
   public RuntimeService getRuntimeService() {
 	  return runtimeService;
   }
+
+//  @Override
+//  public RepositoryServiceWrapper getRepositoryService() {
+//        return null;  //To change body of implemented methods use File | Settings | File Templates.
+//  }
   
   public List<JobHandler> getCustomJobHandlers() {
 	    return customJobHandlers;
@@ -1225,4 +1227,12 @@ public SimulationEngineConfigurationImpl setFailedJobCommandFactory(
     this.jobHandlers = jobHandlers;
     return this;
   }
+
+//  public DeploymentCache getDeploymentCache() {
+//    return deploymentCache;
+//  }
+//
+//  public void setDeploymentCache(DeploymentCache deploymentCache) {
+//    this.deploymentCache = deploymentCache;
+//  }
 }

@@ -23,6 +23,6 @@ import java.util.List;
  */
 public interface RejectedJobsHandler {
 
-  public void jobsRejected(JobExecutor jobExecutor, List<String> jobIds);  
+  public void jobsRejected(JobExecutor jobExecutor, List<String> jobIds);
   
 }

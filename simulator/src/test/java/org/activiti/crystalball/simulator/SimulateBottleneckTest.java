@@ -21,13 +21,6 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.activiti.crystalball.generator.AbstractProcessEngineGraphGenerator;
 import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
@@ -37,6 +30,13 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.io.File;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class SimulateBottleneckTest {
 	protected static final String tempDir = System.getProperty("tempDir", "target");
@@ -59,7 +59,7 @@ public class SimulateBottleneckTest {
         processEngine.close();        
         appContext.close();        
 
-        File expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/activiti/crystalball/simulator/simulateBottleneckTest-1.png" );   
+        File expected = new File(System.getProperty("baseDir", ".") + "/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/simulator/simulateBottleneckTest-1.png" );
 		File generated = new File(tempDir + "/SimulateBottleneckTest-1.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	
 		// delete database file
@@ -69,7 +69,7 @@ public class SimulateBottleneckTest {
 	}
 
 	/**
-	 * results differs - that's why this test is ignored - possible bug. 
+	 * results differs - that's why this org.activiti.crystalball.processengine.wrapper.test is ignored - possible bug.
 	 * @throws Exception 
 	 */
 	@Test
@@ -91,7 +91,7 @@ public class SimulateBottleneckTest {
         processEngine.close();
         appContext.close();        
 
-        File expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/activiti/crystalball/simulator/simulateBottleneckTest-2.png" );   
+        File expected = new File(System.getProperty("baseDir", ".") + "/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/simulator/simulateBottleneckTest-2.png" );
 		File generated = new File(tempDir + "/SimulateBottleneckTest-2.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));	          
 		// delete database file

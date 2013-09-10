@@ -24,9 +24,8 @@ package org.activiti.crystalball.simulator.impl;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
-import org.activiti.crystalball.simulator.processengine.jobexecutor.SimulationDefaultJobExecutor;
-import org.activiti.engine.impl.jobexecutor.JobExecutor;
-import org.activiti.engine.impl.jobexecutor.SimulationAcquireJobsRunnable;
+import org.activiti.engine.impl.jobexecutor.AcquireJobsRunnable;
+import org.activiti.engine.impl.jobexecutor.SimulationDefaultJobExecutor;
 import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +40,9 @@ public class AcquireJobNotificationEventHandler implements
 
 	private static Logger log = LoggerFactory.getLogger(AcquireJobNotificationEventHandler.class);
 
-	JobExecutor jobExecutor = null;
+	SimulationDefaultJobExecutor jobExecutor = null;
 	
-	public AcquireJobNotificationEventHandler(JobExecutor jobExecutor) {
+	public AcquireJobNotificationEventHandler(SimulationDefaultJobExecutor jobExecutor) {
 		this.jobExecutor = jobExecutor;
 	}
 	
@@ -55,14 +54,14 @@ public class AcquireJobNotificationEventHandler implements
         SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent(
         	  ClockUtil.getCurrentTime().getTime(),  
         	  SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, 
-        	  ((SimulationDefaultJobExecutor) jobExecutor).getAcquireJobsRunnable()) );
+        	  jobExecutor.getAcquireJobsRunnable() ) );
         
 	}
 
 	@Override
 	public void handle(SimulationEvent event) {
         log.debug(" starting to acquire jobs [" + event + "]");
-		SimulationAcquireJobsRunnable acquireJobs = (SimulationAcquireJobsRunnable) event.getProperty();
+		AcquireJobsRunnable acquireJobs = (AcquireJobsRunnable) event.getProperty();
 		acquireJobs.run();
 	}
 

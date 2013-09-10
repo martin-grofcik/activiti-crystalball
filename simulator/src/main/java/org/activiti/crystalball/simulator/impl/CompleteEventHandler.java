@@ -21,22 +21,22 @@ package org.activiti.crystalball.simulator.impl;
  */
 
 
+import org.activiti.crystalball.processengine.wrapper.TaskServiceWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.TaskWrapper;
+import org.activiti.crystalball.simulator.SimulationEvent;
+import org.activiti.crystalball.simulator.SimulationEventHandler;
+import org.activiti.crystalball.simulator.SimulationRunContext;
+import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
+import org.activiti.engine.impl.persistence.entity.TaskEntity;
+import org.activiti.engine.impl.util.ClockUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.activiti.crystalball.simulator.SimulationEvent;
-import org.activiti.crystalball.simulator.SimulationEventHandler;
-import org.activiti.crystalball.simulator.SimulationRunContext;
-import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
-import org.activiti.engine.TaskService;
-import org.activiti.engine.impl.persistence.entity.TaskEntity;
-import org.activiti.engine.impl.util.ClockUtil;
-import org.activiti.engine.task.Task;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CompleteEventHandler implements SimulationEventHandler {
 
@@ -46,11 +46,11 @@ public class CompleteEventHandler implements SimulationEventHandler {
 	
 	@Override
 	public void handle(SimulationEvent event) {
-		TaskService taskService = SimulationRunContext.getTaskService();
+		TaskServiceWrapper taskService = SimulationRunContext.getTaskService();
 		long simulationTime = ClockUtil.getCurrentTime().getTime();
 		
 		String taskId = (String) event.getProperty("task");
-		Task task = SimulationRunContext.getTaskService().createTaskQuery().taskId( taskId ).singleResult();		
+		TaskWrapper task = SimulationRunContext.getTaskService().createTaskQuery().taskId( taskId ).singleResult();
 		String assignee = task.getAssignee();
 		
 		// fulfill variables
@@ -61,7 +61,7 @@ public class CompleteEventHandler implements SimulationEventHandler {
 		log.debug( SimpleDateFormat.getTimeInstance().format( new Date(event.getSimulationTime())) +": completed {}, {}, {}, {}", task, task.getName(), assignee, variables);
 		
 		//claim new task to assignee
-		List<Task> execTaskList = taskService.createTaskQuery().taskCandidateUser( assignee).orderByTaskPriority().desc().listPage(0, 1);
+		List<TaskWrapper> execTaskList = taskService.createTaskQuery().taskCandidateUser( assignee).orderByTaskPriority().desc().listPage(0, 1);
 		if ( !execTaskList.isEmpty()) {
 			TaskEntity execTask = (TaskEntity) execTaskList.get(0);
 			if (execTask != null ) {

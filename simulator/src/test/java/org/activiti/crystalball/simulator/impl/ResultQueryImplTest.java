@@ -1,11 +1,11 @@
 package org.activiti.crystalball.simulator.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.SimulationEngine;
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
 import org.activiti.engine.impl.test.PvmTestCase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ResultQueryImplTest extends PvmTestCase {
 

@@ -21,10 +21,10 @@ package org.activiti.crystalball.simulator.executor.impl;
  */
 
 
-import java.util.Map;
-
+import org.activiti.crystalball.processengine.wrapper.queries.TaskWrapper;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
-import org.activiti.engine.impl.persistence.entity.TaskEntity;
+
+import java.util.Map;
 
 /**
  * execute user task in constant time specific for each user  
@@ -55,7 +55,7 @@ public class ConstantUserMapTaskExecutor extends AbstractRandomVariableMapUserta
 	}
 
 	@Override
-	protected long getExecutionTime(TaskEntity execTask, Map<String, Object> variables) {
+	protected long getExecutionTime(TaskWrapper execTask, Map<String, Object> variables) {
 		String assigneId = execTask.getAssignee();
 		if (userExecutionMap.get( assigneId) != null) {
 			return userExecutionMap.get( assigneId);

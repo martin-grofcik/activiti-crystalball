@@ -75,7 +75,7 @@
     from ${prefix}CRB_RU_SIMULATION RES
     <foreach collection="queryVariableValues" index="index" item="queryVariableValue">
       <choose>
-        <when test="queryVariableValue.local">
+        <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.local">
           inner join ${prefix}ACT_RU_VARIABLE A${index} on RES.ID_ = A${index}.RUN_ID_
         </when>
         <otherwise>
@@ -83,7 +83,7 @@
         </otherwise>
       </choose> 
     </foreach>
-<!--     <if test="eventSubscriptions != null">
+<!--     <if org.activiti.crystalball.processengine.wrapper.test="eventSubscriptions != null">
     	 <foreach collection="eventSubscriptions" index="index" item="eventSubscriptionValue">
     	 	inner join ${prefix}ACT_RU_EVENT_SUBSCR EVT${index} on RES.ID_ = EVT${index}.EXECUTION_ID_
 	    </foreach>
@@ -91,49 +91,49 @@
     inner join ${prefix}ACT_RE_PROCDEF P on RES.PROC_DEF_ID_ = P.ID_
  -->
     <where>
-      <if test="simulationDefinitionId != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="simulationDefinitionId != null">
         and RES.SIMULATION_CONFIG_URL_ = #{simulationDefinitionId}
       </if>
-      <if test="simulationInstanceId != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="simulationInstanceId != null">
         and RES.ID_ = #{simulationInstanceId}
       </if>
-      <if test="simulationInstanceIds != null and !simulationInstanceIds.isEmpty()">
+      <if org.activiti.crystalball.processengine.wrapper.test="simulationInstanceIds != null and !simulationInstanceIds.isEmpty()">
         and RES.PROC_INST_ID_ in
         <foreach item="item" index="index" collection="simulationInstanceIds" open="(" separator="," close=")">
           #{item}
         </foreach>
       </if>
-      <if test="name != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="name != null">
         and RES.NAME_ = #{name}
       </if>
-      <if test="suspensionState != null">
-      	<if test="suspensionState.stateCode == 1">
+      <if org.activiti.crystalball.processengine.wrapper.test="suspensionState != null">
+      	<if org.activiti.crystalball.processengine.wrapper.test="suspensionState.stateCode == 1">
         	and (RES.SUSPENSION_STATE_ = 1)
         </if>
-        <if test="suspensionState.stateCode == 2">
+        <if org.activiti.crystalball.processengine.wrapper.test="suspensionState.stateCode == 2">
         	and (RES.SUSPENSION_STATE_ = 2)
         </if>
-        <if test="suspensionState.stateCode == 3">
+        <if org.activiti.crystalball.processengine.wrapper.test="suspensionState.stateCode == 3">
         	and (RES.SUSPENSION_STATE_ = 3)
         </if>
       </if>
       <!-- PLEASE NOTE: If you change anything have a look into the HistoricVariableInstance & HistoricProcessInstance, the same query object is used there! -->
       <foreach collection="queryVariableValues" index="index" item="queryVariableValue">
-        <if test="!queryVariableValue.local">
+        <if org.activiti.crystalball.processengine.wrapper.test="!queryVariableValue.local">
           <!-- When process instance variable is queried for, only process variables are taken into account -->
           and A${index}.EXECUTION_ID_ = A${index}.SIMULATION_INST_ID_
         </if>
-        <if test="queryVariableValue.name != null">
+        <if org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.name != null">
           <!-- Match-all variable-names when name is null -->
           and A${index}.NAME_= #{queryVariableValue.name}
         </if>
-        <if test="!queryVariableValue.type.equals('null')">
+        <if org.activiti.crystalball.processengine.wrapper.test="!queryVariableValue.type.equals('null')">
         <!-- When operator is not-equals or type of value is null, type doesn't matter! -->
           and A${index}.TYPE_ = #{queryVariableValue.type}
         </if>
-      	<if test="queryVariableValue.textValue != null &amp;&amp; queryVariableValue.longValue == null &amp;&amp; queryVariableValue.doubleValue == null">
+      	<if org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.textValue != null &amp;&amp; queryVariableValue.longValue == null &amp;&amp; queryVariableValue.doubleValue == null">
           <choose>
-            <when test="queryVariableValue.operator.equals('EQUALS_IGNORE_CASE') || queryVariableValue.operator.equals('NOT_EQUALS_IGNORE_CASE')">
+            <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('EQUALS_IGNORE_CASE') || queryVariableValue.operator.equals('NOT_EQUALS_IGNORE_CASE')">
               and lower(A${index}.TEXT_)
             </when>
             <otherwise>
@@ -141,33 +141,33 @@
             </otherwise>
           </choose>
 	      <choose>
-	        <when test="queryVariableValue.operator.equals('LIKE')">LIKE</when>
+	        <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('LIKE')">LIKE</when>
 	        <otherwise><include refid="executionVariableOperator" /></otherwise>
 	      </choose>
   	      #{queryVariableValue.textValue}
       	</if>
-      	<if test="queryVariableValue.textValue2 != null">
+      	<if org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.textValue2 != null">
 	      and A${index}.TEXT2_
 	      <choose>
-	        <when test="queryVariableValue.operator.equals('LIKE')">LIKE</when>
+	        <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('LIKE')">LIKE</when>
 	        <otherwise><include refid="executionVariableOperator" /></otherwise>
 	      </choose>
 	        #{queryVariableValue.textValue2}
       	</if>
-      	<if test="queryVariableValue.longValue != null">
+      	<if org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.longValue != null">
 	      and A${index}.LONG_
 	      <include refid="executionVariableOperator" />
 	      #{queryVariableValue.longValue}
       	</if>
-      	<if test="queryVariableValue.doubleValue != null">
+      	<if org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.doubleValue != null">
 	      and A${index}.DOUBLE_
 	      <include refid="executionVariableOperator" />
 	      #{queryVariableValue.doubleValue}
       	</if>
       	<!-- Null variable type -->
-      	<if test="queryVariableValue.textValue == null &amp;&amp; queryVariableValue.textValue2 == null &amp;&amp; queryVariableValue.longValue == null &amp;&amp; queryVariableValue.doubleValue == null">
+      	<if org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.textValue == null &amp;&amp; queryVariableValue.textValue2 == null &amp;&amp; queryVariableValue.longValue == null &amp;&amp; queryVariableValue.doubleValue == null">
           <choose>
-	        <when test="queryVariableValue.operator.equals('NOT_EQUALS')">
+	        <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('NOT_EQUALS')">
 	          and (A${index}.TEXT_ is not null or A${index}.TEXT2_ is not null or A${index}.LONG_ is not null or A${index}.DOUBLE_ is not null or A${index}.BYTEARRAY_ID_ is not null)
 	        </when>
 	        <otherwise>
@@ -177,7 +177,7 @@
       	</if>
       </foreach>
       <!-- event subscriptions -->
-<!--       <if test="eventSubscriptions != null">
+<!--       <if org.activiti.crystalball.processengine.wrapper.test="eventSubscriptions != null">
     	 <foreach collection="eventSubscriptions" index="index" item="eventSubscriptionValue">
     	    and (EVT${index}.EVENT_TYPE_ = #{eventSubscriptionValue.eventType} and EVT${index}.EVENT_NAME_ = #{eventSubscriptionValue.eventName}) 
 	    </foreach>
@@ -188,14 +188,14 @@
   
   <sql id="executionVariableOperator">
     <choose>
-   	  <when test="queryVariableValue.operator.equals('EQUALS')">=</when>
-   	  <when test="queryVariableValue.operator.equals('EQUALS_IGNORE_CASE')">=</when>
-   	  <when test="queryVariableValue.operator.equals('NOT_EQUALS')">&lt;&gt;</when>
-   	  <when test="queryVariableValue.operator.equals('NOT_EQUALS_IGNORE_CASE')">&lt;&gt;</when>
-   	  <when test="queryVariableValue.operator.equals('GREATER_THAN')">&gt;</when>
-   	  <when test="queryVariableValue.operator.equals('GREATER_THAN_OR_EQUAL')">&gt;=</when>
-   	  <when test="queryVariableValue.operator.equals('LESS_THAN')">&lt;</when>
-   	  <when test="queryVariableValue.operator.equals('LESS_THAN_OR_EQUAL')">&lt;=</when>
+   	  <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('EQUALS')">=</when>
+   	  <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('EQUALS_IGNORE_CASE')">=</when>
+   	  <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('NOT_EQUALS')">&lt;&gt;</when>
+   	  <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('NOT_EQUALS_IGNORE_CASE')">&lt;&gt;</when>
+   	  <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('GREATER_THAN')">&gt;</when>
+   	  <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('GREATER_THAN_OR_EQUAL')">&gt;=</when>
+   	  <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('LESS_THAN')">&lt;</when>
+   	  <when org.activiti.crystalball.processengine.wrapper.test="queryVariableValue.operator.equals('LESS_THAN_OR_EQUAL')">&lt;=</when>
    </choose>
   </sql>
 

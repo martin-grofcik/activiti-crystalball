@@ -12,14 +12,14 @@
  */
 package org.activiti.crystalball.simulator.initialization;
 
-import java.io.IOException;
-import java.util.Date;
-
 import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.SimulationEngine;
 import org.activiti.crystalball.simulator.SimulationEngineConfiguration;
 import org.activiti.crystalball.simulator.runtime.SimulationInstance;
 import org.activiti.engine.impl.test.PvmTestCase;
+
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * @author Tom Baeyens
@@ -48,7 +48,7 @@ public class SimulationEngineTest extends PvmTestCase {
       assertNotNull(simulationEngine);
       
       RuntimeService runtimeService = simulationEngine.getRuntimeService();
-	  SimulationInstance simInstance = runtimeService.startSimulationInstanceByKey("test", "test-desc", "test-author", new Date(), new Date(), 1, 20L, "test-url");
+	  SimulationInstance simInstance = runtimeService.startSimulationInstanceByKey("org.activiti.crystalball.processengine.wrapper.test", "org.activiti.crystalball.processengine.wrapper.test-desc", "org.activiti.crystalball.processengine.wrapper.test-author", new Date(), new Date(), 1, 20L, "empty.cfg.xml");
       assertNotNull( simInstance.getId());      
       simulationEngine.close();      	  
   }

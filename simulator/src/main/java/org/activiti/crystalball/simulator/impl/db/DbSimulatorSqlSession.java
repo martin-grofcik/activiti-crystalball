@@ -13,6 +13,20 @@
 
 package org.activiti.crystalball.simulator.impl.db;
 
+import org.activiti.crystalball.simulator.*;
+import org.activiti.crystalball.simulator.impl.JobQueryImpl;
+import org.activiti.crystalball.simulator.impl.Page;
+import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
+import org.activiti.crystalball.simulator.impl.context.SimulationContext;
+import org.activiti.crystalball.simulator.impl.db.upgrade.DbUpgradeStep;
+import org.activiti.crystalball.simulator.impl.interceptor.Session;
+import org.activiti.crystalball.simulator.impl.persistence.entity.PropertyEntity;
+import org.activiti.crystalball.simulator.impl.persistence.entity.VariableInstanceEntity;
+import org.activiti.crystalball.simulator.impl.util.IoUtil;
+import org.activiti.crystalball.simulator.impl.util.ReflectUtil;
+import org.activiti.crystalball.simulator.impl.variable.DeserializedObject;
+import org.apache.ibatis.session.SqlSession;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,51 +35,11 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.activiti.crystalball.simulator.SimulationEngine;
-import org.activiti.crystalball.simulator.SimulationEngineConfiguration;
-import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
-import org.activiti.crystalball.simulator.impl.context.SimulationContext;
-import org.activiti.crystalball.simulator.impl.db.upgrade.DbUpgradeStep;
-import org.activiti.engine.ActivitiException;
-import org.activiti.engine.ActivitiOptimisticLockingException;
-import org.activiti.engine.ActivitiWrongDbException;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.impl.DeploymentQueryImpl;
-import org.activiti.engine.impl.ExecutionQueryImpl;
-import org.activiti.engine.impl.GroupQueryImpl;
-import org.activiti.engine.impl.HistoricActivityInstanceQueryImpl;
-import org.activiti.engine.impl.HistoricDetailQueryImpl;
-import org.activiti.engine.impl.HistoricProcessInstanceQueryImpl;
-import org.activiti.engine.impl.HistoricTaskInstanceQueryImpl;
-import org.activiti.engine.impl.HistoricVariableInstanceQueryImpl;
-import org.activiti.engine.impl.JobQueryImpl;
-import org.activiti.engine.impl.ModelQueryImpl;
-import org.activiti.engine.impl.Page;
-import org.activiti.engine.impl.ProcessDefinitionQueryImpl;
-import org.activiti.engine.impl.ProcessInstanceQueryImpl;
-import org.activiti.engine.impl.TaskQueryImpl;
-import org.activiti.engine.impl.UserQueryImpl;
-import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
-import org.activiti.engine.impl.db.HasRevision;
-import org.activiti.engine.impl.db.ListQueryParameterObject;
-import org.activiti.engine.impl.db.PersistentObject;
-import org.activiti.engine.impl.interceptor.Session;
-import org.activiti.engine.impl.persistence.entity.PropertyEntity;
-import org.activiti.engine.impl.persistence.entity.VariableInstanceEntity;
-import org.activiti.engine.impl.util.IoUtil;
-import org.activiti.engine.impl.util.ReflectUtil;
-import org.activiti.engine.impl.variable.DeserializedObject;
-import org.apache.ibatis.session.SqlSession;
 
 /** responsibilities:
  *   - delayed flushing of inserts updates and deletes
@@ -271,7 +245,7 @@ public class DbSimulatorSqlSession implements Session {
 		  }
 		  
 		  @SuppressWarnings("rawtypes")
-		  public List selectList(String statement, Object parameter, Page page) {   
+		  public List selectList(String statement, Object parameter, Page page) {
 		    if(page!=null) {
 		      return selectList(statement, parameter, page.getFirstResult(), page.getMaxResults());
 		    }else {
@@ -697,7 +671,7 @@ public class DbSimulatorSqlSession implements Session {
 		    try {
 		      String dbVersion = getDbVersion();
 		      if (!SimulationEngine.VERSION.equals(dbVersion)) {
-		        throw new ActivitiWrongDbException(ProcessEngine.VERSION, dbVersion);
+		        throw new ActivitiWrongDbException(SimulationEngine.VERSION, dbVersion);
 		      }
 
 		      String errorMessage = null;
@@ -740,8 +714,8 @@ public class DbSimulatorSqlSession implements Session {
 		    
 		    if (isEngineTablePresent()) {
 		      String dbVersion = getDbVersion();
-		      if (!ProcessEngine.VERSION.equals(dbVersion)) {
-		        throw new ActivitiWrongDbException(ProcessEngine.VERSION, dbVersion);
+		      if (!SimulationEngine.VERSION.equals(dbVersion)) {
+		        throw new ActivitiWrongDbException(SimulationEngine.VERSION, dbVersion);
 		      }
 		    } else {
 		      dbSchemaCreateEngine();
@@ -779,10 +753,10 @@ public class DbSimulatorSqlSession implements Session {
 		      // the next piece assumes both DB version and library versions are formatted 5.x
 		      PropertyEntity dbVersionProperty = selectById(PropertyEntity.class, "schema.version");
 		      dbVersion = dbVersionProperty.getValue();
-		      isUpgradeNeeded = !ProcessEngine.VERSION.equals(dbVersion);
+		      isUpgradeNeeded = !SimulationEngine.VERSION.equals(dbVersion);
 		      
 		      if (isUpgradeNeeded) {
-		        dbVersionProperty.setValue(ProcessEngine.VERSION);
+		        dbVersionProperty.setValue(SimulationEngine.VERSION);
 
 		        PropertyEntity dbHistoryProperty;
 		        if ("5.0".equals(dbVersion)) {
@@ -792,12 +766,12 @@ public class DbSimulatorSqlSession implements Session {
 		          dbHistoryProperty = selectById(PropertyEntity.class, "schema.history");
 		        }
 		        
-		        String dbHistoryValue = dbHistoryProperty.getValue()+" upgrade("+dbVersion+"->"+ProcessEngine.VERSION+")";
+		        String dbHistoryValue = dbHistoryProperty.getValue()+" upgrade("+dbVersion+"->"+SimulationEngine.VERSION+")";
 		        dbHistoryProperty.setValue(dbHistoryValue);
 		        
 		        dbSchemaUpgrade("engine", dbVersion);
 
-		        feedback = "upgraded Activiti from "+dbVersion+" to "+ProcessEngine.VERSION;
+		        feedback = "upgraded Activiti from "+dbVersion+" to "+SimulationEngine.VERSION;
 		      }
 		    } else {
 		      dbSchemaCreateEngine();
@@ -842,17 +816,17 @@ public class DbSimulatorSqlSession implements Session {
 		  }
 		  
 		  protected boolean isUpgradeNeeded(String versionInDatabase) {
-		    if(ProcessEngine.VERSION.equals(versionInDatabase)) {
+		    if(SimulationEngine.VERSION.equals(versionInDatabase)) {
 		      return false;
 		    }
 		    Double cleanDbVersion = getCleanVersion(versionInDatabase);
-		    Double cleanEngineVersion = getCleanVersion(ProcessEngine.VERSION);
+		    Double cleanEngineVersion = getCleanVersion(SimulationEngine.VERSION);
 		      
 		    if(cleanDbVersion.compareTo(cleanEngineVersion) > 0) {
-		      throw new ActivitiException("Version of activiti database (" + versionInDatabase + ") is more recent than the engine (" + ProcessEngine.VERSION +")");
+		      throw new ActivitiException("Version of activiti database (" + versionInDatabase + ") is more recent than the engine (" + SimulationEngine.VERSION +")");
 		    } else if(cleanDbVersion.compareTo(cleanEngineVersion) == 0) {
 		      // Versions don't match exactly, possibly snapshot is being used
-		      log.warning("Engine-version is the same, but not an exact match: " + versionInDatabase + " vs. " + ProcessEngine.VERSION 
+		      log.warning("Engine-version is the same, but not an exact match: " + versionInDatabase + " vs. " + SimulationEngine.VERSION 
 		              + ". Not performing database-upgrade.");
 		      return false;
 		    }
@@ -878,16 +852,16 @@ public class DbSimulatorSqlSession implements Session {
 		  }
 
 		  protected void dbSchemaUpgrade(String component, String dbVersion) {
-		    log.info("upgrading activiti "+component+" schema from "+dbVersion+" to "+ProcessEngine.VERSION);
+		    log.info("upgrading activiti "+component+" schema from "+dbVersion+" to "+SimulationEngine.VERSION);
 		    
 		    if (dbVersion.endsWith("-SNAPSHOT")) {
 		      dbVersion = dbVersion.substring(0, dbVersion.length()-"-SNAPSHOT".length());
 		    }
 		    int minorDbVersionNumber = Integer.parseInt(dbVersion.substring(2));
 		    
-		    String libraryVersion = ProcessEngine.VERSION;
-		    if (ProcessEngine.VERSION.endsWith("-SNAPSHOT")) {
-		      libraryVersion = ProcessEngine.VERSION.substring(0, ProcessEngine.VERSION.length()-"-SNAPSHOT".length());
+		    String libraryVersion = SimulationEngine.VERSION;
+		    if (SimulationEngine.VERSION.endsWith("-SNAPSHOT")) {
+		      libraryVersion = SimulationEngine.VERSION.substring(0, SimulationEngine.VERSION.length()-"-SNAPSHOT".length());
 		    }
 		    int minorLibraryVersionNumber = Integer.parseInt(libraryVersion.substring(2));
 		    
@@ -1030,7 +1004,7 @@ public class DbSimulatorSqlSession implements Session {
 		  
 		  public void performSchemaOperationsSimulationEngineBuild() {
 		    String databaseSchemaUpdate = SimulationContext.getSimulationEngineConfiguration().getDatabaseSchemaUpdate();
-		    if (ProcessEngineConfigurationImpl.DB_SCHEMA_UPDATE_DROP_CREATE.equals(databaseSchemaUpdate)) {
+		    if (SimulationEngineConfigurationImpl.DB_SCHEMA_UPDATE_DROP_CREATE.equals(databaseSchemaUpdate)) {
 		      try {
 		        dbSchemaDrop();
 		      } catch (RuntimeException e) {
@@ -1051,7 +1025,7 @@ public class DbSimulatorSqlSession implements Session {
 		    }
 		  }
 
-		  public void performSchemaOperationsProcessEngineClose() {
+		  public void performSchemaOperationsSimulationEngineClose() {
 		    String databaseSchemaUpdate = SimulationContext.getSimulationEngineConfiguration().getDatabaseSchemaUpdate();
 		    if (SimulationEngineConfiguration.DB_SCHEMA_UPDATE_CREATE_DROP.equals(databaseSchemaUpdate)) {
 		      dbSchemaDrop();
@@ -1060,48 +1034,48 @@ public class DbSimulatorSqlSession implements Session {
 
 		  // query factory methods ////////////////////////////////////////////////////  
 
-		  public DeploymentQueryImpl createDeploymentQuery() {
-		    return new DeploymentQueryImpl();
-		  }
-		  public ModelQueryImpl createModelQueryImpl() {
-		    return new ModelQueryImpl();
-		  }
-		  public ProcessDefinitionQueryImpl createProcessDefinitionQuery() {
-		    return new ProcessDefinitionQueryImpl();
-		  }
-		  public ProcessInstanceQueryImpl createProcessInstanceQuery() {
-		    return new ProcessInstanceQueryImpl();
-		  }
-		  public ExecutionQueryImpl createExecutionQuery() {
-		    return new ExecutionQueryImpl();
-		  }
-		  public TaskQueryImpl createTaskQuery() {
-		    return new TaskQueryImpl();
-		  }
+//		  public DeploymentQueryImpl createDeploymentQuery() {
+//		    return new DeploymentQueryImpl();
+//		  }
+//		  public ModelQueryImpl createModelQueryImpl() {
+//		    return new ModelQueryImpl();
+//		  }
+//		  public ProcessDefinitionQueryImpl createProcessDefinitionQuery() {
+//		    return new ProcessDefinitionQueryImpl();
+//		  }
+//		  public ProcessInstanceQueryImpl createProcessInstanceQuery() {
+//		    return new ProcessInstanceQueryImpl();
+//		  }
+//		  public ExecutionQueryImpl createExecutionQuery() {
+//		    return new ExecutionQueryImpl();
+//		  }
+//		  public TaskQueryImpl createTaskQuery() {
+//		    return new TaskQueryImpl();
+//		  }
 		  public JobQueryImpl createJobQuery() {
 		    return new JobQueryImpl();
 		  }
-		  public HistoricProcessInstanceQueryImpl createHistoricProcessInstanceQuery() {
-		    return new HistoricProcessInstanceQueryImpl();
-		  }
-		  public HistoricActivityInstanceQueryImpl createHistoricActivityInstanceQuery() {
-		    return new HistoricActivityInstanceQueryImpl();
-		  }
-		  public HistoricTaskInstanceQueryImpl createHistoricTaskInstanceQuery() {
-		    return new HistoricTaskInstanceQueryImpl();
-		  }
-		  public HistoricDetailQueryImpl createHistoricDetailQuery() {
-		    return new HistoricDetailQueryImpl();
-		  }
-		  public HistoricVariableInstanceQueryImpl createHistoricVariableInstanceQuery() {
-		    return new HistoricVariableInstanceQueryImpl();
-		  }
-		  public UserQueryImpl createUserQuery() {
-		    return new UserQueryImpl();
-		  }
-		  public GroupQueryImpl createGroupQuery() {
-		    return new GroupQueryImpl();
-		  }
+//		  public HistoricProcessInstanceQueryImpl createHistoricProcessInstanceQuery() {
+//		    return new HistoricProcessInstanceQueryImpl();
+//		  }
+//		  public HistoricActivityInstanceQueryImpl createHistoricActivityInstanceQuery() {
+//		    return new HistoricActivityInstanceQueryImpl();
+//		  }
+//		  public HistoricTaskInstanceQueryImpl createHistoricTaskInstanceQuery() {
+//		    return new HistoricTaskInstanceQueryImpl();
+//		  }
+//		  public HistoricDetailQueryImpl createHistoricDetailQuery() {
+//		    return new HistoricDetailQueryImpl();
+//		  }
+//		  public HistoricVariableInstanceQueryImpl createHistoricVariableInstanceQuery() {
+//		    return new HistoricVariableInstanceQueryImpl();
+//		  }
+//		  public UserQueryImpl createUserQuery() {
+//		    return new UserQueryImpl();
+//		  }
+//		  public GroupQueryImpl createGroupQuery() {
+//		    return new GroupQueryImpl();
+//		  }
 
 		  // getters and setters //////////////////////////////////////////////////////
 		  

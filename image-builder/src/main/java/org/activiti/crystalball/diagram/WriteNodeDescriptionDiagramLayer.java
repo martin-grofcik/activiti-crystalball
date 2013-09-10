@@ -25,14 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.activiti.engine.impl.RepositoryServiceImpl;
-import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
-import org.activiti.engine.impl.pvm.PvmTransition;
-import org.activiti.engine.impl.pvm.process.ActivityImpl;
-import org.activiti.engine.impl.pvm.process.Lane;
-import org.activiti.engine.impl.pvm.process.LaneSet;
-import org.activiti.engine.impl.pvm.process.ParticipantProcess;
-import org.activiti.engine.impl.pvm.process.TransitionImpl;
+import org.activiti.crystalball.processengine.wrapper.ProcessDiagramCanvasInterface;
+import org.activiti.crystalball.processengine.wrapper.ProcessDiagramService;
+import org.activiti.crystalball.processengine.wrapper.RepositoryServiceWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.*;
 
 /**
  * write counts into nodes  
@@ -45,12 +41,13 @@ public class WriteNodeDescriptionDiagramLayer extends AbstractProcessDiagramLaye
 	public WriteNodeDescriptionDiagramLayer() {
 	}
 
-	public WriteNodeDescriptionDiagramLayer( RepositoryServiceImpl repositoryService) {
+	public WriteNodeDescriptionDiagramLayer( RepositoryServiceWrapper repositoryService, ProcessDiagramService diagramService) {
 		this.repositoryService = repositoryService;
+        this.diagramService = diagramService;
 	}
 
 	@Override
-	public byte[] generateLayer(String imageType,
+	public byte[] generateLayer( String imageType,
 			Map<String, Object> params) {
 		// get parameters
 		final String processDefinitionKey = (String) params.get( PROCESS_DEFINITION_ID );
@@ -61,11 +58,11 @@ public class WriteNodeDescriptionDiagramLayer extends AbstractProcessDiagramLaye
 	    writeableActivities.remove( PROCESS_DEFINITION_ID);
 	    
 		// get process definition entity
-	    ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ( ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition( processDefinitionId ));
+	    ProcessDefinitionWrapper pde =  repositoryService.getDeployedProcessDefinition( processDefinitionId );
 	    
-		ProcessDiagramCanvas canvas = initProcessDiagramCanvas( pde );
+		ProcessDiagramCanvasInterface canvas = initProcessDiagramCanvas(diagramService, pde );
 
-		for (ActivityImpl activity : pde.getActivities()) {
+		for (ActivityWrapper activity : pde.getActivities()) {
 	      // Draw count into activities
 	      if (writeableActivities.contains(activity.getId())) {
 	    	  canvas.drawStringToNode( params.get( activity.getId() ).toString(), activity.getX(), activity.getY(), activity.getWidth(), activity.getHeight());	      
@@ -74,14 +71,14 @@ public class WriteNodeDescriptionDiagramLayer extends AbstractProcessDiagramLaye
 	    return convertToByteArray( imageType, canvas.generateImage(imageType));
 	}
 	
-	  protected static ProcessDiagramCanvas initProcessDiagramCanvas(ProcessDefinitionEntity processDefinition) {
+	  protected static ProcessDiagramCanvasInterface initProcessDiagramCanvas(ProcessDiagramService diagramService, ProcessDefinitionWrapper processDefinition) {
 		    int minX = Integer.MAX_VALUE;
 		    int maxX = 0;
 		    int minY = Integer.MAX_VALUE;
 		    int maxY = 0;
 		    
 		    if(processDefinition.getParticipantProcess() != null) {
-		      ParticipantProcess pProc = processDefinition.getParticipantProcess();
+		      ParticipantProcessWrapper pProc = processDefinition.getParticipantProcess();
 		      
 		      minX = pProc.getX();
 		      maxX = pProc.getX() + pProc.getWidth();
@@ -89,7 +86,7 @@ public class WriteNodeDescriptionDiagramLayer extends AbstractProcessDiagramLaye
 		      maxY = pProc.getY() + pProc.getHeight();
 		    }
 		    
-		    for (ActivityImpl activity : processDefinition.getActivities()) {
+		    for (ActivityWrapper activity : processDefinition.getActivities()) {
 
 		      // width
 		      if (activity.getX() + activity.getWidth() > maxX) {
@@ -106,8 +103,8 @@ public class WriteNodeDescriptionDiagramLayer extends AbstractProcessDiagramLaye
 		        minY = activity.getY();
 		      }
 
-		      for (PvmTransition sequenceFlow : activity.getOutgoingTransitions()) {
-		        List<Integer> waypoints = ((TransitionImpl) sequenceFlow).getWaypoints();
+		      for (PvmTransitionWrapper sequenceFlow : activity.getOutgoingTransitions()) {
+		        List<Integer> waypoints = ((PvmTransitionWrapper) sequenceFlow).getWaypoints();
 		        for (int i = 0; i < waypoints.size(); i += 2) {
 		          // width
 		          if (waypoints.get(i) > maxX) {
@@ -128,9 +125,9 @@ public class WriteNodeDescriptionDiagramLayer extends AbstractProcessDiagramLaye
 		    }
 		    
 		    if(processDefinition.getLaneSets() != null && processDefinition.getLaneSets().size() > 0) {
-		      for(LaneSet laneSet : processDefinition.getLaneSets()) {
+		      for(LaneSetWrapper laneSet : processDefinition.getLaneSets()) {
 		        if(laneSet.getLanes() != null && laneSet.getLanes().size() > 0) {
-		          for(Lane lane : laneSet.getLanes()) {
+		          for(LaneWrapper lane : laneSet.getLanes()) {
 		            // width
 		            if (lane.getX() + lane.getWidth() > maxX) {
 		              maxX = lane.getX() + lane.getWidth();
@@ -150,6 +147,6 @@ public class WriteNodeDescriptionDiagramLayer extends AbstractProcessDiagramLaye
 		      }
 		    }
 		    
-		    return new ProcessDiagramCanvas(maxX + 10, maxY + 10, minX, minY);
+		    return diagramService.createProcessDiagramCanvas(maxX + 10, maxY + 10, minX, minY);
 		  }
 }

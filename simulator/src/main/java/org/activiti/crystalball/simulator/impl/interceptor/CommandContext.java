@@ -12,35 +12,19 @@
  */
 package org.activiti.crystalball.simulator.impl.interceptor;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import org.activiti.crystalball.simulator.ActivitiException;
+import org.activiti.crystalball.simulator.ActivitiTaskAlreadyClaimedException;
+import org.activiti.crystalball.simulator.JobNotFoundException;
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
 import org.activiti.crystalball.simulator.impl.cfg.TransactionContext;
 import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSession;
-import org.activiti.crystalball.simulator.impl.persistence.entity.JobManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.PropertyManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntityManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntityManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntityManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.VariableInstanceManager;
+import org.activiti.crystalball.simulator.impl.persistence.entity.*;
 import org.activiti.crystalball.simulator.impl.simulationexecutor.FailedJobCommandFactory;
-import org.activiti.engine.ActivitiException;
-import org.activiti.engine.ActivitiTaskAlreadyClaimedException;
-import org.activiti.engine.JobNotFoundException;
-import org.activiti.engine.impl.context.Context;
-import org.activiti.engine.impl.interceptor.Session;
-import org.activiti.engine.impl.interceptor.SessionFactory;
-import org.activiti.engine.impl.persistence.entity.ByteArrayManager;
-import org.activiti.engine.impl.persistence.entity.DeploymentManager;
-import org.activiti.engine.impl.persistence.entity.ModelManager;
-import org.activiti.engine.impl.persistence.entity.ResourceManager;
-import org.activiti.engine.impl.persistence.entity.TableDataManager;
-import org.activiti.engine.impl.pvm.runtime.AtomicOperation;
-import org.activiti.engine.impl.pvm.runtime.InterpretableExecution;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Tom Baeyens
@@ -55,28 +39,28 @@ public class CommandContext {
   protected Map<Class< ? >, SessionFactory> sessionFactories;
   protected Map<Class< ? >, Session> sessions = new HashMap<Class< ? >, Session>();
   protected Throwable exception = null;
-  protected LinkedList<AtomicOperation> nextOperations = new LinkedList<AtomicOperation>();
+//  protected LinkedList<AtomicOperation> nextOperations = new LinkedList<AtomicOperation>();
   protected SimulationEngineConfigurationImpl processEngineConfiguration;
   protected FailedJobCommandFactory failedJobCommandFactory;
 
   
-  public void performOperation(AtomicOperation executionOperation, InterpretableExecution execution) {
-    nextOperations.add(executionOperation);
-    if (nextOperations.size()==1) {
-      try {
-        Context.setExecutionContext(execution);
-        while (!nextOperations.isEmpty()) {
-          AtomicOperation currentOperation = nextOperations.removeFirst();
-          if (log.isLoggable(Level.FINEST)) {
-            log.finest("AtomicOperation: " + currentOperation + " on " + this);
-          }
-          currentOperation.execute(execution);
-        }
-      } finally {
-        Context.removeExecutionContext();
-      }
-    }
-  }
+//  public void performOperation(AtomicOperation executionOperation, InterpretableExecution execution) {
+//    nextOperations.add(executionOperation);
+//    if (nextOperations.size()==1) {
+//      try {
+////        SimulationContext.setExecutionContext(execution);
+//        while (!nextOperations.isEmpty()) {
+//          AtomicOperation currentOperation = nextOperations.removeFirst();
+//          if (log.isLoggable(Level.FINEST)) {
+//            log.finest("AtomicOperation: " + currentOperation + " on " + this);
+//          }
+//          currentOperation.execute(execution);
+//        }
+//      } finally {
+////        SimulationContext.removeExecutionContext();
+//      }
+//    }
+//  }
 
   public CommandContext(Command<?> command, SimulationEngineConfigurationImpl simulationEngineConfiguration) {
     this.command = command;
@@ -194,18 +178,18 @@ public class CommandContext {
     return getSession(DbSimulatorSqlSession.class);
   }
   
-  public DeploymentManager getDeploymentManager() {
-    return getSession(DeploymentManager.class);
-  }
+//  public DeploymentManager getDeploymentManager() {
+//    return getSession(DeploymentManager.class);
+//  }
+//
+//  public ResourceManager getResourceManager() {
+//    return getSession(ResourceManager.class);
+//  }
 
-  public ResourceManager getResourceManager() {
-    return getSession(ResourceManager.class);
-  }
-  
   public ByteArrayManager getByteArrayManager() {
     return getSession(ByteArrayManager.class);
   }
-  
+
   public SimulationInstanceEntityManager getSimulationInstanceManager() {
     return getSession(SimulationInstanceEntityManager.class);
   }
@@ -218,9 +202,9 @@ public class CommandContext {
 	    return getSession(ResultEntityManager.class);
   }
   
-  public ModelManager getModelManager() {
-    return getSession(ModelManager.class);
-  }
+//  public ModelManager getModelManager() {
+//    return getSession(ModelManager.class);
+//  }
   
   public JobManager getJobManager() {
     return getSession(JobManager.class);
@@ -230,9 +214,9 @@ public class CommandContext {
 	    return getSession(VariableInstanceManager.class);
   }
 
-  public TableDataManager getTableDataManager() {
-    return getSession(TableDataManager.class);
-  }
+//  public TableDataManager getTableDataManager() {
+//    return getSession(TableDataManager.class);
+//  }
 
   public Map<Class< ? >, SessionFactory> getSessionFactories() {
     return sessionFactories;
@@ -241,6 +225,10 @@ public class CommandContext {
   public PropertyManager getPropertyManager() {
     return getSession(PropertyManager.class);
   }
+
+//  public ProcessDefinitionManager getProcessDefinitionManager() {
+//      return getSession(ProcessDefinitionManager.class);
+//  }
   
   // getters and setters //////////////////////////////////////////////////////
 

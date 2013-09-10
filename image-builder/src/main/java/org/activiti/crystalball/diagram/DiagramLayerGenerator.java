@@ -21,6 +21,8 @@ package org.activiti.crystalball.diagram;
  */
 
 
+import org.activiti.crystalball.processengine.wrapper.ProcessDiagramService;
+
 import java.util.Map;
 
 /**
@@ -30,10 +32,10 @@ import java.util.Map;
 public interface DiagramLayerGenerator {
 	/**
 	 * generate layer to process diagram (byte[])
-	 * 
+	 *
 	 * @param imageType type of the image produced
 	 * @param params parameters map  
 	 * @return byte array which represents image  
 	 */
-	public byte[] generateLayer(String imageType, Map<String, Object> params);
+	public byte[] generateLayer( String imageType, Map<String, Object> params);
 }

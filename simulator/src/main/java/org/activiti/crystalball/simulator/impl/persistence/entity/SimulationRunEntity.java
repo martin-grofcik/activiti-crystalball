@@ -12,16 +12,16 @@
  */
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
+import org.activiti.crystalball.simulator.SimulationRun;
+import org.activiti.crystalball.simulator.impl.db.PersistentObject;
+import org.activiti.crystalball.simulator.runtime.SuspensionState;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.activiti.crystalball.simulator.SimulationRun;
-import org.activiti.crystalball.simulator.runtime.SuspensionState;
-import org.activiti.engine.impl.db.PersistentObject;
 
-
-public class SimulationRunEntity extends SimulationRun implements	PersistentObject {
+public class SimulationRunEntity extends SimulationRun implements PersistentObject {
 
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;

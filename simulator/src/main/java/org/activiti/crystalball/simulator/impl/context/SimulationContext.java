@@ -13,13 +13,12 @@
 
 package org.activiti.crystalball.simulator.impl.context;
 
-import java.util.Stack;
-
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
 import org.activiti.crystalball.simulator.impl.simulationexecutor.JobExecutorContext;
-import org.activiti.engine.impl.pvm.runtime.InterpretableExecution;
+
+import java.util.Stack;
 
 
 /**
@@ -30,7 +29,6 @@ public class SimulationContext {
 
   protected static ThreadLocal<Stack<CommandContext>> commandContextThreadLocal = new ThreadLocal<Stack<CommandContext>>();
   protected static ThreadLocal<Stack<SimulationEngineConfigurationImpl>> simulationEngineConfigurationStackThreadLocal = new ThreadLocal<Stack<SimulationEngineConfigurationImpl>>();
-  protected static ThreadLocal<Stack<ExecutionContext>> executionContextStackThreadLocal = new ThreadLocal<Stack<ExecutionContext>>();
   protected static ThreadLocal<JobExecutorContext> jobExecutorContextThreadLocal = new ThreadLocal<JobExecutorContext>();
   protected static ThreadLocal<SimulationRunEntity> simulationRunThreadLocal = new ThreadLocal<SimulationRunEntity>();
 
@@ -64,18 +62,6 @@ public class SimulationContext {
 
   public static void removeSimulationEngineConfiguration() {
     getStack(simulationEngineConfigurationStackThreadLocal).pop();
-  }
-
-  public static ExecutionContext getExecutionContext() {
-    return getStack(executionContextStackThreadLocal).peek();
-  }
-
-  public static void setExecutionContext(InterpretableExecution execution) {
-    getStack(executionContextStackThreadLocal).push(new ExecutionContext(execution));
-  }
-
-  public static void removeExecutionContext() {
-    getStack(executionContextStackThreadLocal).pop();
   }
 
   protected static <T> Stack<T> getStack(ThreadLocal<Stack<T>> threadLocal) {

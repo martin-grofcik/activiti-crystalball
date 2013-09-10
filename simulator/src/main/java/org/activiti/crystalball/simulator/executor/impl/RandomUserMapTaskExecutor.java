@@ -21,10 +21,10 @@ package org.activiti.crystalball.simulator.executor.impl;
  */
 
 
-import java.util.Map;
-
+import org.activiti.crystalball.processengine.wrapper.queries.TaskWrapper;
 import org.activiti.crystalball.simulator.SimUtils;
-import org.activiti.engine.impl.persistence.entity.TaskEntity;
+
+import java.util.Map;
 
 /**
  * generate execution time (unified distribution) in given interval min inclusive max exclusive 
@@ -42,7 +42,7 @@ public class RandomUserMapTaskExecutor extends AbstractRandomVariableMapUsertask
 	}
 	
 	@Override
-	protected long getExecutionTime(TaskEntity execTask,
+	protected long getExecutionTime(TaskWrapper execTask,
 			Map<String, Object> variables) {
 		return SimUtils.getRandomInt(max - min ) + min;
 	}

@@ -12,10 +12,10 @@
  */
 package org.activiti.crystalball.simulator.impl.simulationexecutor;
 
-import java.util.logging.Logger;
-
 import org.activiti.crystalball.simulator.impl.cfg.TransactionListener;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
+
+import java.util.logging.Logger;
 
 /**
  * @author Tom Baeyens

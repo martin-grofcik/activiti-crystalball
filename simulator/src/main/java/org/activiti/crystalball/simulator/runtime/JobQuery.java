@@ -13,10 +13,9 @@
 
 package org.activiti.crystalball.simulator.runtime;
 
+import org.activiti.crystalball.simulator.query.Query;
+
 import java.util.Date;
-
-import org.activiti.engine.query.Query;
-
 
 /**
  * Allows programmatic querying of {@link Job}s.

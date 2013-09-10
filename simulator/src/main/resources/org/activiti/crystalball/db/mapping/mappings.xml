@@ -19,7 +19,7 @@
     <mapper resource="org/activiti/db/mapping/entity/Comment.xml" />
     <mapper resource="org/activiti/db/mapping/entity/Deployment.xml" />
     <mapper resource="org/activiti/db/mapping/entity/Execution.xml" />
-    <mapper resource="org/activiti/db/mapping/entity/Group.xml" />
+    <mapper resource="org/activiti/db/mapping/entity/GroupWrapper.xml" />
     <mapper resource="org/activiti/db/mapping/entity/HistoricActivityInstance.xml" />
     <mapper resource="org/activiti/db/mapping/entity/HistoricDetail.xml" />
     <mapper resource="org/activiti/db/mapping/entity/HistoricProcessInstance.xml" />

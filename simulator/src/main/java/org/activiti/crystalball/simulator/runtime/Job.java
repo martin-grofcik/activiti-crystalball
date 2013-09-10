@@ -15,7 +15,6 @@ package org.activiti.crystalball.simulator.runtime;
 
 import java.util.Date;
 
-import org.activiti.engine.ManagementService;
 
 
 /**
@@ -59,7 +58,7 @@ public interface Job {
    * executed. Returns null when no exception occurred.
    * 
    * To get the full exception stacktrace, 
-   * use {@link ManagementService#getJobExceptionStacktrace(String)}
+   * use {@//link ManagementService#getJobExceptionStacktrace(String)}
    */
   String getExceptionMessage();
 

@@ -12,9 +12,6 @@
  */
 package org.activiti.crystalball.simulator.impl;
 
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.SimulationEngine;
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
@@ -22,9 +19,12 @@ import org.activiti.crystalball.simulator.impl.cfg.TransactionContextFactory;
 import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSession;
 import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSessionFactory;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
+import org.activiti.crystalball.simulator.impl.interceptor.SessionFactory;
 import org.activiti.crystalball.simulator.impl.simulationexecutor.JobExecutor;
 import org.activiti.engine.impl.el.ExpressionManager;
-import org.activiti.engine.impl.interceptor.SessionFactory;
+
+import java.util.Map;
+import java.util.logging.Logger;
 
 
 
@@ -35,6 +35,7 @@ public class SimulationEngineImpl implements SimulationEngine {
   protected String name;
   protected String databaseSchemaUpdate;
   protected RuntimeService runtimeService;
+//  protected RepositoryServiceWrapper repositoryService;
   protected CommandExecutor commandExecutor;
   protected Map<Class<?>, SessionFactory> sessionFactories;
   protected ExpressionManager expressionManager;
@@ -85,7 +86,12 @@ public class SimulationEngineImpl implements SimulationEngine {
     return name;
   }
 
-	@Override
+//    @Override
+//    public RepositoryServiceWrapper getRepositoryService() {
+//        return repositoryService;
+//    }
+//
+    @Override
 	public RuntimeService getRuntimeService() {
 		return runtimeService;
 	}

@@ -21,23 +21,19 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.activiti.crystalball.processengine.wrapper.ProcessEngineWrapper;
 import org.activiti.crystalball.simulator.evaluator.HistoryEvaluator;
 import org.activiti.crystalball.simulator.impl.AcquireJobNotificationEventHandler;
 import org.activiti.crystalball.simulator.impl.NoopEventHandler;
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.impl.jobexecutor.JobExecutor;
+import org.activiti.engine.impl.jobexecutor.SimulationDefaultJobExecutor;
 import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
+
+import java.util.*;
 
 public class SimulationRun {
 	
@@ -51,13 +47,13 @@ public class SimulationRun {
 	/** simulation run event handlers - e.g. specific handlers for managing simulation time events*/
 	private HashMap<String, SimulationEventHandler> eventHandlerMap;
 
-	protected FactoryBean<ProcessEngine> processEngineFactory;
+	protected FactoryBean<ProcessEngineWrapper> processEngineFactory;
 	protected FactoryBean<EventCalendar> eventCalendarFactory;
 	
 	public SimulationRun() {		
 	}
 
-	public SimulationRun(FactoryBean<EventCalendar> eventCalendarFactory, FactoryBean<ProcessEngine> processEngineFactory, Map<String, SimulationEventHandler> eventHandlerMap, List<HistoryEvaluator> historyEvaluators) {
+	public SimulationRun(FactoryBean<EventCalendar> eventCalendarFactory, FactoryBean<ProcessEngineWrapper> processEngineFactory, Map<String, SimulationEventHandler> eventHandlerMap, List<HistoryEvaluator> historyEvaluators) {
 		this.eventCalendarFactory = eventCalendarFactory;
 		this.processEngineFactory = processEngineFactory;
 		this.eventHandlerMap = new HashMap<String, SimulationEventHandler>();
@@ -67,7 +63,7 @@ public class SimulationRun {
 		this.historyEvaluators = historyEvaluators;
 	}
 	
-	public SimulationRun(FactoryBean<EventCalendar> eventCalendarFactory, FactoryBean<ProcessEngine> processEngineFactory, Map<String, SimulationEventHandler> customEventHandlerMap, List<HistoryEvaluator> historyEvaluators, JobExecutor jobExecutor) {
+	public SimulationRun(FactoryBean<EventCalendar> eventCalendarFactory, FactoryBean<ProcessEngineWrapper> processEngineFactory, Map<String, SimulationEventHandler> customEventHandlerMap, List<HistoryEvaluator> historyEvaluators, SimulationDefaultJobExecutor jobExecutor) {
 		this(eventCalendarFactory, processEngineFactory, customEventHandlerMap, historyEvaluators);
 		// init internal event handler map.
 		eventHandlerMap.put( SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, new AcquireJobNotificationEventHandler(jobExecutor) );
@@ -76,7 +72,7 @@ public class SimulationRun {
 	public List<ResultEntity> execute(Date simDate, Date dueDate) throws Exception {
 		
 		// init new process engine
-		ProcessEngine processEngine = processEngineFactory.getObject();
+		ProcessEngineWrapper processEngine = processEngineFactory.getObject();
 				
 		// add context in which simulation run is executed
 		SimulationRunContext.setEventCalendar(eventCalendarFactory.getObject());
@@ -122,7 +118,7 @@ public class SimulationRun {
 	public void execute(SimulationRunEntity simulationRun) throws Exception {
 		
 		// init new process engine
-		ProcessEngine processEngine = processEngineFactory.getObject();
+		ProcessEngineWrapper processEngine = processEngineFactory.getObject();
 				
 		// add context in which simulation run is executed
 		SimulationRunContext.setEventCalendar(eventCalendarFactory.getObject());
@@ -182,7 +178,7 @@ public class SimulationRun {
 	
 	/** 
 	 * evaluate sim. results
-	 * @param context 
+	 * @param simulationRun
 	 * @return
 	 */
 	private List<ResultEntity> evaluate(SimulationRunEntity simulationRun) {
@@ -223,7 +219,7 @@ public class SimulationRun {
 		this.customEventHandlerMap = eventHandlerMap;
 	}
 
-	public ProcessEngine getProcessEngine() throws Exception {
+	public ProcessEngineWrapper getProcessEngine() throws Exception {
 		return processEngineFactory.getObject();
 	}
 }

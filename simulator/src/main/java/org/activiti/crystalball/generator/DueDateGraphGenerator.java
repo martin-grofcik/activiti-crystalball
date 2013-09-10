@@ -21,23 +21,22 @@ package org.activiti.crystalball.generator;
  */
 
 
-import java.awt.Color;
+import org.activiti.crystalball.processengine.wrapper.HistoryServiceWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.ActivityWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.NativeHistoricTaskInstanceQueryWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.ProcessDefinitionWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.history.NativeHistoricTaskInstanceQuery;
-import org.activiti.engine.impl.RepositoryServiceImpl;
-import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
-import org.activiti.engine.impl.pvm.process.ActivityImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class DueDateGraphGenerator extends AbstractProcessEngineGraphGenerator {
 
 	protected static Logger log = LoggerFactory.getLogger(DueDateGraphGenerator.class);
-	HistoryService historyService;
+	HistoryServiceWrapper historyService;
 	
 	/** query for selecting all task instances (completed or not) in given time interval for given ProcessDefinitionId and */
 	private String QUERY_HISTORIC_TASK_INSTANCES_FROM_INTERVAL = "select count(*) from ACT_HI_TASKINST RES where " +
@@ -49,18 +48,18 @@ public class DueDateGraphGenerator extends AbstractProcessEngineGraphGenerator {
     		"and (RES.END_TIME_ is not null) and (RES.END_TIME_ > RES.DUE_DATE_)";
 	
 	@Override
-	protected ProcessDefinitionEntity getProcessData(String processDefinitionId, Date startDate, Date finishDate,
+	protected ProcessDefinitionWrapper getProcessData(String processDefinitionId, Date startDate, Date finishDate,
 			 Map<Color,List<String>> highLightedActivitiesMap, Map<String, String> counts) {
 		
-		ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ( ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition( processDefinitionId ));
-	    List<ActivityImpl> activities = pde.getActivities();
+		ProcessDefinitionWrapper pde = repositoryService.getDeployedProcessDefinition( processDefinitionId );
+	    List<ActivityWrapper> activities = pde.getActivities();
 	    // iterate through all activities
-	    for( ActivityImpl activity : activities) {
+	    for( ActivityWrapper activity : activities) {
 	    	// get count of  executions for userTask in the given process
 	    	if (activity.getProperty("type") == "userTask") {
 	    		
 
-	    		NativeHistoricTaskInstanceQuery query = historyService.createNativeHistoricTaskInstanceQuery();
+	    		NativeHistoricTaskInstanceQueryWrapper query = historyService.createNativeHistoricTaskInstanceQuery();
 	    		
 		    	long count = query.sql(QUERY_HISTORIC_TASK_INSTANCES_FROM_INTERVAL)
 		    						.parameter("processDefinitionId", processDefinitionId)
@@ -91,11 +90,11 @@ public class DueDateGraphGenerator extends AbstractProcessEngineGraphGenerator {
 		return pde;
 	}
 
-	public HistoryService getHistoryService() {
+	public HistoryServiceWrapper getHistoryService() {
 		return historyService;
 	}
 
-	public void setHistoryService(HistoryService historyService) {
+	public void setHistoryService(HistoryServiceWrapper historyService) {
 		this.historyService = historyService;
 	}
 

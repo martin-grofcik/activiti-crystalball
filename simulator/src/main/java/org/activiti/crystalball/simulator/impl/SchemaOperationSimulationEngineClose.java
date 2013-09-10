@@ -28,7 +28,7 @@ final class SchemaOperationSimulationEngineClose implements Command<Object> {
   public Object execute(CommandContext commandContext) {
     commandContext
       .getSession(DbSimulatorSqlSession.class)
-      .performSchemaOperationsProcessEngineClose();
+      .performSchemaOperationsSimulationEngineClose();
     return null;
   }
 }

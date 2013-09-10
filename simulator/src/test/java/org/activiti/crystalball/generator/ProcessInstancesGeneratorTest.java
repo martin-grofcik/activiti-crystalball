@@ -21,16 +21,15 @@ package org.activiti.crystalball.generator;
  */
 
 
-import java.awt.Color;
+import org.activiti.engine.impl.test.PluggableActivitiTestCase;
+import org.activiti.engine.task.Task;
+import org.apache.commons.io.FileUtils;
+
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.activiti.engine.impl.test.PluggableActivitiTestCase;
-import org.activiti.engine.task.Task;
-import org.apache.commons.io.FileUtils;
-import org.activiti.crystalball.generator.ProcessInstancesGenerator;
 
 
 public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
@@ -90,10 +89,10 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 	
 	/**
 	 * Generate ProcessInstances reports for started ThreeTask process. <br/>
-	 * The first report should have <a href="https://raw.github.com/gro-mar/activiti/crystalball/master/simulator/src/test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-1.png">4 tasks on the first node<a>.<br/>
-	 * 3 tasks are completed - <a href="https://raw.github.com/gro-mar/activiti/crystalball/master/simulator/src/test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-2.png">1 task on the first node  3 tasks on the second.<a><br/>
-	 * 3 tasks from the 2nd node are completed - <a href="https://raw.github.com/gro-mar/activiti/crystalball/master/simulator/src/test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-3.png">1 task on the first node  3 tasks on the 3rd<a>.<br/>
-	 * 3 tasks from the 3rd node are completed - <a href="https://raw.github.com/gro-mar/activiti/crystalball/master/simulator/src/test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-4.png">1 task on the first node remains<a>
+	 * The first report should have <a href="https://raw.github.com/gro-mar/activiti/crystalball/master/simulator/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-1.png">4 tasks on the first node<a>.<br/>
+	 * 3 tasks are completed - <a href="https://raw.github.com/gro-mar/activiti/crystalball/master/simulator/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-2.png">1 task on the first node  3 tasks on the second.<a><br/>
+	 * 3 tasks from the 2nd node are completed - <a href="https://raw.github.com/gro-mar/activiti/crystalball/master/simulator/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-3.png">1 task on the first node  3 tasks on the 3rd<a>.<br/>
+	 * 3 tasks from the 3rd node are completed - <a href="https://raw.github.com/gro-mar/activiti/crystalball/master/simulator/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-4.png">1 task on the first node remains<a>
 	 * @throws IOException
 	 */
 	public void testGenerateProcessDefinition() throws IOException {
@@ -109,7 +108,7 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 	    
 	    monitor.generateReport( processDefinitionId, null, null, "target/ProcessInstanceMonitor-1.png");
 	    
-	    File expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-1.png" );
+	    File expectedFile = new File("src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-1.png" );
 	    File generatedFile = new File("target/ProcessInstanceMonitor-1.png" );
 	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
 	    
@@ -123,7 +122,7 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 
 	    monitor.generateReport( processDefinitionId, null, null, "target/ProcessInstanceMonitor-2.png");
 	    
-	    expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-2.png" );
+	    expectedFile = new File("src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-2.png" );
 	    generatedFile = new File("target/ProcessInstanceMonitor-2.png" );
 	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
 
@@ -136,7 +135,7 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 
 	    monitor.generateReport( processDefinitionId, null, null, "target/ProcessInstanceMonitor-3.png");
 
-		expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-3.png" );
+		expectedFile = new File("src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-3.png" );
 	    generatedFile = new File("target/ProcessInstanceMonitor-3.png" );
 	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
 
@@ -149,7 +148,7 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 
 	    monitor.generateReport( processDefinitionId, null, null, "target/ProcessInstanceMonitor-4.png");
 
-		expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-4.png" );
+		expectedFile = new File("src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/ProcessInstanceMonitor-4.png" );
 	    generatedFile = new File("target/ProcessInstanceMonitor-4.png" );
 	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
 
@@ -171,7 +170,7 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 	    
 	    monitor.generateReport( processDefinitionId, null, null, "target/HistoricInstanceMonitor-1.png");
 	    
-	    File expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-1.png" );
+	    File expectedFile = new File("src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-1.png" );
 	    File generatedFile = new File("target/HistoricInstanceMonitor-1.png" );
 	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
 	    
@@ -185,7 +184,7 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 
 	    monitor.generateReport( processDefinitionId, null, null, "target/HistoricInstanceMonitor-2.png");
 	    
-	    expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-2.png" );
+	    expectedFile = new File("src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-2.png" );
 	    generatedFile = new File("target/HistoricInstanceMonitor-2.png" );
 	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
 
@@ -198,7 +197,7 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 
 	    monitor.generateReport( processDefinitionId, null, null, "target/HistoricInstanceMonitor-3.png");
 
-		expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-3.png" );
+		expectedFile = new File("src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-3.png" );
 	    generatedFile = new File("target/HistoricInstanceMonitor-3.png" );
 	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
 
@@ -211,7 +210,7 @@ public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {
 
 	    monitor.generateReport( processDefinitionId, null, null, "target/HistoricInstanceMonitor-4.png");
 
-		expectedFile = new File("src/test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-4.png" );
+		expectedFile = new File("src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/generator/HistoricInstanceMonitor-4.png" );
 	    generatedFile = new File("target/HistoricInstanceMonitor-4.png" );
 	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
 

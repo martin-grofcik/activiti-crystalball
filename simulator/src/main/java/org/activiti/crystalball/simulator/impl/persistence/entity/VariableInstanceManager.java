@@ -13,10 +13,10 @@
 
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
+import org.activiti.crystalball.simulator.impl.persistence.AbstractManager;
+
 import java.util.List;
 import java.util.Map;
-
-import org.activiti.crystalball.simulator.impl.persistence.AbstractManager;
 
 
 /**

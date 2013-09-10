@@ -12,16 +12,14 @@
  */
 package org.activiti.crystalball.simulator.runtime;
 
+import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntity;
+import org.activiti.crystalball.simulator.query.Query;
+
 import java.io.Serializable;
 import java.util.Set;
 
-import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntity;
-import org.activiti.engine.ProcessEngineConfiguration;
-import org.activiti.engine.query.Query;
-import org.activiti.engine.runtime.ProcessInstance;
-
 /**
- * Allows programmatic querying of {@link ProcessInstance}s.
+ * Allows programmatic querying of {@link SimulationInstance}s.
  * 
  * @author Joram Barrez
  * @author Frederik Heremans
@@ -51,7 +49,7 @@ public interface SimulationInstanceQuery extends Query<SimulationInstanceQuery, 
   /** 
    * Only select process instances which have a global variable with the given value. The type
    * of variable is determined based on the value, using types configured in 
-   * {@link ProcessEngineConfiguration#getVariableTypes()}. 
+   * {@//link SimulationEngineConfiguration#getVariableTypes()}.
    * Byte-arrays and {@link Serializable} objects (which are not primitive type wrappers)
    * are not supported.
    * @param name name of the variable, cannot be null.
@@ -61,7 +59,7 @@ public interface SimulationInstanceQuery extends Query<SimulationInstanceQuery, 
   /** 
    * Only select process instances which have at least one global variable with the given value. The type
    * of variable is determined based on the value, using types configured in 
-   * {@link ProcessEngineConfiguration#getVariableTypes()}. 
+   * {@//link SimulationEngineConfiguration//#getVariableTypes()}.
    * Byte-arrays and {@link Serializable} objects (which are not primitive type wrappers)
    * are not supported.
    */

@@ -21,19 +21,6 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-
 import org.activiti.crystalball.diagram.BasicProcessDiagramGenerator;
 import org.activiti.crystalball.diagram.HighlightNodeDiagramLayer;
 import org.activiti.crystalball.diagram.MergeLayersGenerator;
@@ -46,6 +33,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import javax.imageio.ImageIO;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.assertTrue;
 
 public class SimulatorProcessMonitorTestWithoutProcess {
 
@@ -70,7 +65,7 @@ public class SimulatorProcessMonitorTestWithoutProcess {
 
 	@Test
 	public void testProcessRun() throws Throwable {
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/activiti/crystalball/simulator/SimEngine-h2-context.xml");
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/activiti/crystalball/simulator/SimRun-h2-context.xml");
 		SimulationRun simRun = appContext.getBean(SimulationRun.class);
 		RepositoryService repositoryService  = (RepositoryService) appContext.getBean("simRepositoryService");
 		
@@ -95,7 +90,7 @@ public class SimulatorProcessMonitorTestWithoutProcess {
 		 
 		appContext.close();
  
-		File expected = new File(System.getProperty("baseDir", ".") + "/src/test/resources/org/activiti/crystalball/simulator/SimulatorProcessMonitor-unfinishedTasks-expected.png" );   
+		File expected = new File(System.getProperty("baseDir", ".") + "/src/org.activiti.crystalball.processengine.wrapper.test/resources/org/activiti/crystalball/simulator/SimulatorProcessMonitor-unfinishedTasks-expected.png" );
 		File generated = new File(System.getProperty("tempDir", "target") + "/unfinished_task/threetasksprocess.png");   
 	    assertTrue( FileUtils.contentEquals(expected, generated));
 	    

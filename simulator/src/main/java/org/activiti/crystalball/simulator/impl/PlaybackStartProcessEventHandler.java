@@ -21,20 +21,19 @@ package org.activiti.crystalball.simulator.impl;
  */
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.activiti.crystalball.processengine.wrapper.HistoryServiceWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.HistoricActivityInstanceWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.HistoricDetailWrapper;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.history.HistoricActivityInstance;
-import org.activiti.engine.history.HistoricDetail;
-import org.activiti.engine.history.HistoricVariableUpdate;
 import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * event handler acts as playback - starts defined processes in the given simulation time. 
@@ -55,7 +54,7 @@ public class PlaybackStartProcessEventHandler implements SimulationEventHandler 
 	private String eventType;
 	
 	/** history from which process starts will be played */
-	private HistoryService historyService;
+	private HistoryServiceWrapper historyService;
 
 	@Override
 	public void init() {
@@ -66,11 +65,11 @@ public class PlaybackStartProcessEventHandler implements SimulationEventHandler 
 		// start process now
 		String processInstanceId = (String) event.getProperty(PROCESS_INSTANCE_ID);
 		// get process variables for startEvent
-		HistoricActivityInstance activityInstance = historyService.createHistoricActivityInstanceQuery()
+		HistoricActivityInstanceWrapper activityInstance = historyService.createHistoricActivityInstanceQuery()
 				.processInstanceId(processInstanceId)
 				.activityType("startEvent")
 				.singleResult();
-		List<HistoricDetail> details = historyService.createHistoricDetailQuery()
+		List<HistoricDetailWrapper> details = historyService.createHistoricDetailQuery()
 				.processInstanceId( processInstanceId )
 				.activityInstanceId( activityInstance.getId())
 				.variableUpdates()
@@ -78,8 +77,8 @@ public class PlaybackStartProcessEventHandler implements SimulationEventHandler 
 		
 		// fulfill variables
 		Map<String, Object> variables = new HashMap<String,Object>();		
-		for ( HistoricDetail detail : details) {
-			variables.put( ((HistoricVariableUpdate) detail).getVariableName(), ((HistoricVariableUpdate) detail).getValue());			
+		for ( HistoricDetailWrapper detail : details) {
+			variables.put( ((HistoricVariableUpdateWrapper) detail).getVariableName(), ((HistoricVariableUpdateWrapper) detail).getValue());
 		}
 		
 		variables.put( PROCESS_INSTANCE_ID, processInstanceId);

@@ -12,11 +12,10 @@
  */
 package org.activiti.crystalball.simulator.runtime;
 
-import org.activiti.engine.repository.ProcessDefinition;
 
 
 
-/** Represents one execution of a  {@link ProcessDefinition}.
+/** Represents one execution of a  {@//link ProcessDefinition}.
  * 
  * @author Tom Baeyens
  * @author Joram Barrez

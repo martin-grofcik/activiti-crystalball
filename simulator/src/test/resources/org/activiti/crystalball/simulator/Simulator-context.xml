@@ -22,10 +22,8 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:activiti="http://www.activiti.org/schema/spring/components"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
-                           http://www.activiti.org/schema/spring/components http://www.activiti.org/schema/spring/components/activiti.xsd"
-    default-lazy-init="true">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-lazy-init="true">
     
 	<!-- *************************************** -->
 	<!--   SIMULATOR                             -->
@@ -50,7 +48,7 @@
 	</bean>
 	
 	<bean id="simulationRunHelper" class="org.activiti.crystalball.simulator.impl.CopySimulationRunHelper">
-		<constructor-arg index ="0" value="${tempDir:target}/basicSimulation.h2.db"/>
+		<constructor-arg index ="0" value="${tempDir:target}/BasicSimulation.h2.db"/>
 		<constructor-arg index ="1" value="${tempDir:target}/${simulationRunId:default}.h2.db"/>
 	</bean>
 	

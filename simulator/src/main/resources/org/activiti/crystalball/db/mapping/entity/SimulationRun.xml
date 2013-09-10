@@ -108,58 +108,58 @@
   
   <sql id="selectProcessDefinitionsByQueryCriteriaSql">  
     from ${prefix}ACT_RE_PROCDEF RES
-    <if test="eventSubscriptionType != null">
+    <if org.activiti.crystalball.processengine.wrapper.test="eventSubscriptionType != null">
     	inner join ${prefix}ACT_RU_EVENT_SUBSCR EVT on RES.ID_ = EVT.CONFIGURATION_
     </if>
     <where>
-      <if test="id != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="id != null">
         RES.ID_ = #{id}
       </if>
-      <if test="category != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="category != null">
         and RES.CATEGORY_ = #{category}
       </if>
-      <if test="categoryLike != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="categoryLike != null">
         and RES.CATEGORY_ like #{categoryLike}
       </if>
-      <if test="categoryNotEquals != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="categoryNotEquals != null">
         and ( RES.CATEGORY_ &lt;&gt; #{categoryNotEquals} OR RES.CATEGORY_ is null )
       </if>
-      <if test="name != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="name != null">
         and RES.NAME_ = #{name}
       </if>
-      <if test="nameLike != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="nameLike != null">
         and RES.NAME_ like #{nameLike}
       </if>
-      <if test="key != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="key != null">
         and RES.KEY_ = #{key}
       </if>
-      <if test="keyLike != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="keyLike != null">
         and RES.KEY_ like #{keyLike}
       </if>
-      <if test="resourceName != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="resourceName != null">
         and RES.RESOURCE_NAME_ = #{resourceName}
       </if>
-      <if test="resourceNameLike != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="resourceNameLike != null">
         and RES.RESOURCE_NAME_ like #{resourceNameLike}
       </if>
-      <if test="version != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="version != null">
         and RES.VERSION_ = #{version}
       </if>
-      <if test="deploymentId != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="deploymentId != null">
         and RES.DEPLOYMENT_ID_ = #{deploymentId}
       </if>
-      <if test="latest">
+      <if org.activiti.crystalball.processengine.wrapper.test="latest">
         and RES.VERSION_ = (select max(VERSION_) from ${prefix}ACT_RE_PROCDEF where KEY_ = RES.KEY_)
       </if>
-      <if test="suspensionState != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="suspensionState != null">
         and (RES.SUSPENSION_STATE_ = #{suspensionState.stateCode})
       </if>
-      <if test="eventSubscriptionType != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="eventSubscriptionType != null">
       	and (EVT.EVENT_TYPE_ = #{eventSubscriptionType} and EVT.EVENT_NAME_ = #{eventSubscriptionName}) 
       </if>
-      <if test="authorizationUserId != null">
+      <if org.activiti.crystalball.processengine.wrapper.test="authorizationUserId != null">
         AND (exists (select ID_  from ${prefix} ACT_RU_IDENTITYLINK  IDN where IDN.PROC_DEF_ID_ = RES.ID_ and IDN.USER_ID_ = #{authorizationUserId})
-        <if test="authorizationGroups != null &amp;&amp; authorizationGroups.size() &gt; 0">
+        <if org.activiti.crystalball.processengine.wrapper.test="authorizationGroups != null &amp;&amp; authorizationGroups.size() &gt; 0">
          OR exists (select ID_ from ${prefix} ACT_RU_IDENTITYLINK  IDN where IDN.PROC_DEF_ID_ = RES.ID_ and IDN.GROUP_ID_ IN
             <foreach item="group" index="index" collection="authorizationGroups" 
                      open="(" separator="," close=")">

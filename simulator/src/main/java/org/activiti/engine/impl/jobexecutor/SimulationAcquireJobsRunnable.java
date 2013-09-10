@@ -21,18 +21,22 @@ package org.activiti.engine.impl.jobexecutor;
  */
 
 
+import org.activiti.crystalball.simulator.ActivitiOptimisticLockingException;
+import org.activiti.crystalball.simulator.SimulationEvent;
+import org.activiti.crystalball.simulator.SimulationRunContext;
+import org.activiti.crystalball.simulator.impl.Page;
+import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
+import org.activiti.crystalball.simulator.impl.persistence.entity.TimerEntity;
+import org.activiti.crystalball.simulator.impl.simulationexecutor.AcquireJobsRunnable;
+import org.activiti.crystalball.simulator.impl.simulationexecutor.AcquiredJobs;
+import org.activiti.crystalball.simulator.impl.simulationexecutor.GetUnlockedTimersByDuedateCmd;
+import org.activiti.crystalball.simulator.impl.simulationexecutor.JobExecutor;
+import org.activiti.engine.impl.util.ClockUtil;
+
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.activiti.crystalball.simulator.SimulationEvent;
-import org.activiti.crystalball.simulator.SimulationRunContext;
-import org.activiti.engine.ActivitiOptimisticLockingException;
-import org.activiti.engine.impl.Page;
-import org.activiti.engine.impl.interceptor.CommandExecutor;
-import org.activiti.engine.impl.persistence.entity.TimerEntity;
-import org.activiti.engine.impl.util.ClockUtil;
 
 /**
  * "thread" has to be driven by simulation time.
@@ -47,8 +51,7 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 	/**
 	 * 
 	 * @param jobExecutor
-	 * @param eventCalendar - calendar into which next AcqureJobs execution is scheduled 
-	 */
+     */
 	public SimulationAcquireJobsRunnable(JobExecutor jobExecutor) {
 	    super(jobExecutor);
 	}
@@ -80,6 +83,7 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		          isJobAdded = false;
 		          
 		          // check if the next timer should fire before the normal sleep time is over
+                  @SuppressWarnings("deprecated")
 		          Date duedate = new Date(ClockUtil.getCurrentTime().getTime() + millisToWait);
 		          List<TimerEntity> nextTimers = commandExecutor.execute(new GetUnlockedTimersByDuedateCmd(duedate, new Page(0, 1)));
 		          
@@ -94,7 +98,7 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		          millisToWait = 0;
 		        }
 
-		      } catch (ActivitiOptimisticLockingException optimisticLockingException) { 
+		      } catch (ActivitiOptimisticLockingException optimisticLockingException) {
 		        // See http://jira.codehaus.org/browse/ACT-1390
 		        if (log.isLoggable(Level.FINE)) {
 		          log.fine("Optimistic locking exception during job acquisition. If you have multiple job executors running against the same database, " +

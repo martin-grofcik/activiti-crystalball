@@ -16,8 +16,12 @@
 	<name>examples</name>
 	<url>http://maven.apache.org</url>
 	<description>Examples to demonstrate crystalball usage</description>
-	
-	<dependencies>
+
+    <properties>
+        <activiti.version>5.11</activiti.version>
+    </properties>
+
+    <dependencies>
 		<dependency>
 			<groupId>org.activiti.crystalball</groupId>
 			<artifactId>image-builder</artifactId>
@@ -51,15 +55,15 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
+			<artifactId>spring-org.activiti.crystalball.processengine.wrapper.test</artifactId>
 			<version>${spring.framework.version}</version>
-			<scope>test</scope>
+			<scope>org.activiti.crystalball.processengine.wrapper.test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.2</version>
-			<!-- scope>test</scope -->
+			<!-- scope>org.activiti.crystalball.processengine.wrapper.test</scope -->
 		</dependency>
 	</dependencies>
 
@@ -67,10 +71,8 @@
 		<directory>target</directory>
 		<outputDirectory>target/classes</outputDirectory>
 		<finalName>${artifactId}-${version}</finalName>
-		<testOutputDirectory>target/test-classes</testOutputDirectory>
-		<sourceDirectory>src/main/java</sourceDirectory>
-		<scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
-		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<testOutputDirectory>target/org.activiti.crystalball.processengine.wrapper.test-classes</testOutputDirectory>
+		<testSourceDirectory>src/org.activiti.crystalball.processengine.wrapper.test/java</testSourceDirectory>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -81,14 +83,14 @@
 		</resources>
 		<testResources>
 			<testResource>
-				<directory>src/test/resources</directory>
+				<directory>src/org.activiti.crystalball.processengine.wrapper.test/resources</directory>
 			</testResource>
 			<testResource>
-				<directory>src/test/process</directory>
+				<directory>src/org.activiti.crystalball.processengine.wrapper.test/process</directory>
 			</testResource>
 		</testResources>
 		<plugins>			
-			<!-- test config -->
+			<!-- org.activiti.crystalball.processengine.wrapper.test config -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -119,8 +121,8 @@
 		        <version>1.7</version>
 		        <executions>
 		          <execution>
-		            <id>mvn-test</id>
-		            <phase>test</phase>
+		            <id>mvn-org.activiti.crystalball.processengine.wrapper.test</id>
+		            <phase>org.activiti.crystalball.processengine.wrapper.test</phase>
 					<configuration>											
 						<target>
 							<taskdef name="runSimulation"
@@ -137,14 +139,14 @@
 							<tstamp />
 
 							<runSimulation
-								appContext="${project.build.directory}/test-classes/org/activiti/crystalball/examples/mvn/mortages-h2-context.xml"
+								appContext="${project.build.directory}/org.activiti.crystalball.processengine.wrapper.test-classes/org/activiti/crystalball/examples/mvn/mortages-h2-context.xml"
 								simRunBean="simulationRun"
 								dateFormat="yyMMddhhmmss"
 								startDate="130403120000" 
 								endDate="130403123000"/>
 								
 							<runGenerator
-								appContext="${project.build.directory}/test-classes/org/activiti/crystalball/examples/mvn/mortages-h2-context.xml"
+								appContext="${project.build.directory}/org.activiti.crystalball.processengine.wrapper.test-classes/org/activiti/crystalball/examples/mvn/mortages-h2-context.xml"
 								generatorBean="reportInstances" 
 								processDefinitionId="mortagedemo-0:1:4"
 								dateFormat="yyMMddhhmmss"

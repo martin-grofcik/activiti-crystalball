@@ -13,30 +13,26 @@
 package org.activiti.crystalball.simulator.impl.simulationexecutor;
 
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <p>This is a simple implementation of the {@link JobExecutor} using self-managed
+ * <p>This is a simple implementation of the {@link org.activiti.engine.impl.jobexecutor.JobExecutor} using self-managed
  * threads for performing background work.</p>
- * 
- * <p>This implementation uses a {@link ThreadPoolExecutor} backed by a queue to which
+ *
+ * <p>This implementation uses a {@link java.util.concurrent.ThreadPoolExecutor} backed by a queue to which
  * work is submitted.</p>
- * 
- * <p><em>NOTE: use this class in environments in which self-management of threads 
- * is permitted. Consider using a different thread-management strategy in 
+ *
+ * <p><em>NOTE: use this class in environments in which self-management of threads
+ * is permitted. Consider using a different thread-management strategy in
  * J(2)EE-Environments.</em></p>
- * 
+ *
  * @author Daniel Meyer
  */
 public class DefaultJobExecutor extends JobExecutor {
   
-  private static Logger log = Logger.getLogger(DefaultJobExecutor.class.getName());
+  private static Logger log = Logger.getLogger(org.activiti.engine.impl.jobexecutor.DefaultJobExecutor.class.getName());
   
   protected int queueSize = 3;
   protected int corePoolSize = 3;

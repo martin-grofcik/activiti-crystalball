@@ -26,9 +26,9 @@ import java.util.Collections;
 import java.util.Map;
 
 
-import org.activiti.engine.impl.RepositoryServiceImpl;
-import org.activiti.engine.impl.bpmn.diagram.ProcessDiagramGenerator;
-import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.activiti.crystalball.processengine.wrapper.ProcessDiagramService;
+import org.activiti.crystalball.processengine.wrapper.RepositoryServiceWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.ProcessDefinitionWrapper;
 
 /**
  * generates basic process diagram without any highlightings
@@ -40,9 +40,10 @@ public class BasicProcessDiagramGenerator extends AbstractProcessDiagramLayerGen
 	public BasicProcessDiagramGenerator() {		
 	}
 	
-	public BasicProcessDiagramGenerator(RepositoryServiceImpl repositoryService)
+	public BasicProcessDiagramGenerator(RepositoryServiceWrapper repositoryService, ProcessDiagramService diagramService)
 	{
 		this.repositoryService = repositoryService ;
+        this.diagramService = diagramService;
 	}
 	
 	/**
@@ -54,15 +55,15 @@ public class BasicProcessDiagramGenerator extends AbstractProcessDiagramLayerGen
 	 * @return null in case of params == null in other cases @see RepositoryServiceImpl ProcessDiagramGenerator 
 	 */
 	@Override
-	public byte[] generateLayer(String imageType, Map<String, Object> params) {
+	public byte[] generateLayer( String imageType, Map<String, Object> params) {
 		
 		// get process definition entity
 		final String processDefinitionKey = (String) params.get( PROCESS_DEFINITION_ID );
 		final String processDefinitionId  = repositoryService.createProcessDefinitionQuery().processDefinitionKey( processDefinitionKey ).singleResult().getId();
-	    ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ( ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition( processDefinitionId ));
+	    ProcessDefinitionWrapper pde = repositoryService.getDeployedProcessDefinition( processDefinitionId );
 
 	    // convert image to byte[]
-	    InputStream diagramIs = ProcessDiagramGenerator.generateDiagram(pde, imageType, Collections.<String> emptyList());   
+	    InputStream diagramIs = diagramService.generatePngDiagram(pde);
 	    
 		return convertToByteArray(imageType, diagramIs);
 	}

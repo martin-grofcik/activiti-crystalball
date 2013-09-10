@@ -21,13 +21,6 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.activiti.crystalball.simulator.impl.PlaybackScheduleStartProcessEventHandler;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
@@ -39,11 +32,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.File;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+
 public class PlaybackTest {
 
 	@After @Before
 	public void after() {
-		File db = new File(System.getProperty("tempDir", "target") + "/Playback-test.h2.db");
+		File db = new File(System.getProperty("tempDir", "target") + "/Playback-org.activiti.crystalball.processengine.wrapper.test.h2.db");
 		db.delete();
 		db = new File(System.getProperty("tempDir", "target") + "/Playback-test2.h2.db");
 		db.delete();
@@ -51,7 +51,7 @@ public class PlaybackTest {
 
 	@Test
 	public void testPlaybackRun() throws Exception {
-		System.setProperty("_SIM_DB_PATH", System.getProperty("tempDir", "target") + "/Playback-test");
+		System.setProperty("_SIM_DB_PATH", System.getProperty("tempDir", "target") + "/Playback-org.activiti.crystalball.processengine.wrapper.test");
 		System.setProperty("liveDB", "target/Playback");
 
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/activiti/crystalball/simulator/PlaybackSimEngine-h2-context.xml");

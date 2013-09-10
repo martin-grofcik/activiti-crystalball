@@ -21,17 +21,16 @@ package org.activiti.crystalball.generator;
  */
 
 
-import java.awt.Color;
+import org.activiti.crystalball.processengine.wrapper.RuntimeServiceWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.ActivityWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.ProcessDefinitionWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.impl.RepositoryServiceImpl;
-import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
-import org.activiti.engine.impl.pvm.process.ActivityImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * highlight user tasks with running process instances higher than limit 
@@ -40,15 +39,15 @@ import org.slf4j.LoggerFactory;
 public class ProcessInstancesGenerator extends AbstractProcessEngineGraphGenerator {
 
 	protected static Logger log = LoggerFactory.getLogger(ProcessInstancesGenerator.class);
-	RuntimeService runtimeService;
+	RuntimeServiceWrapper runtimeService;
 	
 	@Override
-	protected ProcessDefinitionEntity getProcessData(String processDefinitionId, Date startDate, Date finishDate,
+	protected ProcessDefinitionWrapper getProcessData(String processDefinitionId, Date startDate, Date finishDate,
 			Map<Color,List<String>> highLightedActivitiesMap, Map<String, String> counts) {
-		ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ( ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition( processDefinitionId ));
-	    List<ActivityImpl> activities = pde.getActivities();
+		ProcessDefinitionWrapper pde = repositoryService.getDeployedProcessDefinition( processDefinitionId );
+	    List<ActivityWrapper> activities = pde.getActivities();
 	    // iterate through all activities
-	    for( ActivityImpl activity : activities) {
+	    for( ActivityWrapper activity : activities) {
 	    	// get count of  executions for userTask in the given process
 	    	if (activity.getProperty("type") == "userTask") {
 		    	long count = runtimeService.createExecutionQuery().processDefinitionId(processDefinitionId).activityId( activity.getId() ).count();
@@ -70,11 +69,11 @@ public class ProcessInstancesGenerator extends AbstractProcessEngineGraphGenerat
 		return pde;
 	}
 
-	public RuntimeService getRuntimeService() {
+	public RuntimeServiceWrapper getRuntimeService() {
 		return runtimeService;
 	}
 
-	public void setRuntimeService(RuntimeService runtimeService) {
+	public void setRuntimeService(RuntimeServiceWrapper runtimeService) {
 		this.runtimeService = runtimeService;
 	}
 

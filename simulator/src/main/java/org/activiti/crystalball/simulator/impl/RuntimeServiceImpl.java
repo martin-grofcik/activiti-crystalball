@@ -12,10 +12,6 @@
  */
 package org.activiti.crystalball.simulator.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.executor.impl.ServiceImpl;
 import org.activiti.crystalball.simulator.impl.cmd.GetResultVariablesCmd;
@@ -26,9 +22,10 @@ import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInst
 import org.activiti.crystalball.simulator.result.ResultQuery;
 import org.activiti.crystalball.simulator.runtime.SimulationInstance;
 import org.activiti.crystalball.simulator.runtime.SimulationInstanceQuery;
-import org.activiti.engine.runtime.ExecutionQuery;
-import org.activiti.engine.runtime.NativeExecutionQuery;
-import org.activiti.engine.runtime.NativeProcessInstanceQuery;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Tom Baeyens
@@ -47,20 +44,20 @@ public class RuntimeServiceImpl extends ServiceImpl implements RuntimeService {
 //	    commandExecutor.execute(new DeleteProcessInstanceCmd(simulationInstanceId, deleteReason));
   }
 
-  public ExecutionQuery createExecutionQuery() {
+//  public ExecutionQuery createExecutionQuery() {
 //    return new ExecutionQueryImpl(commandExecutor);
-    return null;
-  }
+//    return null;
+//  }
   
-  public NativeExecutionQuery createNativeExecutionQuery() {
+//  public NativeExecutionQuery createNativeExecutionQuery() {
 //    return new NativeExecutionQueryImpl(commandExecutor);
-	  return null;
-  }
+//	  return null;
+//  }
 
-  public NativeProcessInstanceQuery createNativeProcessInstanceQuery() {
+//  public NativeProcessInstanceQuery createNativeProcessInstanceQuery() {
 //    return new NativeProcessInstanceQueryImpl(commandExecutor);
-	  return null;
-  }  
+//	  return null;
+//  }
   
   public void suspendSimulationInstanceById(String processInstanceId) {
 //    commandExecutor.execute(new SuspendProcessInstanceCmd(processInstanceId));

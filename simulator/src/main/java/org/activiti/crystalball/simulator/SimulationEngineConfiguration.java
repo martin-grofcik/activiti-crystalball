@@ -1,14 +1,12 @@
 
 package org.activiti.crystalball.simulator;
 
-import java.io.InputStream;
-
-import javax.sql.DataSource;
-
 import org.activiti.crystalball.simulator.impl.cfg.BeansConfigurationHelper;
 import org.activiti.crystalball.simulator.impl.cfg.StandaloneInMemSimulationEngineConfiguration;
 import org.activiti.crystalball.simulator.impl.cfg.StandaloneSimulationEngineConfiguration;
-import org.activiti.engine.ProcessEngines;
+
+import javax.sql.DataSource;
+import java.io.InputStream;
 
 
 /** Configuration information from which a process engine can be build.
@@ -21,7 +19,7 @@ import org.activiti.engine.ProcessEngines;
  * </p>
  * 
  * <p>To create a process engine programatic, without a configuration file, 
- * the first option is {@link #createStandaloneProcessEngineConfiguration()}
+ * the first option is {@link #createStandaloneSimulationEngineConfiguration()}
  * <pre>ProcessEngine processEngine = ProcessEngineConfiguration
  *   .createStandaloneProcessEngineConfiguration()
  *   .buildProcessEngine();
@@ -35,7 +33,7 @@ import org.activiti.engine.ProcessEngines;
  * userguide.
  * </p>
  * 
- * <p>The second option is great for testing: {@link #createStandalonInMemeProcessEngineConfiguration()}
+ * <p>The second option is great for testing: {@link #createStandaloneInMemSimulationEngineConfiguration()}
  * <pre>ProcessEngine processEngine = ProcessEngineConfiguration
  *   .createStandaloneInMemProcessEngineConfiguration()
  *   .buildProcessEngine();
@@ -60,7 +58,7 @@ import org.activiti.engine.ProcessEngines;
  * </pre>
  * </p>
  * 
- * @see ProcessEngines 
+ * @see SimulationEngine
  * @author Tom Baeyens
  */
 public abstract class SimulationEngineConfiguration implements EngineServices {
@@ -141,7 +139,7 @@ public abstract class SimulationEngineConfiguration implements EngineServices {
     return new StandaloneInMemSimulationEngineConfiguration();
   }
 
-// TODO add later when we have test coverage for this
+// TODO add later when we have org.activiti.crystalball.processengine.wrapper.test coverage for this
 //  public static ProcessEngineConfiguration createJtaProcessEngineConfiguration() {
 //    return new JtaProcessEngineConfiguration();
 //  }

@@ -12,19 +12,17 @@
  */
 package org.activiti.crystalball.simulator.impl;
 
-import java.io.Serializable;
-import java.util.List;
-
+import org.activiti.crystalball.simulator.ActivitiException;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
+import org.activiti.crystalball.simulator.impl.db.ListQueryParameterObject;
 import org.activiti.crystalball.simulator.impl.interceptor.Command;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
-import org.activiti.engine.ActivitiException;
-import org.activiti.engine.impl.Direction;
-import org.activiti.engine.impl.Page;
-import org.activiti.engine.impl.db.ListQueryParameterObject;
-import org.activiti.engine.query.Query;
-import org.activiti.engine.query.QueryProperty;
+import org.activiti.crystalball.simulator.query.Query;
+import org.activiti.crystalball.simulator.query.QueryProperty;
+
+import java.io.Serializable;
+import java.util.List;
 
 
 /**

@@ -1,11 +1,11 @@
 package org.activiti.crystalball.simulator.impl.cmd;
 
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.interceptor.Command;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
+
+import java.util.Map;
 
 public class SaveResultCmd implements Command<ResultEntity> {
 	

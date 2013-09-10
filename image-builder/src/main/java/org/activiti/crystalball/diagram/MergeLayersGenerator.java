@@ -21,6 +21,8 @@ package org.activiti.crystalball.diagram;
  */
 
 
+import org.activiti.crystalball.processengine.wrapper.ProcessDiagramService;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -46,7 +48,7 @@ public class MergeLayersGenerator extends AbstractProcessDiagramLayerGenerator {
 	 * images are merged in alphabetical order
 	 */
 	@Override
-	public byte[] generateLayer(String imageType, Map<String, Object> params) {
+	public byte[] generateLayer( String imageType, Map<String, Object> params) {
 		if (params == null )
 			return null;
 		Object[] keys = params.keySet().toArray();

@@ -19,11 +19,11 @@ package org.activiti.crystalball.simulator;
  */
 public interface EngineServices {
 
-//  RepositoryService getRepositoryService();
+//  RepositoryServiceWrapper getRepositoryService();
   
   RuntimeService getRuntimeService();
   
-//  HistoryService getResultService();
+//  HistoryServiceWrapper getResultService();
     
 //  ManagementService getManagementService();
   

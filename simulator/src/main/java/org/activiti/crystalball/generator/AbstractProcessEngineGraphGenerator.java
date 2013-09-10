@@ -21,17 +21,14 @@ package org.activiti.crystalball.generator;
  */
 
 
-import java.awt.Color;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.activiti.crystalball.processengine.wrapper.queries.ProcessDefinitionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 public abstract class AbstractProcessEngineGraphGenerator extends AbstractGraphGenerator {
 
@@ -53,11 +50,11 @@ public abstract class AbstractProcessEngineGraphGenerator extends AbstractGraphG
 	 * @param processDefinitionId
 	 * @param finishDate 
 	 * @param startDate 
-	 * @param highLightedActivities
+	 * @param highLightedActivitiesMap
 	 * @param counts
 	 * @return
 	 */
-	protected abstract ProcessDefinitionEntity getProcessData(
+	protected abstract ProcessDefinitionWrapper getProcessData(
 			String processDefinitionId, Date startDate, Date finishDate, Map<Color,List<String>> highLightedActivitiesMap,
 			Map<String, String> counts);
 
@@ -79,7 +76,7 @@ public abstract class AbstractProcessEngineGraphGenerator extends AbstractGraphG
 		Map<Color, List<String>> highLightedActivitiesMap = new HashMap<Color,List<String>>();
 		Map<String, String> counts = new HashMap<String, String>();
 
-		ProcessDefinitionEntity pde = getProcessData(processDefinitionId, startDate, finishDate,
+		ProcessDefinitionWrapper pde = getProcessData(processDefinitionId, startDate, finishDate,
 				highLightedActivitiesMap, counts);
 
 		reportGraph(fileName, pde.getKey(), highLightedActivitiesMap, counts);

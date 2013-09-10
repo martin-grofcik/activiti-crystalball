@@ -21,12 +21,12 @@ package org.activiti.crystalball.simulator.executor.impl;
  */
 
 
-import java.util.List;
-import java.util.Map;
-
+import org.activiti.crystalball.processengine.wrapper.queries.TaskWrapper;
 import org.activiti.crystalball.simulator.SimUtils;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
-import org.activiti.engine.impl.persistence.entity.TaskEntity;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * abstract class to randomly choose one variable set 
@@ -49,14 +49,14 @@ public abstract class AbstractRandomVariableMapUsertaskExecutor implements UserT
 	 * @param execTask
 	 * @return
 	 */
-	protected abstract long getExecutionTime(TaskEntity execTask, Map<String, Object> variables);
+	protected abstract long getExecutionTime(TaskWrapper execTask, Map<String, Object> variables);
 
 	/**
 	 * randomly choose one variable map for given task
 	 * @param execTask
 	 * @return
 	 */
-	protected Map<String, Object> getVariables(TaskEntity execTask) {
+	protected Map<String, Object> getVariables(TaskWrapper execTask) {
 		if (taskVariablesMap.containsKey( execTask.getTaskDefinitionKey())) {
 			List<Map<String, Object>> variablesList = taskVariablesMap.get( execTask.getTaskDefinitionKey());
 			if (!variablesList.isEmpty()) {
@@ -70,7 +70,7 @@ public abstract class AbstractRandomVariableMapUsertaskExecutor implements UserT
 	 * return constant time for task execution
 	 * choose randomly one possibility for setting variables 
 	 */
-	public long simulateTaskExecution(TaskEntity execTask, Map<String, Object> variables) {
+	public long simulateTaskExecution(TaskWrapper execTask, Map<String, Object> variables) {
 		if (taskVariablesMap != null) {
 			Map<String, Object> var = getVariables(execTask);
 			if ( var != null)

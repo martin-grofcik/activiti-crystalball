@@ -13,32 +13,31 @@
 
 package org.activiti.crystalball.simulator.impl.simulationexecutor;
 
+
+import org.activiti.crystalball.simulator.impl.cmd.AcquireJobsCmd;
+import org.activiti.crystalball.simulator.impl.interceptor.Command;
+import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.activiti.crystalball.simulator.impl.cmd.AcquireJobsCmd;
-import org.activiti.crystalball.simulator.impl.interceptor.Command;
-import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
-import org.activiti.engine.runtime.Job;
-
-
 /**
  * <p>Interface to the work management component of activiti.</p>
  * 
  * <p>This component is responsible for performing all background work 
- * ({@link Job Jobs}) scheduled by activiti.</p>
- * 
- * <p>You should generally only have one of these per Activiti instance (process 
+ * ({@link org.activiti.engine.runtime.Job Jobs}) scheduled by activiti.</p>
+ *
+ * <p>You should generally only have one of these per Activiti instance (process
  * engine) in a JVM.
  * In clustered situations, you can have multiple of these running against the
  * same queue + pending job list.</p>
- * 
+ *
  * @author Daniel Meyer
  */
 public abstract class JobExecutor {
-  
+
   private static Logger log = Logger.getLogger(JobExecutor.class.getName());
 
   protected String name = "JobExecutor["+getClass().getName()+"]";
@@ -47,25 +46,25 @@ public abstract class JobExecutor {
   protected AcquireJobsRunnable acquireJobsRunnable;
   protected RejectedJobsHandler rejectedJobsHandler;
   protected Thread jobAcquisitionThread;
-  
+
   protected boolean isAutoActivate = false;
   protected boolean isActive = false;
-  
+
   protected int maxJobsPerAcquisition = 3;
   protected int waitTimeInMillis = 5 * 1000;
   protected String lockOwner = UUID.randomUUID().toString();
   protected int lockTimeInMillis = 5 * 60 * 1000;
-      
+
   public void start() {
     if (isActive) {
       return;
     }
     log.info("Starting up the JobExecutor["+getClass().getName()+"].");
-    ensureInitialization();    
+    ensureInitialization();
     startExecutingJobs();
     isActive = true;
   }
-  
+
   public synchronized void shutdown() {
     if (!isActive) {
       return;
@@ -73,30 +72,30 @@ public abstract class JobExecutor {
     log.info("Shutting down the JobExecutor["+getClass().getName()+"].");
     acquireJobsRunnable.stop();
     stopExecutingJobs();
-    ensureCleanup();   
+    ensureCleanup();
     isActive = false;
   }
-  
-  protected void ensureInitialization() { 
+
+  protected void ensureInitialization() {
     acquireJobsCmd = new AcquireJobsCmd(this);
-    acquireJobsRunnable = new AcquireJobsRunnable(this);  
+    acquireJobsRunnable = new AcquireJobsRunnable(this);
   }
-  
-  protected void ensureCleanup() {  
+
+  protected void ensureCleanup() {
     acquireJobsCmd = null;
-    acquireJobsRunnable = null;  
+    acquireJobsRunnable = null;
   }
-  
+
   public void jobWasAdded() {
     if(isActive) {
       acquireJobsRunnable.jobWasAdded();
     }
   }
-  
+
   protected abstract void startExecutingJobs();
-  protected abstract void stopExecutingJobs(); 
-  protected abstract void executeJobs(List<String> jobIds);
-  
+  protected abstract void stopExecutingJobs();
+  public abstract void executeJobs(List<String> jobIds);
+
   // getters and setters //////////////////////////////////////////////////////
 
   public CommandExecutor getCommandExecutor() {
@@ -142,7 +141,7 @@ public abstract class JobExecutor {
   public int getMaxJobsPerAcquisition() {
     return maxJobsPerAcquisition;
   }
-  
+
   public void setMaxJobsPerAcquisition(int maxJobsPerAcquisition) {
     this.maxJobsPerAcquisition = maxJobsPerAcquisition;
   }
@@ -150,19 +149,19 @@ public abstract class JobExecutor {
   public String getName() {
     return name;
   }
-  
+
   public Command<AcquiredJobs> getAcquireJobsCmd() {
     return acquireJobsCmd;
   }
-  
+
   public void setAcquireJobsCmd(Command<AcquiredJobs> acquireJobsCmd) {
     this.acquireJobsCmd = acquireJobsCmd;
   }
-    
+
   public boolean isActive() {
     return isActive;
   }
-  
+
   public RejectedJobsHandler getRejectedJobsHandler() {
     return rejectedJobsHandler;
   }

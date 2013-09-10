@@ -21,9 +21,9 @@ package org.activiti.crystalball.simulator.executor;
  */
 
 
-import java.util.Map;
+import org.activiti.crystalball.processengine.wrapper.queries.TaskWrapper;
 
-import org.activiti.engine.impl.persistence.entity.TaskEntity;
+import java.util.Map;
 
 /**
  * Simulate user task execution 
@@ -38,5 +38,5 @@ public interface UserTaskExecutor {
 	 * @param variables variables to set on task complete event
 	 * @return simulation time increased by UserTask execution
 	 */
-	long simulateTaskExecution( TaskEntity execTask, Map<String, Object> variables);
+	long simulateTaskExecution( TaskWrapper execTask, Map<String, Object> variables);
 }

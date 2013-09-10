@@ -21,10 +21,6 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.crystalball.generator.SimulationResultsGraphGenerator;
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
@@ -33,14 +29,18 @@ import org.activiti.crystalball.simulator.runtime.SimulationInstance;
 import org.activiti.engine.impl.test.PvmTestCase;
 import org.junit.Test;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 public class BasicSimulationTest extends PvmTestCase{
 
 	@Test
 	public void testBasicSimulationRun() throws Exception {
 		System.setProperty("liveDB", "target/basicSimulation");
 		
-		SimulationEngine simulationEngine= SimulationEngineConfigurationImpl.createStandaloneInMemSimulationEngineConfiguration().buildSimulationEngine();
-		SimulationInstance simulationInstance = simulationEngine.getRuntimeService().startSimulationInstanceByKey("test - simulationRun", (String) null, (String) null, new Date(), (Date) null, 1, 1L, "/org/activiti/crystalball/simulator/SimRun-h2-context.xml");
+		SimulationEngine simulationEngine= SimulationEngineConfigurationImpl.createStandaloneSimulationEngineConfiguration().buildSimulationEngine();
+		SimulationInstance simulationInstance = simulationEngine.getRuntimeService().startSimulationInstanceByKey("org.activiti.crystalball.processengine.wrapper.test - simulationRun", (String) null, (String) null, new Date(), (Date) null, 1, 1L, "/org/activiti/crystalball/simulator/SimRun-h2-context.xml");
 		
 		// wait to finish simulation asynchronously
 		do {

@@ -12,23 +12,16 @@
  */
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import org.activiti.crystalball.simulator.ActivitiException;
+import org.activiti.crystalball.simulator.delegate.VariableScope;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
-import org.activiti.engine.ActivitiException;
-import org.activiti.engine.delegate.VariableScope;
-import org.activiti.engine.impl.javax.el.ELContext;
-import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
-import org.activiti.engine.impl.variable.VariableType;
-import org.activiti.engine.impl.variable.VariableTypes;
+import org.activiti.crystalball.simulator.impl.javax.el.ELContext;
+import org.activiti.crystalball.simulator.impl.variable.VariableType;
+import org.activiti.crystalball.simulator.impl.variable.VariableTypes;
+
+import java.io.Serializable;
+import java.util.*;
 
 
 
@@ -239,7 +232,7 @@ public abstract class VariableScopeImpl implements Serializable, VariableScope {
     setVariable(variableName, value, getSourceActivityExecution());
   }
 
-  protected void setVariable(String variableName, Object value, ExecutionEntity sourceActivityExecution) {
+  protected void setVariable(String variableName, Object value, ResultEntity sourceActivityExecution) {
     if (hasVariableLocal(variableName)) {
       setVariableLocal(variableName, value, sourceActivityExecution);
       return;
@@ -260,7 +253,7 @@ public abstract class VariableScopeImpl implements Serializable, VariableScope {
     return setVariableLocal(variableName, value, getSourceActivityExecution());
   }
 
-  public Object setVariableLocal(String variableName, Object value, ExecutionEntity sourceActivityExecution) {
+  public Object setVariableLocal(String variableName, Object value, ResultEntity sourceActivityExecution) {
     ensureVariableInstancesInitialized();
     VariableInstanceEntity variableInstance = variableInstances.get(variableName);
     if ((variableInstance != null) && (!variableInstance.getType().isAbleToStore(value))) {
@@ -284,7 +277,7 @@ public abstract class VariableScopeImpl implements Serializable, VariableScope {
   /** only called when a new variable is created on this variable scope.
    * This method is also responsible for propagating the creation of this 
    * variable to the history. */
-  protected void createVariableLocal(String variableName, Object value, ExecutionEntity sourceActivityExecution) {
+  protected void createVariableLocal(String variableName, Object value, ResultEntity sourceActivityExecution) {
     ensureVariableInstancesInitialized();
     
     if (variableInstances.containsKey(variableName)) {
@@ -298,7 +291,7 @@ public abstract class VariableScopeImpl implements Serializable, VariableScope {
     removeVariable(variableName, getSourceActivityExecution());
   }
 
-  protected void removeVariable(String variableName, ExecutionEntity sourceActivityExecution) {
+  protected void removeVariable(String variableName, ResultEntity sourceActivityExecution) {
     ensureVariableInstancesInitialized();
     if (variableInstances.containsKey(variableName)) {
       removeVariableLocal(variableName);
@@ -318,11 +311,11 @@ public abstract class VariableScopeImpl implements Serializable, VariableScope {
     removeVariableLocal(variableName, getSourceActivityExecution());
   }
 
-  protected ExecutionEntity getSourceActivityExecution() {
+  protected ResultEntity getSourceActivityExecution() {
     return null;
   }
   
-  protected void removeVariableLocal(String variableName, ExecutionEntity sourceActivityExecution) {
+  protected void removeVariableLocal(String variableName, ResultEntity sourceActivityExecution) {
     ensureVariableInstancesInitialized();
     VariableInstanceEntity variableInstance = variableInstances.remove(variableName);
     if (variableInstance != null) {
@@ -330,7 +323,7 @@ public abstract class VariableScopeImpl implements Serializable, VariableScope {
     }
   }
 
-  protected void deleteVariableInstanceForExplicitUserCall(VariableInstanceEntity variableInstance, ExecutionEntity sourceActivityExecution) {
+  protected void deleteVariableInstanceForExplicitUserCall(VariableInstanceEntity variableInstance, ResultEntity sourceActivityExecution) {
     variableInstance.delete();
     variableInstance.setValue(null);
 // history is not recorded
@@ -343,7 +336,7 @@ public abstract class VariableScopeImpl implements Serializable, VariableScope {
 //      .recordHistoricDetailVariableCreate(variableInstance, sourceActivityExecution,  isActivityIdUsedForDetails());
   }
 
-  protected void updateVariableInstance(VariableInstanceEntity variableInstance, Object value, ExecutionEntity sourceActivityExecution) {
+  protected void updateVariableInstance(VariableInstanceEntity variableInstance, Object value, ResultEntity sourceActivityExecution) {
     variableInstance.setValue(value);
 
 // history is not recorded
@@ -354,7 +347,7 @@ public abstract class VariableScopeImpl implements Serializable, VariableScope {
 //      .recordVariableUpdate(variableInstance);
   }
 
-  protected VariableInstanceEntity createVariableInstance(String variableName, Object value, ExecutionEntity sourceActivityExecution) {
+  protected VariableInstanceEntity createVariableInstance(String variableName, Object value, ResultEntity sourceActivityExecution) {
     VariableTypes variableTypes = SimulationContext
       .getSimulationEngineConfiguration()
       .getVariableTypes();

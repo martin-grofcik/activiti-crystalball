@@ -21,21 +21,21 @@ package org.activiti.crystalball.simulator.impl;
  */
 
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
+import org.activiti.crystalball.processengine.wrapper.TaskServiceWrapper;
+import org.activiti.crystalball.processengine.wrapper.queries.TaskWrapper;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
-import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.impl.util.ClockUtil;
-import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * claim task - we have unlimited resources to process a task. 
@@ -55,10 +55,10 @@ public class SimpleClaimTaskEventHandler implements SimulationEventHandler {
 	 */
 	@Override
 	public void init() {
-		TaskService taskService = SimulationRunContext.getTaskService();
+		TaskServiceWrapper taskService = SimulationRunContext.getTaskService();
 		long simulationTime = ClockUtil.getCurrentTime().getTime();
 		
-		for ( Task execTask : taskService.createTaskQuery().list()) {
+		for ( TaskWrapper execTask : taskService.createTaskQuery().list()) {
 			if (execTask != null ) {
 				// claim task and update assignee
 				log.debug( SimpleDateFormat.getTimeInstance().format( new Date(simulationTime)) + 
@@ -69,7 +69,7 @@ public class SimpleClaimTaskEventHandler implements SimulationEventHandler {
 				Map<String, Object> props = new HashMap<String, Object>();
 				props.put( "task", execTask.getId());
 				Map<String, Object> variables = new HashMap<String, Object>();
-				long userTaskDelta = userTaskExecutor.simulateTaskExecution((TaskEntity) execTask, variables);
+				long userTaskDelta = userTaskExecutor.simulateTaskExecution((TaskWrapper) execTask, variables);
 				props.put( "variables", variables);
 
 				SimulationEvent completeEvent = new SimulationEvent( simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
@@ -81,7 +81,7 @@ public class SimpleClaimTaskEventHandler implements SimulationEventHandler {
 
 	@Override
 	public void handle(SimulationEvent event) {
-		TaskEntity task = (TaskEntity) event.getProperty();
+		TaskWrapper task = (TaskEntity) event.getProperty();
 		
 		SimulationRunContext.getTaskService().claim(task.getId(), DEFAULT_USER);		
 		task.setAssignee( DEFAULT_USER );

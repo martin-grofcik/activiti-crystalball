@@ -1,9 +1,9 @@
 package org.activiti.crystalball.simulator.runtime;
 
-import java.util.Date;
-
 import org.activiti.crystalball.simulator.SimulationRun;
 import org.springframework.beans.factory.FactoryBean;
+
+import java.util.Date;
 
 public abstract class SimulationInstanceImpl implements SimulationInstance {
 	protected String name;
