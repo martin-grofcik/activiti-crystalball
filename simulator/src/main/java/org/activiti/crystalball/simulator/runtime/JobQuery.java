@@ -13,9 +13,9 @@
 
 package org.activiti.crystalball.simulator.runtime;
 
-import java.util.Date;
-
 import org.activiti.engine.query.Query;
+
+import java.util.Date;
 
 
 /**

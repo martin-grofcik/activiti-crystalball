@@ -13,23 +13,6 @@
 
 package org.activiti.crystalball.simulator.impl.cfg;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
-
 import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.SimulationEngine;
 import org.activiti.crystalball.simulator.SimulationEngineConfiguration;
@@ -44,20 +27,8 @@ import org.activiti.crystalball.simulator.impl.interceptor.CommandContextFactory
 import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutorImpl;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandInterceptor;
-import org.activiti.crystalball.simulator.impl.persistence.entity.JobManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.PropertyManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntityManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntityManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntityManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.VariableInstanceManager;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.CallerRunsRejectedJobsHandler;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.DefaultFailedJobCommandFactory;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.DefaultJobExecutor;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.FailedJobCommandFactory;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.JobExecutor;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.JobHandler;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.RejectedJobsHandler;
-import org.activiti.crystalball.simulator.impl.simulationexecutor.SimulationRunExecuteJobHandler;
+import org.activiti.crystalball.simulator.impl.persistence.entity.*;
+import org.activiti.crystalball.simulator.impl.simulationexecutor.*;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.impl.bpmn.data.ItemInstance;
@@ -73,30 +44,10 @@ import org.activiti.engine.impl.event.SignalEventHandler;
 import org.activiti.engine.impl.interceptor.DelegateInterceptor;
 import org.activiti.engine.impl.interceptor.SessionFactory;
 import org.activiti.engine.impl.persistence.GenericManagerFactory;
-import org.activiti.engine.impl.scripting.BeansResolverFactory;
-import org.activiti.engine.impl.scripting.ResolverFactory;
-import org.activiti.engine.impl.scripting.ScriptBindingsFactory;
-import org.activiti.engine.impl.scripting.ScriptingEngines;
-import org.activiti.engine.impl.scripting.VariableScopeResolverFactory;
+import org.activiti.engine.impl.scripting.*;
 import org.activiti.engine.impl.util.IoUtil;
 import org.activiti.engine.impl.util.ReflectUtil;
-import org.activiti.engine.impl.variable.BooleanType;
-import org.activiti.engine.impl.variable.ByteArrayType;
-import org.activiti.engine.impl.variable.CustomObjectType;
-import org.activiti.engine.impl.variable.DateType;
-import org.activiti.engine.impl.variable.DefaultVariableTypes;
-import org.activiti.engine.impl.variable.DoubleType;
-import org.activiti.engine.impl.variable.EntityManagerSession;
-import org.activiti.engine.impl.variable.EntityManagerSessionFactory;
-import org.activiti.engine.impl.variable.IntegerType;
-import org.activiti.engine.impl.variable.JPAEntityVariableType;
-import org.activiti.engine.impl.variable.LongType;
-import org.activiti.engine.impl.variable.NullType;
-import org.activiti.engine.impl.variable.SerializableType;
-import org.activiti.engine.impl.variable.ShortType;
-import org.activiti.engine.impl.variable.StringType;
-import org.activiti.engine.impl.variable.VariableType;
-import org.activiti.engine.impl.variable.VariableTypes;
+import org.activiti.engine.impl.variable.*;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
@@ -107,6 +58,17 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
 import org.apache.ibatis.type.JdbcType;
+
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.logging.Logger;
 
 
 public abstract class SimulationEngineConfigurationImpl extends SimulationEngineConfiguration {  

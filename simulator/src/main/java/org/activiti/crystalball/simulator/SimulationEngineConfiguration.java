@@ -1,14 +1,13 @@
 
 package org.activiti.crystalball.simulator;
 
-import java.io.InputStream;
-
-import javax.sql.DataSource;
-
 import org.activiti.crystalball.simulator.impl.cfg.BeansConfigurationHelper;
 import org.activiti.crystalball.simulator.impl.cfg.StandaloneInMemSimulationEngineConfiguration;
 import org.activiti.crystalball.simulator.impl.cfg.StandaloneSimulationEngineConfiguration;
 import org.activiti.engine.ProcessEngines;
+
+import javax.sql.DataSource;
+import java.io.InputStream;
 
 
 /** Configuration information from which a process engine can be build.

@@ -13,13 +13,13 @@
 
 package org.activiti.crystalball.simulator.impl.context;
 
-import java.util.Stack;
-
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
 import org.activiti.crystalball.simulator.impl.simulationexecutor.JobExecutorContext;
 import org.activiti.engine.impl.pvm.runtime.InterpretableExecution;
+
+import java.util.Stack;
 
 
 /**

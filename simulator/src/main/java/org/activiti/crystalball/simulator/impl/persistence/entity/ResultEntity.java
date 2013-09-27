@@ -21,14 +21,14 @@ package org.activiti.crystalball.simulator.impl.persistence.entity;
  */
 
 
+import org.activiti.crystalball.simulator.Result;
+import org.activiti.crystalball.simulator.impl.context.SimulationContext;
+import org.activiti.engine.impl.db.PersistentObject;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.activiti.crystalball.simulator.Result;
-import org.activiti.crystalball.simulator.impl.context.SimulationContext;
-import org.activiti.engine.impl.db.PersistentObject;
 
 public class ResultEntity extends VariableScopeImpl implements Serializable, Result, PersistentObject {
 	/**

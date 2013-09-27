@@ -21,13 +21,6 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.activiti.crystalball.generator.AbstractProcessEngineGraphGenerator;
 import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
@@ -37,6 +30,13 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.io.File;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class SimulateBottleneckTest {
 	protected static final String tempDir = System.getProperty("tempDir", "target");

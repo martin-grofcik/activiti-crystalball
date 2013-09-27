@@ -21,10 +21,6 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.crystalball.generator.SimulationResultsGraphGenerator;
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
@@ -32,6 +28,10 @@ import org.activiti.crystalball.simulator.result.ResultQuery;
 import org.activiti.crystalball.simulator.runtime.SimulationInstance;
 import org.activiti.engine.impl.test.PvmTestCase;
 import org.junit.Test;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class BasicSimulationTest extends PvmTestCase{
 

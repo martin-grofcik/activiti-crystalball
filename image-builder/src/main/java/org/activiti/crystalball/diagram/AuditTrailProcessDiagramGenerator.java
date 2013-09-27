@@ -21,11 +21,7 @@ package org.activiti.crystalball.diagram;
  */
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
+import org.activiti.crystalball.diagram.svg.SVGCanvasFactory;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricDetail;
@@ -36,6 +32,12 @@ import org.activiti.engine.impl.bpmn.behavior.BoundaryEventActivityBehavior;
 import org.activiti.engine.impl.bpmn.parser.BpmnParse;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
+
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  *	generate audit trail diagram layer based on audit trail data in historyService 
@@ -283,7 +285,15 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 
 	  }
 
-	  protected static void drawActivity(ProcessDiagramCanvas processDiagramCanvas, ActivityImpl activity, Map<String,Object> varUpdates, Integer x, Integer y, boolean writeUpdates) {
+    public AuditTrailProcessDiagramGenerator() {
+        super();
+    }
+
+    public AuditTrailProcessDiagramGenerator(ProcessDiagramCanvasFactory canvasFactory) {
+        super(canvasFactory);
+    }
+
+    protected static void drawActivity(ProcessDiagramCanvas processDiagramCanvas, ActivityImpl activity, Map<String,Object> varUpdates, Integer x, Integer y, boolean writeUpdates) {
 	    String type = (String) activity.getProperty("type");
 	    ActivityDrawXYInstruction drawInstruction = activityDrawInstructions.get(type);
 	    if (drawInstruction != null) {
@@ -327,7 +337,7 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 		  /**
 		   * draw activity on the given position.
 		   * 
-		   * @see ActivityDrawInstruction
+		   * @see org.activiti.engine.impl.bpmn.diagram.ProcessDiagramGenerator.ActivityDrawInstruction
 		   * @param processDiagramCreator
 		   * @param activityImpl
 		   * @param x
@@ -338,13 +348,13 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 	  }
 
 	
-	public byte[] generateLayer(String imageType, Map<String, Object> params) {
+	public InputStream generateLayer(String imageType, Map<String, Object> params) {
 		
 		// get process instance from which we will get audit trail layer
 		final String processInstanceId = (String) params.get( PROCESS_INSTANCE_ID );
 	    ProcessDiagramCanvas canvas = generateDiagram( processInstanceId);   
 	    
-		return convertToByteArray(imageType, canvas.generateImage(imageType));
+		return canvas.generateImage(imageType);
 	}
 
 	protected ProcessDiagramCanvas generateDiagram(	String processInstanceId) {
@@ -364,12 +374,19 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 		// TODO: Draw lanes
 
 		// Draw activities
-		List<HistoricActivityInstance> historicActivities = historyService.createHistoricActivityInstanceQuery()
+        // ordering can be source of problems.
+        // ExecutionId is String which contains number.
+        // timestamps are not precise enough
+        // .orderByHistoricActivityInstanceStartTime()
+        //        .asc()
+        //        .orderByHistoricActivityInstanceEndTime()
+        //        .asc()
+        List<HistoricActivityInstance> historicActivities = historyService.createHistoricActivityInstanceQuery()
 	    		.processInstanceId( processInstanceId)
-	    		.orderByHistoricActivityInstanceStartTime()
-	    		.asc()
-	    		.orderByHistoricActivityInstanceEndTime()
-	    		.asc()
+                .orderByHistoricActivityInstanceStartTime()
+                .asc()
+                .orderByHistoricActivityInstanceEndTime()
+                .asc()
 	    		.list();
 	    int y = 0;
 	    
@@ -443,7 +460,7 @@ public class AuditTrailProcessDiagramGenerator extends AbstractProcessDiagramLay
 		maxX += 10;
 		// correct image height
 		maxY += 10 - TRANSITION_HEIGHT;
-		return new ProcessDiagramCanvas(maxX, maxY, minX, minY);
+		return canvasFactory.createCanvas(maxX, maxY, minX, minY);
 	}
 	
 	private static ActivityImpl findActivity(ProcessDefinitionEntity processDefinition, String activityId) {

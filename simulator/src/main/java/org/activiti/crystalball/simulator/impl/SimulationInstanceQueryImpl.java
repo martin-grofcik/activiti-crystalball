@@ -13,10 +13,6 @@
 
 package org.activiti.crystalball.simulator.impl;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
-
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntity;
@@ -25,6 +21,10 @@ import org.activiti.crystalball.simulator.runtime.SuspensionState;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.impl.EventSubscriptionQueryValue;
 import org.activiti.engine.impl.Page;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
 
 
 /**

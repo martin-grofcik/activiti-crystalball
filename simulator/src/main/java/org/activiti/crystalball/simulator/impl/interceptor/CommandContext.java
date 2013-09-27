@@ -12,20 +12,12 @@
  */
 package org.activiti.crystalball.simulator.impl.interceptor;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
 import org.activiti.crystalball.simulator.impl.cfg.TransactionContext;
 import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSession;
 import org.activiti.crystalball.simulator.impl.persistence.entity.JobManager;
 import org.activiti.crystalball.simulator.impl.persistence.entity.PropertyManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntityManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntityManager;
-import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntityManager;
+import org.activiti.crystalball.simulator.impl.persistence.entity.*;
 import org.activiti.crystalball.simulator.impl.persistence.entity.VariableInstanceManager;
 import org.activiti.crystalball.simulator.impl.simulationexecutor.FailedJobCommandFactory;
 import org.activiti.engine.ActivitiException;
@@ -34,13 +26,15 @@ import org.activiti.engine.JobNotFoundException;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.interceptor.Session;
 import org.activiti.engine.impl.interceptor.SessionFactory;
-import org.activiti.engine.impl.persistence.entity.ByteArrayManager;
-import org.activiti.engine.impl.persistence.entity.DeploymentManager;
-import org.activiti.engine.impl.persistence.entity.ModelManager;
-import org.activiti.engine.impl.persistence.entity.ResourceManager;
-import org.activiti.engine.impl.persistence.entity.TableDataManager;
+import org.activiti.engine.impl.persistence.entity.*;
 import org.activiti.engine.impl.pvm.runtime.AtomicOperation;
 import org.activiti.engine.impl.pvm.runtime.InterpretableExecution;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Tom Baeyens

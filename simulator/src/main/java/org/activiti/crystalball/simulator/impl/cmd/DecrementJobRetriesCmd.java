@@ -13,9 +13,6 @@
 
 package org.activiti.crystalball.simulator.impl.cmd;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import org.activiti.crystalball.simulator.impl.cfg.TransactionContext;
 import org.activiti.crystalball.simulator.impl.cfg.TransactionState;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
@@ -24,6 +21,9 @@ import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.crystalball.simulator.impl.persistence.entity.JobEntity;
 import org.activiti.crystalball.simulator.impl.simulationexecutor.JobExecutor;
 import org.activiti.crystalball.simulator.impl.simulationexecutor.MessageAddedNotification;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * @author Tom Baeyens

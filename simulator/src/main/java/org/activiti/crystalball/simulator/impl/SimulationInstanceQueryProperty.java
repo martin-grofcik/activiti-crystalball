@@ -13,11 +13,11 @@
 
 package org.activiti.crystalball.simulator.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.activiti.engine.query.QueryProperty;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**

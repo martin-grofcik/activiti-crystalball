@@ -12,10 +12,6 @@
  */
 package org.activiti.crystalball.simulator.impl.cmd;
 
-import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.activiti.crystalball.simulator.impl.cfg.TransactionState;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.interceptor.Command;
@@ -26,6 +22,10 @@ import org.activiti.crystalball.simulator.impl.simulationexecutor.FailedJobListe
 import org.activiti.crystalball.simulator.impl.simulationexecutor.JobExecutorContext;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.JobNotFoundException;
+
+import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 

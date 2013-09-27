@@ -21,16 +21,16 @@ package org.activiti.spring;
  */
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.impl.interceptor.CommandContextInterceptor;
 import org.activiti.engine.impl.interceptor.CommandInterceptor;
 import org.activiti.engine.impl.interceptor.LogInterceptor;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class SpringNewContextProcessEngineConfiguration extends	SpringProcessEngineConfiguration {
 	

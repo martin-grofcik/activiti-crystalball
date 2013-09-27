@@ -12,15 +12,6 @@
  */
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.engine.ActivitiException;
@@ -29,6 +20,9 @@ import org.activiti.engine.impl.javax.el.ELContext;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.variable.VariableType;
 import org.activiti.engine.impl.variable.VariableTypes;
+
+import java.io.Serializable;
+import java.util.*;
 
 
 

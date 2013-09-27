@@ -21,7 +21,13 @@ package org.activiti.crystalball.diagram;
  */
 
 
-import java.io.ByteArrayInputStream;
+import org.activiti.crystalball.diagram.svg.SVGCanvasFactory;
+import org.activiti.engine.impl.RepositoryServiceImpl;
+import org.activiti.engine.impl.test.PluggableActivitiTestCase;
+import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
+
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,19 +36,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-
-import org.activiti.engine.impl.RepositoryServiceImpl;
-import org.activiti.engine.impl.test.PluggableActivitiTestCase;
-import org.apache.commons.io.FileUtils;
-import org.activiti.crystalball.diagram.AbstractProcessDiagramLayerGenerator;
-import org.activiti.crystalball.diagram.BasicProcessDiagramGenerator;
-import org.activiti.crystalball.diagram.DiagramLayerGenerator;
-import org.activiti.crystalball.diagram.HighlightNodeDiagramLayer;
-import org.activiti.crystalball.diagram.MergeLayersGenerator;
-import org.activiti.crystalball.diagram.WriteNodeDescriptionDiagramLayer;
-import org.junit.Ignore;
 
 
 public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
@@ -86,11 +79,24 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	    
 	    File expectedFile = new File("src/test/resources/org/activiti/crystalball/diagram/BasicProcessDiagramGeneratorTest.testSimpleProcessDefinition.png" );
 	    File generatedFile = new File("target/BasicProcessDiagramGeneratorTest.testSimpleProcessDefinition.png" );
-	    ImageIO.write( ImageIO.read(new ByteArrayInputStream( generator.generateLayer("png", params)))
+	    ImageIO.write( ImageIO.read( generator.generateLayer("png", params))
 				, "png"
 				, generatedFile);
 	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
 	}
+
+    public void testGenerateProcessDefinitionSVG() throws IOException {
+        String id = FINANCIALREPORT_PROCESS_KEY;
+        DiagramLayerGenerator generator = new BasicProcessDiagramGenerator( (RepositoryServiceImpl) repositoryService, new SVGCanvasFactory());
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(AbstractProcessDiagramLayerGenerator.PROCESS_DEFINITION_ID, id);
+
+        File expectedFile = new File("src/test/resources/org/activiti/crystalball/diagram/BasicProcessDiagramGeneratorTest.testSimpleProcessDefinition.svg" );
+        File generatedFile = new File("target/BasicProcessDiagramGeneratorTest.testSimpleProcessDefinition.svg" );
+        FileUtils.copyInputStreamToFile( generator.generateLayer("svg", params), generatedFile);
+
+        assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
+    }
 	
 	public void testOneNodeHighlight() throws IOException {
 	    String id = FINANCIALREPORT_PROCESS_KEY;
@@ -103,13 +109,28 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	    
 	    File expectedFile = new File("src/test/resources/org/activiti/crystalball/diagram/HighlightNodeDiagramLayer.testOneNodeHighlight.png" );   
 	    File generatedFile = new File("target/HighlightNodeDiagramLayer.testOneNodeHighlight.png" );   
-	    ImageIO.write( ImageIO.read(new ByteArrayInputStream( generator.generateLayer("png", params)))
+	    ImageIO.write( ImageIO.read( generator.generateLayer("png", params))
 				, "png"
 				, generatedFile);
 	    assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));	    
 	}
-	
-	public void testMergeLayers() throws IOException {
+
+    public void testOneNodeHighlightSVG() throws IOException {
+        String id = FINANCIALREPORT_PROCESS_KEY;
+        DiagramLayerGenerator generator = new HighlightNodeDiagramLayer( (RepositoryServiceImpl) repositoryService, null, new SVGCanvasFactory());
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put( HighlightNodeDiagramLayer.PROCESS_DEFINITION_ID, id);
+        List<String> highlightedActivities = new ArrayList<String>();
+        highlightedActivities.add("writeReportTask");
+        params.put( HighlightNodeDiagramLayer.HIGHLIGHTED_ACTIVITIES, highlightedActivities);
+
+        File expectedFile = new File("src/test/resources/org/activiti/crystalball/diagram/HighlightNodeDiagramLayer.testOneNodeHighlight.svg" );
+        File generatedFile = new File("target/HighlightNodeDiagramLayer.testOneNodeHighlight.svg" );
+        FileUtils.copyInputStreamToFile( generator.generateLayer("svg", params), generatedFile);
+        assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));
+    }
+
+    public void testMergeLayers() throws IOException {
 	    DiagramLayerGenerator generator = new MergeLayersGenerator();
 	    Map<String, Object> params = new HashMap<String, Object>();
 	    params.put( "img1", getBytes("src/test/resources/org/activiti/crystalball/diagram/MergeLayerGenerator.testMergeLayers1.png"));
@@ -117,7 +138,7 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	    
 	    File expectedFile = new File("src/test/resources/org/activiti/crystalball/diagram/MergeLayerGenerator.testMergeLayers.png" );  
 	    File generatedFile = new File("target/MergeLayerGenerator.testMergeLayers.png" );  
-	    ImageIO.write( ImageIO.read(new ByteArrayInputStream( generator.generateLayer("png", params)))
+	    ImageIO.write( ImageIO.read( generator.generateLayer("png", params))
 				, "png"
 				, generatedFile);
 	 	assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));
@@ -125,7 +146,7 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	
 	/**
 	 * get byte[] from fileName
-	 * @param string
+	 * @param fileName
 	 * @return
 	 */
 	private Object getBytes(String fileName) {
@@ -137,45 +158,23 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 		      //create FileInputStream object
 			 fin = new FileInputStream(fileName);
 		     
-		      /*
-		       * Create byte array large enough to hold the content of the file.
-		       * Use File.length to determine size of the file in bytes.
-		       */
-		     
-		     
-		       byte fileContent[] = new byte[(int)file.length()];
-		     
-		       /*
-		        * To read content of the file in byte array, use
-		        * int read(byte[] byteArray) method of java FileInputStream class.
-		        *
-		        */
-		       fin.read(fileContent);
-		     
-		       return fileContent;
+		       return fin;
 		    }
 		    catch(FileNotFoundException e)
 		    {
 		      System.out.println("File not found" + e);
-		    }
-		    catch(IOException ioe)
-		    {
-		      System.out.println("Exception while reading the file " + ioe);
+                try {
+                    fin.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
 		    } finally {
-		    	if (fin != null) {
-		    		try {
-						fin.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-		    	}
-		    		
 		    }
 		 	return null;
 		 }
 	
 
-	@Ignore("Generator provides platform dependent images (fonts) see http://forums.activiti.org/en/viewtopic.php?f=6&t=4647&start=0")
+	@Ignore("Generator provides platform dependent images (fonts) see http://forums.activiti.org/en/viewtopic.php?f=6109t=4647&start=0")
 	public void testOneNodeCount() throws IOException {
 	    String id = FINANCIALREPORT_PROCESS_KEY;
 	    DiagramLayerGenerator generator = new WriteNodeDescriptionDiagramLayer( (RepositoryServiceImpl) repositoryService );
@@ -185,9 +184,22 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	    
 	    File expectedFile = new File("src/test/resources/org/activiti/crystalball/diagram/WriteCountLayerGeneratorTest.oneNumber.png" );
 	    File generatedFile = new File("target/WriteCountLayerGeneratorTest.oneNumber.png" );
-	    ImageIO.write( ImageIO.read(new ByteArrayInputStream( generator.generateLayer("png", params)))
+	    ImageIO.write( ImageIO.read( generator.generateLayer("png", params))
 				, "png"
 				, generatedFile);
 	    assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));	    	    
 	}
+
+    public void testOneNodeCountSVG() throws IOException {
+        String id = FINANCIALREPORT_PROCESS_KEY;
+        DiagramLayerGenerator generator = new WriteNodeDescriptionDiagramLayer( (RepositoryServiceImpl) repositoryService, new SVGCanvasFactory() );
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put( WriteNodeDescriptionDiagramLayer.PROCESS_DEFINITION_ID, id);
+        params.put( "writeReportTask", 5);
+
+        File expectedFile = new File("src/test/resources/org/activiti/crystalball/diagram/WriteCountLayerGeneratorTest.oneNumber.svg" );
+        File generatedFile = new File("target/WriteCountLayerGeneratorTest.oneNumber.svg" );
+        FileUtils.copyInputStreamToFile( generator.generateLayer("svg", params), generatedFile);
+        assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));
+    }
 }

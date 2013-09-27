@@ -21,9 +21,8 @@ package org.activiti.crystalball.diagram;
  */
 
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,8 +31,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Level;
-
-import javax.imageio.ImageIO;
 
 /**
  * 
@@ -46,15 +43,15 @@ public class MergeLayersGenerator extends AbstractProcessDiagramLayerGenerator {
 	 * images are merged in alphabetical order
 	 */
 	@Override
-	public byte[] generateLayer(String imageType, Map<String, Object> params) {
+	public InputStream generateLayer(String imageType, Map<String, Object> params) {
 		if (params == null )
 			return null;
 		Object[] keys = params.keySet().toArray();
 		Arrays.sort( keys );
-		byte[][] layers = new byte[params.size()][];
+		InputStream[] layers = new InputStream[params.size()];
 		int i = 0;
 		for ( Object key : keys) {
-			layers[ i++ ] = (byte[]) params.get( key.toString() );  
+			layers[ i++ ] = (InputStream) params.get( key.toString() );
 		}
 		
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -66,18 +63,11 @@ public class MergeLayersGenerator extends AbstractProcessDiagramLayerGenerator {
 			os.flush();
 			fis= new ByteArrayInputStream(os.toByteArray());
 			
-			return convertToByteArray(imageType, fis);
+			return fis;
 		} catch (IOException e) {
 			log.log(Level.SEVERE, "Unable to merge image layers ", e);
 			return null;
 		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					log.log(Level.SEVERE, "Unable to merge image layers ", e);
-				}
-			}
 			if (os != null) {
 				try {
 					os.close();
@@ -90,13 +80,13 @@ public class MergeLayersGenerator extends AbstractProcessDiagramLayerGenerator {
 		
 	}
 
-	protected BufferedImage createBufferedImage(byte[][] isLayers)
+	protected BufferedImage createBufferedImage(InputStream[] isLayers)
 			throws IOException {
 
 		Image[] layers = new Image[isLayers.length];
 
 		for (int i = 0; i < isLayers.length; i++) {
-			layers[i] = ImageIO.read(new ByteArrayInputStream(isLayers[i]));
+			layers[i] = ImageIO.read( isLayers[i]);
 		}
 
 		Dimension maxSize = new Dimension();

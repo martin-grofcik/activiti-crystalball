@@ -12,13 +12,13 @@
  */
 package org.activiti.crystalball.simulator.runtime;
 
-import java.io.Serializable;
-import java.util.Set;
-
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInstanceEntity;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.query.Query;
 import org.activiti.engine.runtime.ProcessInstance;
+
+import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Allows programmatic querying of {@link ProcessInstance}s.

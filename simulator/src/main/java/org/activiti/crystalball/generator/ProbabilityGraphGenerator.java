@@ -1,11 +1,5 @@
 package org.activiti.crystalball.generator;
 
-import java.awt.Color;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.SimulationRun;
 import org.activiti.crystalball.simulator.SimulationRunHelper;
@@ -14,6 +8,12 @@ import org.activiti.crystalball.simulator.runtime.SimulationInstance;
 import org.activiti.engine.ProcessEngine;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.awt.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 public class ProbabilityGraphGenerator extends SimulationResultsGraphGenerator {
 

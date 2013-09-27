@@ -18,11 +18,7 @@ import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSession;
 import org.activiti.engine.impl.db.PersistentObject;
 import org.activiti.engine.impl.history.HistoryManager;
 import org.activiti.engine.impl.interceptor.Session;
-import org.activiti.engine.impl.persistence.entity.ByteArrayManager;
-import org.activiti.engine.impl.persistence.entity.DeploymentManager;
-import org.activiti.engine.impl.persistence.entity.ModelManager;
-import org.activiti.engine.impl.persistence.entity.ProcessDefinitionManager;
-import org.activiti.engine.impl.persistence.entity.ResourceManager;
+import org.activiti.engine.impl.persistence.entity.*;
 
 
 /**

@@ -12,13 +12,13 @@
  */
 package org.activiti.crystalball.simulator.impl.simulationexecutor;
 
+import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
+import org.activiti.engine.ActivitiOptimisticLockingException;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
-import org.activiti.engine.ActivitiOptimisticLockingException;
 
 /**
  * 

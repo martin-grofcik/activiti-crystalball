@@ -21,16 +21,15 @@ package org.activiti.crystalball.generator;
  */
 
 
-import java.awt.Color;
+import org.activiti.engine.impl.test.PluggableActivitiTestCase;
+import org.activiti.engine.task.Task;
+import org.apache.commons.io.FileUtils;
+
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.activiti.engine.impl.test.PluggableActivitiTestCase;
-import org.activiti.engine.task.Task;
-import org.apache.commons.io.FileUtils;
-import org.activiti.crystalball.generator.ProcessInstancesGenerator;
 
 
 public class ProcessInstancesGeneratorTest extends PluggableActivitiTestCase {

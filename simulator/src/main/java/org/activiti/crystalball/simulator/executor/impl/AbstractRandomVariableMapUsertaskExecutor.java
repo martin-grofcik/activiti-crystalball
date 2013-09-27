@@ -21,12 +21,12 @@ package org.activiti.crystalball.simulator.executor.impl;
  */
 
 
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.SimUtils;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * abstract class to randomly choose one variable set 

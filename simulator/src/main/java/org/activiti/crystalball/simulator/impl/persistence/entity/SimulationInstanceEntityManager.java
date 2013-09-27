@@ -13,16 +13,16 @@
 
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.impl.SimulationInstanceQueryImpl;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.persistence.AbstractManager;
 import org.activiti.engine.impl.Page;
 import org.activiti.engine.impl.cfg.IdGenerator;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 

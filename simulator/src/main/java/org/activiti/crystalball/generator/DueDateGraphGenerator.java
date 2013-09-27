@@ -21,11 +21,6 @@ package org.activiti.crystalball.generator;
  */
 
 
-import java.awt.Color;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.NativeHistoricTaskInstanceQuery;
 import org.activiti.engine.impl.RepositoryServiceImpl;
@@ -33,6 +28,11 @@ import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class DueDateGraphGenerator extends AbstractProcessEngineGraphGenerator {
 

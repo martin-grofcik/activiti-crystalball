@@ -12,11 +12,11 @@
  */
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
-import java.io.Serializable;
-
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.impl.db.HasRevision;
 import org.activiti.engine.impl.db.PersistentObject;
+
+import java.io.Serializable;
 
 
 

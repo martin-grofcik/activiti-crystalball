@@ -13,8 +13,6 @@
 
 package org.activiti.crystalball.simulator.impl.cfg;
 
-import java.io.InputStream;
-
 import org.activiti.crystalball.simulator.SimulationEngineConfiguration;
 import org.activiti.engine.impl.cfg.SpringBeanFactoryProxyMap;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -22,6 +20,8 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+
+import java.io.InputStream;
 
 
 /**

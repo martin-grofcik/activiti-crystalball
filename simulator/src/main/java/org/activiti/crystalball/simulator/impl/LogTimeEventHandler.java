@@ -21,15 +21,15 @@ package org.activiti.crystalball.simulator.impl;
  */
 
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Log time information. To see that something is happening during long simulation runs. 

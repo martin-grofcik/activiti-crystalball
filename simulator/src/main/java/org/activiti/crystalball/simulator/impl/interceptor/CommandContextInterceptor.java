@@ -14,10 +14,10 @@
 package org.activiti.crystalball.simulator.impl.interceptor;
 
 
-import java.util.logging.Logger;
-
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
+
+import java.util.logging.Logger;
 
 /**
  * @author Tom Baeyens

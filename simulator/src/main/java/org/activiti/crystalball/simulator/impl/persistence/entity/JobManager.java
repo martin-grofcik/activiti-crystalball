@@ -13,12 +13,12 @@
 
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
-import java.util.Date;
-import java.util.List;
-
 import org.activiti.crystalball.simulator.impl.persistence.AbstractManager;
 import org.activiti.engine.impl.Page;
 import org.activiti.engine.impl.util.ClockUtil;
+
+import java.util.Date;
+import java.util.List;
 
 
 /**

@@ -13,9 +13,6 @@
 
 package org.activiti.crystalball.simulator.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
@@ -25,6 +22,9 @@ import org.activiti.engine.impl.QueryOperator;
 import org.activiti.engine.impl.QueryVariableValue;
 import org.activiti.engine.impl.variable.VariableTypes;
 import org.activiti.engine.query.Query;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**

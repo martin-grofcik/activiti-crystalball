@@ -12,13 +12,13 @@
  */
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.runtime.SimulationInstanceImpl;
 import org.activiti.crystalball.simulator.runtime.SuspensionState;
 import org.activiti.engine.impl.db.PersistentObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class SimulationInstanceEntity extends SimulationInstanceImpl implements	PersistentObject {

@@ -21,11 +21,6 @@ package org.activiti.engine.impl.jobexecutor;
  */
 
 
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.engine.ActivitiOptimisticLockingException;
@@ -33,6 +28,11 @@ import org.activiti.engine.impl.Page;
 import org.activiti.engine.impl.interceptor.CommandExecutor;
 import org.activiti.engine.impl.persistence.entity.TimerEntity;
 import org.activiti.engine.impl.util.ClockUtil;
+
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * "thread" has to be driven by simulation time.

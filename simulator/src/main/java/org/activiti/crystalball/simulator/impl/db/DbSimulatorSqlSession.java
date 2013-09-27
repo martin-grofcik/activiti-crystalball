@@ -13,24 +13,6 @@
 
 package org.activiti.crystalball.simulator.impl.db;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.activiti.crystalball.simulator.SimulationEngine;
 import org.activiti.crystalball.simulator.SimulationEngineConfiguration;
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
@@ -40,21 +22,7 @@ import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ActivitiOptimisticLockingException;
 import org.activiti.engine.ActivitiWrongDbException;
 import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.impl.DeploymentQueryImpl;
-import org.activiti.engine.impl.ExecutionQueryImpl;
-import org.activiti.engine.impl.GroupQueryImpl;
-import org.activiti.engine.impl.HistoricActivityInstanceQueryImpl;
-import org.activiti.engine.impl.HistoricDetailQueryImpl;
-import org.activiti.engine.impl.HistoricProcessInstanceQueryImpl;
-import org.activiti.engine.impl.HistoricTaskInstanceQueryImpl;
-import org.activiti.engine.impl.HistoricVariableInstanceQueryImpl;
-import org.activiti.engine.impl.JobQueryImpl;
-import org.activiti.engine.impl.ModelQueryImpl;
-import org.activiti.engine.impl.Page;
-import org.activiti.engine.impl.ProcessDefinitionQueryImpl;
-import org.activiti.engine.impl.ProcessInstanceQueryImpl;
-import org.activiti.engine.impl.TaskQueryImpl;
-import org.activiti.engine.impl.UserQueryImpl;
+import org.activiti.engine.impl.*;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.db.HasRevision;
 import org.activiti.engine.impl.db.ListQueryParameterObject;
@@ -66,6 +34,20 @@ import org.activiti.engine.impl.util.IoUtil;
 import org.activiti.engine.impl.util.ReflectUtil;
 import org.activiti.engine.impl.variable.DeserializedObject;
 import org.apache.ibatis.session.SqlSession;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** responsibilities:
  *   - delayed flushing of inserts updates and deletes

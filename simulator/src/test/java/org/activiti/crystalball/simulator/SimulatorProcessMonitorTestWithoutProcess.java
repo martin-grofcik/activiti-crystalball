@@ -21,19 +21,6 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-
 import org.activiti.crystalball.diagram.BasicProcessDiagramGenerator;
 import org.activiti.crystalball.diagram.HighlightNodeDiagramLayer;
 import org.activiti.crystalball.diagram.MergeLayersGenerator;
@@ -46,6 +33,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.assertTrue;
 
 public class SimulatorProcessMonitorTestWithoutProcess {
 
@@ -127,7 +121,7 @@ public class SimulatorProcessMonitorTestWithoutProcess {
 	    
 		mergeGenerator.generateLayer("png", mergeL);
 		File generatedFile = new File(fileName );
-	    ImageIO.write( ImageIO.read(new ByteArrayInputStream( mergeGenerator.generateLayer("png", mergeL)))
+	    ImageIO.write( ImageIO.read(mergeGenerator.generateLayer("png", mergeL))
 				, "png"
 				, generatedFile);
 	}

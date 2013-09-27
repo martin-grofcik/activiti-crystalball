@@ -21,14 +21,14 @@ package org.activiti.crystalball.simulator.executor.impl;
  */
 
 
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.SimUtils;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Simulate user work based on taskinstance history, in the case when there is no task history 

@@ -13,10 +13,6 @@
 
 package org.activiti.crystalball.simulator.impl;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandExecutor;
 import org.activiti.crystalball.simulator.runtime.Job;
@@ -24,6 +20,10 @@ import org.activiti.crystalball.simulator.runtime.JobQuery;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.impl.Page;
 import org.activiti.engine.impl.util.ClockUtil;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 
 /**

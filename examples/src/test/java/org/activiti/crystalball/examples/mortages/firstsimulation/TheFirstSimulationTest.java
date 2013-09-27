@@ -21,16 +21,16 @@ package org.activiti.crystalball.examples.mortages.firstsimulation;
  */
 
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.util.Date;
-
 import org.activiti.crystalball.simulator.SimulationRun;
 import org.activiti.engine.ProcessEngine;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.io.File;
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * the first simulation 

@@ -12,16 +12,16 @@
  */
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.engine.impl.db.HasRevision;
 import org.activiti.engine.impl.db.PersistentObject;
 import org.activiti.engine.impl.persistence.entity.ByteArrayEntity;
 import org.activiti.engine.impl.variable.ValueFields;
 import org.activiti.engine.impl.variable.VariableType;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Tom Baeyens

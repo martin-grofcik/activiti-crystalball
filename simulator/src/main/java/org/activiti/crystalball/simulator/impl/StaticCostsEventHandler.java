@@ -1,14 +1,14 @@
 package org.activiti.crystalball.simulator.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.engine.impl.util.ClockUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class StaticCostsEventHandler implements SimulationEventHandler {
 

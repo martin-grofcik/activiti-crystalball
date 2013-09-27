@@ -21,13 +21,10 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import java.util.Stack;
-
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.RepositoryService;
+import org.activiti.engine.*;
 import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
+
+import java.util.Stack;
 
 /**
  * Context in which simulation is run.

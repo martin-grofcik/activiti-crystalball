@@ -12,10 +12,6 @@
  */
 package org.activiti.crystalball.simulator.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.RuntimeService;
 import org.activiti.crystalball.simulator.executor.impl.ServiceImpl;
 import org.activiti.crystalball.simulator.impl.cmd.GetResultVariablesCmd;
@@ -29,6 +25,10 @@ import org.activiti.crystalball.simulator.runtime.SimulationInstanceQuery;
 import org.activiti.engine.runtime.ExecutionQuery;
 import org.activiti.engine.runtime.NativeExecutionQuery;
 import org.activiti.engine.runtime.NativeProcessInstanceQuery;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Tom Baeyens

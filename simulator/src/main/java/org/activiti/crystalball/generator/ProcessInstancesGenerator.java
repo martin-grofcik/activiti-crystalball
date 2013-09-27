@@ -21,17 +21,17 @@ package org.activiti.crystalball.generator;
  */
 
 
-import java.awt.Color;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * highlight user tasks with running process instances higher than limit 

@@ -21,13 +21,9 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.impl.persistence.entity.ResultEntity;
+
+import java.util.*;
 
 /**
  * Post process simulation results

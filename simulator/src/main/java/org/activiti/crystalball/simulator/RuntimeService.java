@@ -12,20 +12,16 @@
  */
 package org.activiti.crystalball.simulator;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.result.ResultQuery;
 import org.activiti.crystalball.simulator.runtime.SimulationInstance;
 import org.activiti.crystalball.simulator.runtime.SimulationInstanceQuery;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.repository.Deployment;
-import org.activiti.engine.runtime.Execution;
-import org.activiti.engine.runtime.ExecutionQuery;
-import org.activiti.engine.runtime.NativeExecutionQuery;
-import org.activiti.engine.runtime.NativeProcessInstanceQuery;
-import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.runtime.*;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 /** Service which provides access to {@link Deployment}s,

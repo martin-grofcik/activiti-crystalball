@@ -1,8 +1,8 @@
 package org.activiti.crystalball.simulator.impl;
 
-import java.io.IOException;
-
 import org.activiti.crystalball.simulator.SimulationRunHelper;
+
+import java.io.IOException;
 
 /**
  * No operation after or before simulation run

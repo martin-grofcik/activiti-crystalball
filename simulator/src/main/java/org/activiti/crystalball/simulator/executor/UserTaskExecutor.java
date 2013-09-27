@@ -21,9 +21,9 @@ package org.activiti.crystalball.simulator.executor;
  */
 
 
-import java.util.Map;
-
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
+
+import java.util.Map;
 
 /**
  * Simulate user task execution 

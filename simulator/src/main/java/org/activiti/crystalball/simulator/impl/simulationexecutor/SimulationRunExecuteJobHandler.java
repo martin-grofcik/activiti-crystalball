@@ -12,10 +12,6 @@
  */
 package org.activiti.crystalball.simulator.impl.simulationexecutor;
 
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.activiti.crystalball.simulator.SimulationRun;
 import org.activiti.crystalball.simulator.SimulationRunHelper;
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
@@ -25,6 +21,10 @@ import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationInst
 import org.activiti.crystalball.simulator.impl.persistence.entity.SimulationRunEntity;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**

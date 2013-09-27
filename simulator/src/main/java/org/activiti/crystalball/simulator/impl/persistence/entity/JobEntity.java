@@ -12,12 +12,6 @@
  */
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.impl.context.SimulationContext;
 import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSession;
 import org.activiti.crystalball.simulator.impl.interceptor.CommandContext;
@@ -30,6 +24,12 @@ import org.activiti.engine.impl.db.PersistentObject;
 import org.activiti.engine.impl.persistence.entity.ByteArrayEntity;
 import org.activiti.engine.impl.persistence.entity.MessageEntity;
 import org.activiti.engine.impl.persistence.entity.TimerEntity;
+
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Stub of the common parts of a Job. You will normally work with a subclass of

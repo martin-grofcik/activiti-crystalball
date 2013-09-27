@@ -21,12 +21,6 @@ package org.activiti.crystalball.simulator.impl;
  */
 
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
@@ -35,6 +29,8 @@ import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * event handler schedules processinstances to start according to history which is played back 

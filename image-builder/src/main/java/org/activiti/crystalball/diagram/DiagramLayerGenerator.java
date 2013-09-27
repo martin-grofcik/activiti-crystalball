@@ -21,6 +21,7 @@ package org.activiti.crystalball.diagram;
  */
 
 
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -33,7 +34,7 @@ public interface DiagramLayerGenerator {
 	 * 
 	 * @param imageType type of the image produced
 	 * @param params parameters map  
-	 * @return byte array which represents image  
+	 * @return Input stream of generated image
 	 */
-	public byte[] generateLayer(String imageType, Map<String, Object> params);
+	public InputStream generateLayer(String imageType, Map<String, Object> params);
 }

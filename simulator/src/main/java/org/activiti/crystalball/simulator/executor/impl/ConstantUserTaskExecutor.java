@@ -21,9 +21,9 @@ package org.activiti.crystalball.simulator.executor.impl;
  */
 
 
-import java.util.Map;
-
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
+
+import java.util.Map;
 
 /**
  * execute any user task in constant time,

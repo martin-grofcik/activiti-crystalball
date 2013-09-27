@@ -1,11 +1,5 @@
 package org.activiti.crystalball.examples.mortages.monitoring;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.activiti.crystalball.generator.ProbabilityGraphGenerator;
 import org.activiti.crystalball.simulator.SimulationEngine;
 import org.activiti.crystalball.simulator.impl.cfg.SimulationEngineConfigurationImpl;
@@ -14,6 +8,12 @@ import org.activiti.crystalball.simulator.result.ResultQuery;
 import org.activiti.crystalball.simulator.runtime.SimulationInstance;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * present simulation engine monitoring capabilities 

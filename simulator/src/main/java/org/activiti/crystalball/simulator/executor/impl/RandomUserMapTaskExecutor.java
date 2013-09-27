@@ -21,10 +21,10 @@ package org.activiti.crystalball.simulator.executor.impl;
  */
 
 
-import java.util.Map;
-
 import org.activiti.crystalball.simulator.SimUtils;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
+
+import java.util.Map;
 
 /**
  * generate execution time (unified distribution) in given interval min inclusive max exclusive 

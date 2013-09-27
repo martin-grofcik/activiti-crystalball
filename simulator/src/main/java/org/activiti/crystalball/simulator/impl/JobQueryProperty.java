@@ -13,11 +13,11 @@
 
 package org.activiti.crystalball.simulator.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.activiti.engine.query.QueryProperty;
 import org.activiti.engine.runtime.JobQuery;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Contains the possible properties that can be used in a {@link JobQuery}.

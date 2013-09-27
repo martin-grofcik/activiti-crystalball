@@ -21,15 +21,13 @@ package org.activiti.crystalball.diagram;
  */
 
 
-import java.awt.Color;
-import java.awt.Paint;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
 
 
 public class ProcessDiagramCanvas extends org.activiti.engine.impl.bpmn.diagram.ProcessDiagramCanvas {
-	
+
 	  public ProcessDiagramCanvas(int width, int height) {
 		  super( width, height);
 	  }

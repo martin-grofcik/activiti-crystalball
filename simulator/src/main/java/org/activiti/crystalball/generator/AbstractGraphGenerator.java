@@ -1,22 +1,20 @@
 package org.activiti.crystalball.generator;
 
-import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-
 import org.activiti.crystalball.diagram.BasicProcessDiagramGenerator;
 import org.activiti.crystalball.diagram.HighlightNodeDiagramLayer;
 import org.activiti.crystalball.diagram.MergeLayersGenerator;
 import org.activiti.crystalball.diagram.WriteNodeDescriptionDiagramLayer;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.impl.RepositoryServiceImpl;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AbstractGraphGenerator {
 
@@ -64,10 +62,8 @@ public class AbstractGraphGenerator {
 			i++;
 		}
 
-		mergeGenerator.generateLayer("png", mergeL);
 		File generatedFile = new File(fileName);
-		ImageIO.write(ImageIO.read(new ByteArrayInputStream(mergeGenerator
-				.generateLayer("png", mergeL))), "png", generatedFile);
+		ImageIO.write(ImageIO.read(mergeGenerator.generateLayer("png", mergeL)), "png", generatedFile);
 	}
 	
 	protected static void addToHighlighted(	Map<Color, List<String>> highLightedActivitiesMap, Color color,	String id) {
