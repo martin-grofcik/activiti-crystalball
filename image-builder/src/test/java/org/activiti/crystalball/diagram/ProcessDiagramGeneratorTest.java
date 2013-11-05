@@ -25,6 +25,8 @@ import org.activiti.crystalball.diagram.svg.SVGCanvasFactory;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.test.PluggableActivitiTestCase;
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 
 import javax.imageio.ImageIO;
@@ -37,13 +39,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 
 	private static String FINANCIALREPORT_PROCESS_KEY = "financialReport";
 
 	private List<String> processInstanceIds;
 
+  @Before
 	protected void setUp() throws Exception {
 		super.setUp();
 		repositoryService
@@ -62,6 +64,8 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 		}
 	}
 
+  @Override
+  @After
 	protected void tearDown() throws Exception {
 		for (org.activiti.engine.repository.Deployment deployment : repositoryService
 				.createDeploymentQuery().list()) {
@@ -69,23 +73,8 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 		}
 		super.tearDown();
 	}
-	
-	@Ignore("Generator provides platform dependent images (fonts) see http://forums.activiti.org/en/viewtopic.php?f=6&t=4647&start=0")
-	public void testGenerateProcessDefinition() throws IOException {
-	    String id = FINANCIALREPORT_PROCESS_KEY;
-	    DiagramLayerGenerator generator = new BasicProcessDiagramGenerator( (RepositoryServiceImpl) repositoryService );
-	    Map<String, Object> params = new HashMap<String, Object>();
-	    params.put(AbstractProcessDiagramLayerGenerator.PROCESS_DEFINITION_ID, id);
-	    
-	    File expectedFile = new File("src/test/resources/org/activiti/crystalball/diagram/BasicProcessDiagramGeneratorTest.testSimpleProcessDefinition.png" );
-	    File generatedFile = new File("target/BasicProcessDiagramGeneratorTest.testSimpleProcessDefinition.png" );
-	    ImageIO.write( ImageIO.read( generator.generateLayer("png", params))
-				, "png"
-				, generatedFile);
-	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
-	}
 
-    public void testGenerateProcessDefinitionSVG() throws IOException {
+  public void testGenerateProcessDefinitionSVG() throws IOException {
         String id = FINANCIALREPORT_PROCESS_KEY;
         DiagramLayerGenerator generator = new BasicProcessDiagramGenerator( (RepositoryServiceImpl) repositoryService, new SVGCanvasFactory());
         Map<String, Object> params = new HashMap<String, Object>();
@@ -95,7 +84,7 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
         File generatedFile = new File("target/BasicProcessDiagramGeneratorTest.testSimpleProcessDefinition.svg" );
         FileUtils.copyInputStreamToFile( generator.generateLayer("svg", params), generatedFile);
 
-        assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
+        assertTrue(FileUtils.contentEqualsIgnoreEOL(expectedFile, generatedFile, "UTF-8"));
     }
 	
 	public void testOneNodeHighlight() throws IOException {
@@ -127,7 +116,7 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
         File expectedFile = new File("src/test/resources/org/activiti/crystalball/diagram/HighlightNodeDiagramLayer.testOneNodeHighlight.svg" );
         File generatedFile = new File("target/HighlightNodeDiagramLayer.testOneNodeHighlight.svg" );
         FileUtils.copyInputStreamToFile( generator.generateLayer("svg", params), generatedFile);
-        assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));
+        assertTrue( FileUtils.contentEqualsIgnoreEOL(expectedFile, generatedFile, "UTF-8"));
     }
 
     public void testMergeLayers() throws IOException {
@@ -200,6 +189,6 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
         File expectedFile = new File("src/test/resources/org/activiti/crystalball/diagram/WriteCountLayerGeneratorTest.oneNumber.svg" );
         File generatedFile = new File("target/WriteCountLayerGeneratorTest.oneNumber.svg" );
         FileUtils.copyInputStreamToFile( generator.generateLayer("svg", params), generatedFile);
-        assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));
+        assertTrue( FileUtils.contentEqualsIgnoreEOL(expectedFile, generatedFile, "UTF-8"));
     }
 }

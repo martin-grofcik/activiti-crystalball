@@ -28,6 +28,7 @@ import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -39,6 +40,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
+@Ignore("Generator provides platform dependent images (fonts) see http://forums.activiti.org/en/viewtopic.php?f=6&t=4647&start=0")
 public class OptimizeBottleneckTest {
 	protected static final String tempDir = System.getProperty("tempDir", "target");
 	protected static final String LIVE_DB = tempDir +"/live-SimulateBottleneckTest";

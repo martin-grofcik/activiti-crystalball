@@ -13,6 +13,7 @@ import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.image.JPEGTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.image.TIFFTranscoder;
+import org.apache.batik.transcoder.svg2svg.SVGTranscoder;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -98,6 +99,7 @@ public class SVGProcessDiagramCanvas extends ProcessDiagramCanvas{
             t = new TIFFTranscoder();
         }
         try {
+            t.addTranscodingHint(SVGTranscoder.KEY_NEWLINE, SVGTranscoder.VALUE_NEWLINE_CR_LF);
             t.transcode(input, output);
 
             return new ByteArrayInputStream(ostream.toByteArray());
