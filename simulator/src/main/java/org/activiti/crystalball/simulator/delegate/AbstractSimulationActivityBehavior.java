@@ -25,7 +25,6 @@ import org.activiti.engine.impl.pvm.delegate.ActivityBehavior;
 import org.activiti.engine.impl.pvm.delegate.ActivityExecution;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.pvm.process.ScopeImpl;
-import org.activiti.engine.impl.util.xml.Element;
 
 public abstract class AbstractSimulationActivityBehavior implements ActivityBehavior {
 
@@ -34,7 +33,7 @@ public abstract class AbstractSimulationActivityBehavior implements ActivityBeha
 	   */
 	  public static final String CRYSTALBALL_BPMN_EXTENSIONS_NS = "http://crystalball.org/simulation";
 	  
-	public AbstractSimulationActivityBehavior(Element scriptTaskElement, ScopeImpl scope, ActivityImpl activity) {
+	public AbstractSimulationActivityBehavior(ScopeImpl scope, ActivityImpl activity) {
 		
 	}
 	

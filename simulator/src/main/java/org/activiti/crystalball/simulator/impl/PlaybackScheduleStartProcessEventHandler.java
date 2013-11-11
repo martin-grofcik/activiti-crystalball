@@ -106,7 +106,6 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 
 	/**
 	 * schedule next process start - take history and choose next process from play back interval
-	 * @param context
 	 * @param simulationTime
 	 * @param processInstanceId 
 	 */
@@ -150,7 +149,6 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 	 * get process instances to schedule their start an schedule new schedule simulation event
 	 * 
 	 * @param playBackPosition
-	 * @param context
 	 * @return
 	 */
 	protected List<HistoricProcessInstance> getPlaybackProcessInstances( Date playBackPosition) {

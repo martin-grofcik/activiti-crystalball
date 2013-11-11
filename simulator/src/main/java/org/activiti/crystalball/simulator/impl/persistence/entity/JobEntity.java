@@ -106,7 +106,7 @@ public class JobEntity implements Serializable, Job, PersistentObject, HasRevisi
 
     // Also delete the job's exception byte array
     if (exceptionByteArrayId != null) {
-      Context.getCommandContext().getByteArrayManager().deleteByteArrayById(exceptionByteArrayId);
+      Context.getCommandContext().getByteArrayEntityManager().deleteByteArrayById(exceptionByteArrayId);
     }
     
     // remove link to execution
@@ -137,7 +137,7 @@ public class JobEntity implements Serializable, Job, PersistentObject, HasRevisi
 
 //  public void setExecution(ExecutionEntity execution) {
 //    executionId = execution.getId();
-//    processInstanceId = execution.getProcessInstanceId();
+//    processInstanceId = execution.getSimulationInstanceId();
 //    execution.addJob(this);
 //  }
 

@@ -26,6 +26,7 @@ import org.activiti.engine.JobNotFoundException;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.interceptor.Session;
 import org.activiti.engine.impl.interceptor.SessionFactory;
+import org.activiti.engine.impl.persistence.deploy.DeploymentManager;
 import org.activiti.engine.impl.persistence.entity.*;
 import org.activiti.engine.impl.pvm.runtime.AtomicOperation;
 import org.activiti.engine.impl.pvm.runtime.InterpretableExecution;
@@ -188,16 +189,16 @@ public class CommandContext {
     return getSession(DbSimulatorSqlSession.class);
   }
   
-  public DeploymentManager getDeploymentManager() {
-    return getSession(DeploymentManager.class);
+  public DeploymentEntityManager getDeploymentManager() {
+    return getSession(DeploymentEntityManager.class);
   }
 
-  public ResourceManager getResourceManager() {
-    return getSession(ResourceManager.class);
+  public ResourceEntityManager getResourceManager() {
+    return getSession(ResourceEntityManager.class);
   }
   
-  public ByteArrayManager getByteArrayManager() {
-    return getSession(ByteArrayManager.class);
+  public ByteArrayEntityManager getByteArrayManager() {
+    return getSession(ByteArrayEntityManager.class);
   }
   
   public SimulationInstanceEntityManager getSimulationInstanceManager() {
@@ -212,8 +213,8 @@ public class CommandContext {
 	    return getSession(ResultEntityManager.class);
   }
   
-  public ModelManager getModelManager() {
-    return getSession(ModelManager.class);
+  public ModelEntityManager getModelManager() {
+    return getSession(ModelEntityManager.class);
   }
   
   public JobManager getJobManager() {

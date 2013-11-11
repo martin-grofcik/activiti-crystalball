@@ -18,6 +18,7 @@ import org.activiti.crystalball.simulator.impl.db.DbSimulatorSqlSession;
 import org.activiti.engine.impl.db.PersistentObject;
 import org.activiti.engine.impl.history.HistoryManager;
 import org.activiti.engine.impl.interceptor.Session;
+import org.activiti.engine.impl.persistence.deploy.DeploymentManager;
 import org.activiti.engine.impl.persistence.entity.*;
 
 
@@ -43,24 +44,24 @@ public abstract class AbstractManager implements Session {
     return SimulationContext.getCommandContext().getSession(sessionClass);
   }
 
-  protected DeploymentManager getDeploymentManager() {
-    return getSession(DeploymentManager.class);
+  protected DeploymentEntityManager getDeploymentManager() {
+    return getSession(DeploymentEntityManager.class);
   }
 
-  protected ResourceManager getResourceManager() {
-    return getSession(ResourceManager.class);
+  protected ResourceEntityManager getResourceManager() {
+    return getSession(ResourceEntityManager.class);
   }
   
-  protected ByteArrayManager getByteArrayManager() {
-    return getSession(ByteArrayManager.class);
+  protected ByteArrayEntityManager getByteArrayManager() {
+    return getSession(ByteArrayEntityManager.class);
   }
   
-  protected ProcessDefinitionManager getProcessDefinitionManager() {
-    return getSession(ProcessDefinitionManager.class);
+  protected ProcessDefinitionEntityManager getProcessDefinitionManager() {
+    return getSession(ProcessDefinitionEntityManager.class);
   }
   
-  protected ModelManager getModelManager() {
-    return getSession(ModelManager.class);
+  protected ModelEntityManager getModelManager() {
+    return getSession(ModelEntityManager.class);
   }
 
   

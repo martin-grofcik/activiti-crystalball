@@ -140,12 +140,14 @@
 		<property name="databaseSchemaUpdate" value="true" />
 		<property name="jobExecutorActivate" value="false" />
 		<property name="history" value="full" />
-		<property name="preParseListeners">
-			<list>
-				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener"/>
-			</list>
-		</property>
-		<!-- deploy mortages process from the first simulation run -->
+        <property name="customDefaultBpmnParseHandlers">
+            <list>
+                <bean class="org.activiti.crystalball.simulator.impl.bpmn.parser.handler.SimulatorScriptTaskParseHandler"/>
+                <bean class="org.activiti.crystalball.simulator.impl.bpmn.parser.handler.SimulatorServiceTaskParseHandler"/>
+                <bean class="org.activiti.crystalball.simulator.impl.bpmn.parser.handler.SimulatorUserTaskParseHandler"/>
+            </list>
+        </property>
+        <!-- deploy mortages process from the first simulation run -->
 		<property name="deploymentResources" value="**/classes/**/MortageDemo-0.bpmn" />
 	</bean>
 

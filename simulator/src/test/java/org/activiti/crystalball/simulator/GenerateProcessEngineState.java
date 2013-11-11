@@ -41,13 +41,12 @@ import java.util.*;
  */
 public class GenerateProcessEngineState {
 	
-	static String TEMP_DIR;
+	static String TEMP_DIR = "target";
 	
 	public static void main(String[] args) throws InterruptedException, IOException {
-		TEMP_DIR = args[0];
-		if (TEMP_DIR == null)
-			TEMP_DIR = "target";
-		
+    if (args != null && args.length == 1)
+		  TEMP_DIR = args[0];
+
 		generateLiveDB();
 		generateBasicEngine();
 		generatePlaybackOriginal();

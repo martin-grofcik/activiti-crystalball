@@ -12,19 +12,24 @@
  */
 package org.activiti.crystalball.simulator.impl.persistence.entity;
 
-import org.activiti.crystalball.simulator.impl.context.SimulationContext;
-import org.activiti.engine.impl.db.HasRevision;
-import org.activiti.engine.impl.db.PersistentObject;
-import org.activiti.engine.impl.persistence.entity.ByteArrayEntity;
-import org.activiti.engine.impl.variable.ValueFields;
-import org.activiti.engine.impl.variable.VariableType;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.activiti.crystalball.simulator.impl.context.SimulationContext;
+import org.activiti.engine.impl.context.Context;
+import org.activiti.engine.impl.db.HasRevision;
+import org.activiti.engine.impl.db.PersistentObject;
+import org.activiti.engine.impl.persistence.entity.ByteArrayEntity;
+import org.activiti.engine.impl.persistence.entity.ByteArrayRef;
+import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
+import org.activiti.engine.impl.variable.ValueFields;
+import org.activiti.engine.impl.variable.VariableType;
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @author Tom Baeyens
+ * @author Marcus Klimstra (CGI)
  */
 public class VariableInstanceEntity implements ValueFields, PersistentObject, HasRevision, Serializable {
 
@@ -34,23 +39,22 @@ public class VariableInstanceEntity implements ValueFields, PersistentObject, Ha
   protected int revision;
 
   protected String name;
+  protected VariableType type;
 
   protected String simulationInstanceId;
   protected String runId;
   protected String resultId;
 
   protected Long longValue;
-  protected Double doubleValue; 
+  protected Double doubleValue;
   protected String textValue;
   protected String textValue2;
-
-  protected ByteArrayEntity byteArrayValue;
-  protected String byteArrayValueId;
+  protected final ByteArrayRef byteArrayRef = new ByteArrayRef();
 
   protected Object cachedValue;
+  protected boolean forcedUpdate;
+  protected boolean deleted = false;
 
-  protected VariableType type;
-  
   // Default constructor for SQL mapping
   protected VariableInstanceEntity() {
   }
@@ -58,20 +62,18 @@ public class VariableInstanceEntity implements ValueFields, PersistentObject, Ha
   public static VariableInstanceEntity createAndInsert(String name, VariableType type, Object value) {
     VariableInstanceEntity variableInstance = create(name, type, value);
 
-    SimulationContext
-      .getCommandContext()
-      .getDbSqlSession()
-      .insert(variableInstance);
-  
+    SimulationContext.getCommandContext()
+        .getDbSqlSession()
+        .insert(variableInstance);
+
     return variableInstance;
   }
-  
+
   public static VariableInstanceEntity create(String name, VariableType type, Object value) {
     VariableInstanceEntity variableInstance = new VariableInstanceEntity();
     variableInstance.name = name;
     variableInstance.type = type;
     variableInstance.setValue(value);
-    
     return variableInstance;
   }
 
@@ -80,14 +82,19 @@ public class VariableInstanceEntity implements ValueFields, PersistentObject, Ha
     this.simulationInstanceId = simulationRun.getSimulationId();
   }
 
+  public void forceUpdate() {
+    forcedUpdate = true;
+
+  }
+
   public void delete() {
-    // delete variable
     SimulationContext
-      .getCommandContext()
-      .getDbSqlSession()
-      .delete(this);
-    
-    deleteByteArrayValue();
+        .getCommandContext()
+        .getDbSqlSession()
+        .delete(this);
+
+    byteArrayRef.delete();
+    deleted = true;
   }
 
   public Object getPersistentState() {
@@ -101,14 +108,25 @@ public class VariableInstanceEntity implements ValueFields, PersistentObject, Ha
     if (textValue != null) {
       persistentState.put("textValue", textValue);
     }
-    if (byteArrayValueId != null) {
-      persistentState.put("byteArrayValueId", byteArrayValueId);
+    if (textValue2 != null) {
+      persistentState.put("textValue2", textValue2);
+    }
+    if (byteArrayRef.getId() != null) {
+      persistentState.put("byteArrayValueId", byteArrayRef.getId());
+    }
+    if (forcedUpdate) {
+      persistentState.put("forcedUpdate", Boolean.TRUE);
     }
     return persistentState;
   }
-  
+
   public int getRevisionNext() {
-    return revision+1;
+    return revision + 1;
+  }
+
+
+  public boolean isDeleted() {
+    return deleted;
   }
 
   // lazy initialized relations ///////////////////////////////////////////////
@@ -120,72 +138,41 @@ public class VariableInstanceEntity implements ValueFields, PersistentObject, Ha
   public void setRunId(String runId) {
     this.runId = runId;
   }
-  
+
   // byte array value /////////////////////////////////////////////////////////
-  
-  // i couldn't find a easy readable way to extract the common byte array value logic
-  // into a common class.  therefor it's duplicated in VariableInstanceEntity, 
-  // HistoricVariableInstance and HistoricDetailVariableInstanceUpdateEntity 
-  
-  public String getByteArrayValueId() {
-    return byteArrayValueId;
+
+  @Override
+  public byte[] getBytes() {
+    return byteArrayRef.getBytes();
   }
 
-  public void setByteArrayValueId(String byteArrayValueId) {
-    this.byteArrayValueId = byteArrayValueId;
-    this.byteArrayValue = null;
+  @Override
+  public void setBytes(byte[] bytes) {
+    byteArrayRef.setValue("var-" + name, bytes);
   }
 
+  @Override
+  @Deprecated
   public ByteArrayEntity getByteArrayValue() {
-    if ((byteArrayValue == null) && (byteArrayValueId != null)) {
-      byteArrayValue = SimulationContext
-        .getCommandContext()
-        .getDbSqlSession()
-        .selectById(ByteArrayEntity.class, byteArrayValueId);
-    }
-    return byteArrayValue;
+    return byteArrayRef.getEntity();
   }
-  
+
+  @Override
+  @Deprecated
+  public String getByteArrayValueId() {
+    return byteArrayRef.getId();
+  }
+
+  @Override
+  @Deprecated
   public void setByteArrayValue(byte[] bytes) {
-    ByteArrayEntity byteArrayValue = null;
-    if (this.byteArrayValueId!=null) {
-      getByteArrayValue();
-      SimulationContext
-        .getCommandContext()
-        .getByteArrayManager()
-        .deleteByteArrayById(byteArrayValueId);
-    }
-    if (bytes!=null) {
-      byteArrayValue = new ByteArrayEntity(bytes);
-      SimulationContext
-        .getCommandContext()
-        .getDbSqlSession()
-        .insert(byteArrayValue);
-    }
-    this.byteArrayValue = byteArrayValue;
-    if (byteArrayValue != null) {
-      this.byteArrayValueId = byteArrayValue.getId();
-    } else {
-      this.byteArrayValueId = null;
-    }
+    setBytes(bytes);
   }
 
-  protected void deleteByteArrayValue() {
-    if (byteArrayValueId != null) {
-      // the next apparently useless line is probably to ensure consistency in the DbSqlSession 
-      // cache, but should be checked and docced here (or removed if it turns out to be unnecessary)
-      getByteArrayValue();
-      SimulationContext
-        .getCommandContext()
-        .getByteArrayManager()
-        .deleteByteArrayById(byteArrayValueId);
-    }
-  }
-
-  // type /////////////////////////////////////////////////////////////////////
+  // value ////////////////////////////////////////////////////////////////////
 
   public Object getValue() {
-    if (!type.isCachable() || cachedValue==null) {
+    if (!type.isCachable() || cachedValue == null) {
       cachedValue = type.getValue(this);
     }
     return cachedValue;
@@ -201,67 +188,114 @@ public class VariableInstanceEntity implements ValueFields, PersistentObject, Ha
   public String getId() {
     return id;
   }
+
   public void setId(String id) {
     this.id = id;
   }
-  public String getTextValue() {
-    return textValue;
-  }
-  public String getProcessInstanceId() {
-    return simulationInstanceId;
-  }
-  public String getRunId() {
-    return runId;
-  }
-  public Long getLongValue() {
-    return longValue;
-  }
-  public void setLongValue(Long longValue) {
-    this.longValue = longValue;
-  }
-  public Double getDoubleValue() {
-    return doubleValue;
-  }
-  public void setDoubleValue(Double doubleValue) {
-    this.doubleValue = doubleValue;
-  }
-  public void setName(String name) {
-    this.name = name;
-  }
-  public void setTextValue(String textValue) {
-    this.textValue = textValue;
-  }
-  public String getName() {
-    return name;
-  }
+
   public int getRevision() {
     return revision;
   }
+
   public void setRevision(int revision) {
     this.revision = revision;
   }
-  public void setType(VariableType type) {
-    this.type = type;
+
+  public String getName() {
+    return name;
   }
+
   public VariableType getType() {
     return type;
   }
-  public Object getCachedValue() {
-    return cachedValue;
+
+  public void setType(VariableType type) {
+    this.type = type;
   }
-  public void setCachedValue(Object cachedValue) {
-    this.cachedValue = cachedValue;
+
+  public String getSimulationInstanceId() {
+    return simulationInstanceId;
   }
+
+  public String getRunId() {
+    return runId;
+  }
+
+  public Long getLongValue() {
+    return longValue;
+  }
+
+  public void setLongValue(Long longValue) {
+    this.longValue = longValue;
+  }
+
+  public Double getDoubleValue() {
+    return doubleValue;
+  }
+
+  public void setDoubleValue(Double doubleValue) {
+    this.doubleValue = doubleValue;
+  }
+
+  public String getTextValue() {
+    return textValue;
+  }
+
+  public void setTextValue(String textValue) {
+    this.textValue = textValue;
+  }
+
   public String getTextValue2() {
     return textValue2;
   }
+
   public void setTextValue2(String textValue2) {
     this.textValue2 = textValue2;
   }
+
+  public Object getCachedValue() {
+    return cachedValue;
+  }
+
+  public void setCachedValue(Object cachedValue) {
+    this.cachedValue = cachedValue;
+  }
+
   public String getResultId() {
     return resultId;
   }
+
   public void setResultId(String resultId) {
     this.resultId = resultId;
   }
+
+
+  // misc methods /////////////////////////////////////////////////////////////
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("VariableInstanceEntity[");
+    sb.append("id=").append(id);
+    sb.append(", name=").append(name);
+    sb.append(", type=").append(type != null ? type.getTypeName() : "null");
+    if (longValue != null) {
+      sb.append(", longValue=").append(longValue);
+    }
+    if (doubleValue != null) {
+      sb.append(", doubleValue=").append(doubleValue);
+    }
+    if (textValue != null) {
+      sb.append(", textValue=").append(StringUtils.abbreviate(textValue, 40));
+    }
+    if (textValue2 != null) {
+      sb.append(", textValue2=").append(StringUtils.abbreviate(textValue2, 40));
+    }
+    if (byteArrayRef.getId() != null) {
+      sb.append(", byteArrayValueId=").append(byteArrayRef.getId());
+    }
+    sb.append("]");
+    return sb.toString();
+  }
+
 }

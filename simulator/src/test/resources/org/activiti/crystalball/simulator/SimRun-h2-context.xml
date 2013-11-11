@@ -63,10 +63,12 @@
 		<property name="transactionManager" ref="simTransactionManager" />
 		<property name="databaseSchemaUpdate" value="true" />
 		<property name="jobExecutorActivate" value="false" />
-		<property name="preParseListeners">
+		<property name="customDefaultBpmnParseHandlers">
 			<list>
-				<bean class="org.activiti.crystalball.simulator.parse.SimulationBpmnParseListener"/>
-			</list>
+                <bean class="org.activiti.crystalball.simulator.impl.bpmn.parser.handler.SimulatorScriptTaskParseHandler"/>
+                <bean class="org.activiti.crystalball.simulator.impl.bpmn.parser.handler.SimulatorServiceTaskParseHandler"/>
+                <bean class="org.activiti.crystalball.simulator.impl.bpmn.parser.handler.SimulatorUserTaskParseHandler"/>
+            </list>
 		</property>
 		<property name="processEngineName" value="${simulationRunId:default}"/>
 	</bean>

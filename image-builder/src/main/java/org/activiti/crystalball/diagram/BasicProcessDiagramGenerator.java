@@ -21,6 +21,7 @@ package org.activiti.crystalball.diagram;
  */
 
 
+import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.crystalball.diagram.svg.SVGProcessDiagramGenerator;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.bpmn.diagram.ProcessDiagramGenerator;
@@ -65,12 +66,12 @@ public class BasicProcessDiagramGenerator extends AbstractProcessDiagramLayerGen
 		// get process definition entity
 		final String processDefinitionKey = (String) params.get( PROCESS_DEFINITION_ID );
 		final String processDefinitionId  = repositoryService.createProcessDefinitionQuery().processDefinitionKey( processDefinitionKey ).singleResult().getId();
-	    ProcessDefinitionEntity pde = (ProcessDefinitionEntity) ( ((RepositoryServiceImpl) repositoryService).getDeployedProcessDefinition( processDefinitionId ));
+	    BpmnModel bpmnModel = repositoryService.getBpmnModel( processDefinitionId );
 
         if (ImageTypes.SVG.equalsType( imageType)) {
-            return SVGProcessDiagramGenerator.generateDiagram( pde, imageType, Collections.<String> emptyList());
+            return SVGProcessDiagramGenerator.generateDiagram( bpmnModel, imageType, Collections.<String> emptyList());
         }
-		return ProcessDiagramGenerator.generateDiagram(pde, imageType, Collections.<String> emptyList());
+		return ProcessDiagramGenerator.generateDiagram(bpmnModel, imageType, Collections.<String> emptyList());
 	}
 
 }

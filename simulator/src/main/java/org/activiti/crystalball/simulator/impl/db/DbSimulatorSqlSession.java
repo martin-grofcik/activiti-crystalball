@@ -722,8 +722,8 @@ public class DbSimulatorSqlSession implements Session {
 		    
 		    if (isEngineTablePresent()) {
 		      String dbVersion = getDbVersion();
-		      if (!ProcessEngine.VERSION.equals(dbVersion)) {
-		        throw new ActivitiWrongDbException(ProcessEngine.VERSION, dbVersion);
+		      if (!SimulationEngine.VERSION.equals(dbVersion)) {
+		        throw new ActivitiWrongDbException(SimulationEngine.VERSION, dbVersion);
 		      }
 		    } else {
 		      dbSchemaCreateEngine();

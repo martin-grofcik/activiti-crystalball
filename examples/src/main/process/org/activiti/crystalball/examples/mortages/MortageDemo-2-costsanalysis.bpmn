@@ -9,13 +9,14 @@ slide 32</documentation>
       <script></script>
     </scriptTask>
     <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
-    <serviceTask id="rejection_email" name="Send rejection e-mail" activiti:type="mail" sim:behavior="org.activiti.crystalball.simulator.delegate.Noop">
+    <serviceTask id="rejection_email" name="Send rejection e-mail" activiti:type="mail">
       <extensionElements>
         <activiti:field name="to" expression="to@domain"></activiti:field>
         <activiti:field name="from" expression="from@domain"></activiti:field>
         <activiti:field name="text">
           <activiti:expression><![CDATA[text]]></activiti:expression>
         </activiti:field>
+        <sim:behavior className="org.activiti.crystalball.simulator.delegate.Noop"/>
       </extensionElements>
     </serviceTask>
     <endEvent id="endevent1" name="KO"></endEvent>
@@ -46,13 +47,14 @@ slide 32</documentation>
           </activiti:taskListener>
         </extensionElements>
       </userTask>
-      <serviceTask id="meetingrequest" name="Send meeting request" activiti:type="mail" sim:behavior="org.activiti.crystalball.simulator.delegate.Noop">
+      <serviceTask id="meetingrequest" name="Send meeting request" activiti:type="mail">
         <extensionElements>
           <activiti:field name="to" expression="to@domain"></activiti:field>
           <activiti:field name="from" expression="from@domain"></activiti:field>
           <activiti:field name="text">
             <activiti:expression><![CDATA[text]]></activiti:expression>
           </activiti:field>
+          <sim:behavior className="org.activiti.crystalball.simulator.delegate.Noop"/>
         </extensionElements>
       </serviceTask>
       <userTask id="f2fmeeting" name="F2F meeting">
@@ -100,13 +102,14 @@ slide 32</documentation>
         </extensionElements>
     </userTask>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
-    <serviceTask id="confirmationemail" name="Send confirmation email" activiti:type="mail" sim:behavior="org.activiti.crystalball.simulator.delegate.Noop">
+    <serviceTask id="confirmationemail" name="Send confirmation email" activiti:type="mail">
       <extensionElements>
         <activiti:field name="to" expression="to@domain"></activiti:field>
         <activiti:field name="from" expression="from@domain"></activiti:field>
         <activiti:field name="text">
           <activiti:expression><![CDATA[text]]></activiti:expression>
         </activiti:field>
+        <sim:behavior className="org.activiti.crystalball.simulator.delegate.Noop"/>
       </extensionElements>
     </serviceTask>
     <endEvent id="endevent3" name="End"></endEvent>

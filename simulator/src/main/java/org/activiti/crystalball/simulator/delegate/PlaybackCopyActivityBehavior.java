@@ -31,7 +31,6 @@ import org.activiti.engine.impl.pvm.PvmTransition;
 import org.activiti.engine.impl.pvm.delegate.ActivityExecution;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.pvm.process.ScopeImpl;
-import org.activiti.engine.impl.util.xml.Element;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,9 +44,8 @@ public class PlaybackCopyActivityBehavior extends AbstractSimulationActivityBeha
 
 	public static final String PLAYBACK_HISTORY_SERVICE = "_playback.historyService";
 	
-	public PlaybackCopyActivityBehavior(Element scriptTaskElement, ScopeImpl scope,
-			ActivityImpl activity) {
-		super(scriptTaskElement, scope, activity);
+	public PlaybackCopyActivityBehavior(ScopeImpl scope, ActivityImpl activity) {
+		super(scope, activity);
 	}
 
 	@Override

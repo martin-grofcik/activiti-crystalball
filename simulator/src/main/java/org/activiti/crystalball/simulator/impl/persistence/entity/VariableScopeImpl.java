@@ -373,7 +373,16 @@ public abstract class VariableScopeImpl implements Serializable, VariableScope {
     return variableInstance;
   }
 
-  
+  public Object getVariableLocal(String variableName) {
+    ensureVariableInstancesInitialized();
+    VariableInstanceEntity variableInstance = variableInstances.get(variableName);
+    if (variableInstance != null) {
+      return variableInstance.getValue();
+    }
+    return null;
+  }
+
+
   /** 
    * Execution variable updates have activity instance ids, but historic task variable updates don't.
    */
