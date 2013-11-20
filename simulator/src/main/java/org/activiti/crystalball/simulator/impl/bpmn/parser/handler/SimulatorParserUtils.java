@@ -4,7 +4,6 @@ import org.activiti.bpmn.model.BaseElement;
 import org.activiti.bpmn.model.ExtensionElement;
 import org.activiti.crystalball.simulator.delegate.AbstractSimulationActivityBehavior;
 import org.activiti.engine.ActivitiException;
-import org.activiti.engine.impl.pvm.delegate.ActivityBehavior;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.pvm.process.ProcessDefinitionImpl;
 import org.activiti.engine.impl.pvm.process.ScopeImpl;
@@ -38,9 +37,10 @@ final class SimulatorParserUtils {
 
       LOG.debug("Scripting task [" + activity.getId() + "] setting behavior to [" + behaviorClassName + "]");
       try {
+        @SuppressWarnings("unchecked")
         Class<AbstractSimulationActivityBehavior> behaviorClass = (Class<AbstractSimulationActivityBehavior>) Class.forName(behaviorClassName);
         Constructor<AbstractSimulationActivityBehavior> constructor = behaviorClass.getDeclaredConstructor(ScopeImpl.class, ActivityImpl.class);
-        activity.setActivityBehavior((ActivityBehavior) constructor.newInstance( scope, activity));
+        activity.setActivityBehavior(constructor.newInstance( scope, activity));
       } catch (Throwable t) {
         LOG.error("unable to set simulation behavior class[" + behaviorClassName + "]", t);
         throw new ActivitiException("unable to set simulation behavior class[" + behaviorClassName + "]");
