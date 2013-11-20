@@ -21,7 +21,6 @@ package org.activiti.crystalball.diagram;
  */
 
 
-import org.activiti.crystalball.diagram.svg.SVGCanvasFactory;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricDetail;
