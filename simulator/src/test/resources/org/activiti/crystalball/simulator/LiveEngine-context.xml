@@ -56,8 +56,9 @@
 		<property name="history" value="full" />
 		
 		<property name="mailServerHost" value="localhost" /> 
-    	<property name="mailServerPort" value="5025" />    
-	</bean>
+    	<property name="mailServerPort" value="5025" />
+        <property name="deploymentResources" value="classpath*:/org/activiti/crystalball/simulator/PlaybackTest.bpmn"/>
+    </bean>
 
     <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
         <property name="processEngineConfiguration" ref="processEngineConfiguration"/>

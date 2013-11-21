@@ -109,8 +109,24 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.2.1</version>
 				<executions>
+                    <execution>
+                        <id>generate-init</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <classpathScope>test</classpathScope>
+                            <cleanupDaemonThreads>true</cleanupDaemonThreads>
+                            <stopUnresponsiveDaemonThreads>true</stopUnresponsiveDaemonThreads>
+                            <mainClass>org.activiti.crystalball.simulator.GenerateProcessEngineStateInit</mainClass>
+                            <arguments>
+                                <argument>${project.build.directory}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
 					<execution>
-						<id>generate</id>
+						<id>generate-continue</id>
 						<phase>process-test-classes</phase>
 						<goals>
 							<goal>java</goal>
@@ -119,7 +135,7 @@
 							<classpathScope>test</classpathScope>
 							<cleanupDaemonThreads>true</cleanupDaemonThreads>
 							<stopUnresponsiveDaemonThreads>true</stopUnresponsiveDaemonThreads>
-							<mainClass>org.activiti.crystalball.simulator.GenerateProcessEngineState</mainClass>
+							<mainClass>org.activiti.crystalball.simulator.GenerateProcessEngineStateContinue</mainClass>
 							<arguments>
 								<argument>${project.build.directory}</argument>
 							</arguments>

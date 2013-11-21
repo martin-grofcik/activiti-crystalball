@@ -27,6 +27,7 @@ import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricVariableInstance;
+import org.h2.store.fs.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,35 +44,25 @@ public class PlaybackTest {
 
 	@After @Before
 	public void after() {
-		File db = new File(System.getProperty("tempDir", "target") + "/Playback-test.h2.db");
+		File db = new File(System.getProperty("tempDir", "target") + "/Playback.testPlaybackRun.h2.db");
 		db.delete();
-		db = new File(System.getProperty("tempDir", "target") + "/Playback-test2.h2.db");
+		db = new File(System.getProperty("tempDir", "target") + "/Playback.testPlayback2Run.h2.db");
 		db.delete();
 	}
 
 	@Test
 	public void testPlaybackRun() throws Exception {
-		System.setProperty("_SIM_DB_PATH", System.getProperty("tempDir", "target") + "/Playback-test");
-		System.setProperty("liveDB", "target/Playback");
+        FileUtils.copy("target/Playback.initial.h2.db", "target/Playback.testPlaybackRun.h2.db");
+        System.setProperty("_SIM_DB_PATH", "target/Playback.testPlaybackRun");
+		System.setProperty("liveDB", "target/Playback.processed");
 
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/activiti/crystalball/simulator/PlaybackSimEngine-h2-context.xml");
 		
 		HistoryService simHistoryService = (HistoryService)appContext.getBean("simHistoryService");
-		
-		// init identity service
-		IdentityService identityService = (IdentityService) appContext.getBean("simIdentityService");
-		identityService.saveGroup( identityService.newGroup("Group1") );
-		identityService.saveUser( identityService.newUser("user1") );
-		identityService.createMembership("user1", "Group1");
-		
+
 	    SimulationRun simRun = (SimulationRun)appContext.getBean(SimulationRun.class);
 	    
 	    RepositoryService simRepositoryService = (RepositoryService) appContext.getBean( "simRepositoryService" );
-		
-		// deploy processes
-		simRepositoryService.createDeployment()
-	       .addClasspathResource("org/activiti/crystalball/simulator/Playback.bpmn")
-	       .deploy();
 		
 	    Calendar c = Calendar.getInstance();
 	    c.clear();
@@ -116,24 +107,14 @@ public class PlaybackTest {
 	 */
 	@Test
 	public void testPlayback2Run() throws Exception {
-		System.setProperty("_SIM_DB_PATH", System.getProperty("tempDir", "target") + "/Playback-test2");
-		System.setProperty("liveDB", "target/Playback");
+        FileUtils.copy("target/Playback.initial.h2.db", "target/Playback.testPlayback2Run.h2.db");
+        System.setProperty("_SIM_DB_PATH", "target/Playback.testPlayback2Run");
+        System.setProperty("liveDB", "target/Playback.processed");
 
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/activiti/crystalball/simulator/PlaybackSimEngine-h2-context.xml");
-		
-		// deploy processes
-	    RepositoryService simRepositoryService = (RepositoryService) appContext.getBean( "simRepositoryService" );		
-		simRepositoryService.createDeployment()
-	       .addClasspathResource("org/activiti/crystalball/simulator/Playback.bpmn")
-	       .deploy();
-		
+        ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("/org/activiti/crystalball/simulator/PlaybackSimEngine-h2-context.xml");
+
 		HistoryService historyService = (HistoryService)appContext.getBean("simHistoryService");
-		// init identity service
-		IdentityService identityService = (IdentityService) appContext.getBean("simIdentityService");
-		identityService.saveGroup( identityService.newGroup("Group1") );
-		identityService.saveUser( identityService.newUser("user1") );
-		identityService.createMembership("user1", "Group1");
-		
+
 		SimulationRun simRun = (SimulationRun)appContext.getBean(SimulationRun.class);
 	    PlaybackScheduleStartProcessEventHandler schedule = (PlaybackScheduleStartProcessEventHandler)appContext.getBean("scheduleProcessEventHandler");
 	    schedule.setRepeatPlayback( true );

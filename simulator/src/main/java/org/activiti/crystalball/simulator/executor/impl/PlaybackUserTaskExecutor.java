@@ -48,15 +48,13 @@ public class PlaybackUserTaskExecutor implements UserTaskExecutor {
 	private TaskService taskService;
 
 	/**
-	 *  runtime service from which playBack process instance ID is received
-	 * @TODO: consider obtaining process instance ID from task variables 
-	 */ 
+	 *  runtime service to get playBack process instance ID
+	 */
 	private RuntimeService runtimeService;
 	
 	/** executor used in the case when there is no user task history which can be used*/
 	private UserTaskExecutor backUpExecutor = null;
-	
-	/** default constructor */
+
 	public PlaybackUserTaskExecutor() {		
 	}
 
