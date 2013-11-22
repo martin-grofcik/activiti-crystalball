@@ -38,13 +38,6 @@
 				<entry key="SCHEDULE_PROCESS" value-ref="scheduleProcessEventHandler"/>
 			</map>
 		</constructor-arg>
-		<constructor-arg>
-			<list>
-				<bean class="org.activiti.crystalball.simulator.evaluator.UnfinishedUserTasksEvaluator">
-					<property name="type" value="unfinished_task" />
-				</bean>
-			</list>
-		</constructor-arg>
 	</bean>
 		
 	<bean id="eventCalendar" class="org.activiti.crystalball.simulator.SimpleEventCalendarFactory">
