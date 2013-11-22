@@ -26,18 +26,18 @@
 	<!-- *************************************** -->
 	<!--   SIMULATOR                             -->
 	<!-- *************************************** -->
-	<bean id="simulationRun" class="org.activiti.crystalball.simulator.SimulationRun">
+	<bean id="simulationRun" class="org.activiti.crystalball.simulator.SimpleSimulationRunFactory" >
 	
-		<constructor-arg ref="&amp;eventCalendar"/>
-		<constructor-arg ref="&amp;simProcessEngine"/>
-		<constructor-arg>
+		<property name="eventCalendarFactory" ref="&amp;eventCalendar"/>
+        <property name="processEngineFactory" ref="&amp;simProcessEngine"/>
+		<property name="customEventHandlerMap">
 			<map>
 				<entry key="TASK_CREATE" value-ref="claimEventHandler"/>			
 				<entry key="COMPLETE" value-ref="completeEventHandler"/>
 				<entry key="START_PROCESS" value-ref="startProcessEventHandler"/>
 				<entry key="SCHEDULE_PROCESS" value-ref="scheduleProcessEventHandler"/>
 			</map>
-		</constructor-arg>
+        </property>
 	</bean>
 		
 	<bean id="eventCalendar" class="org.activiti.crystalball.simulator.SimpleEventCalendarFactory">

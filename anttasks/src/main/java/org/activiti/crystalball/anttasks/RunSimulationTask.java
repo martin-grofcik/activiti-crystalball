@@ -61,13 +61,8 @@ public class RunSimulationTask extends Task {
 
 		try {
 			// getting simulation run
-			SimulationRun simRun = null;		
-			if ( simRunBean != null)
-				simRun = (SimulationRun) applicationContext.getBean( simRunBean );
-			if ( simRun == null ) {
-				log("Using default simulation run bean", Project.MSG_WARN);
-				simRun = applicationContext.getBean( SimulationRun.class);
-			}
+			log("Using default simulation run bean", Project.MSG_WARN);
+            SimulationRun simRun = applicationContext.getBean( SimulationRun.class);
 			if ( simRun  == null ) {
 	            throw new BuildException("unable to get sim run bean");
 			}

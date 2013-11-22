@@ -4,7 +4,7 @@ import org.springframework.beans.factory.FactoryBean;
 
 import java.util.Comparator;
 
-public class SimpleEventCalendarFactory implements FactoryBean<EventCalendar> {
+public class SimpleEventCalendarFactory implements FactoryBean<SimpleEventCalendar> {
 
 	protected Comparator<SimulationEvent> eventComparator;
 	
@@ -13,13 +13,13 @@ public class SimpleEventCalendarFactory implements FactoryBean<EventCalendar> {
 	}
 	
 	@Override
-	public EventCalendar getObject() throws Exception {
-		return new EventCalendar(eventComparator);
+	public SimpleEventCalendar getObject() throws Exception {
+		return new SimpleEventCalendar(eventComparator);
 	}
 
 	@Override
 	public Class<?> getObjectType() {
-		return EventCalendar.class;
+		return SimpleEventCalendar.class;
 	}
 
 	@Override

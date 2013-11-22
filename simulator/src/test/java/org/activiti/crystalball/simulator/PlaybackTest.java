@@ -23,7 +23,6 @@ package org.activiti.crystalball.simulator;
 
 import org.activiti.crystalball.simulator.impl.PlaybackScheduleStartProcessEventHandler;
 import org.activiti.engine.HistoryService;
-import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricVariableInstance;
@@ -60,7 +59,7 @@ public class PlaybackTest {
 		
 		HistoryService simHistoryService = (HistoryService)appContext.getBean("simHistoryService");
 
-	    SimulationRun simRun = (SimulationRun)appContext.getBean(SimulationRun.class);
+	    SimulationRun simRun = appContext.getBean(SimulationRun.class);
 	    
 	    RepositoryService simRepositoryService = (RepositoryService) appContext.getBean( "simRepositoryService" );
 		
@@ -115,7 +114,7 @@ public class PlaybackTest {
 
 		HistoryService historyService = (HistoryService)appContext.getBean("simHistoryService");
 
-		SimulationRun simRun = (SimulationRun)appContext.getBean(SimulationRun.class);
+		SimulationRun simRun = appContext.getBean(SimulationRun.class);
 	    PlaybackScheduleStartProcessEventHandler schedule = (PlaybackScheduleStartProcessEventHandler)appContext.getBean("scheduleProcessEventHandler");
 	    schedule.setRepeatPlayback( true );
 	    
