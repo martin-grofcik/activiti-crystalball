@@ -28,13 +28,12 @@ import org.activiti.engine.impl.pvm.process.ScopeImpl;
 
 public abstract class AbstractSimulationActivityBehavior implements ActivityBehavior {
 
-	  /**
-	   * The namespace of the CrystalBall custom BPMN extensions.
-	   */
-	  public static final String CRYSTALBALL_BPMN_EXTENSIONS_NS = "http://crystalball.org/simulation";
+	/**
+	 * The namespace of the CrystalBall custom BPMN extensions.
+	 */
+	public static final String CRYSTALBALL_BPMN_EXTENSIONS_NS = "http://crystalball.org/simulation";
 	  
 	public AbstractSimulationActivityBehavior(ScopeImpl scope, ActivityImpl activity) {
-		
 	}
 	
 	abstract public void execute(ActivityExecution execution) throws Exception;

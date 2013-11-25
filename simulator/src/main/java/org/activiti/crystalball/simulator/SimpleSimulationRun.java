@@ -110,7 +110,7 @@ public class SimpleSimulationRun implements SimulationRun {
 
 	private static boolean simulationEnd(Date dueDate, SimulationEvent event) {
 		if ( dueDate != null)
-			return event == null || ( ClockUtil.getCurrentTime().after( dueDate ));
+			return event.getType() == null || ( ClockUtil.getCurrentTime().after( dueDate ));
 		return  event == null;
 	}
 
