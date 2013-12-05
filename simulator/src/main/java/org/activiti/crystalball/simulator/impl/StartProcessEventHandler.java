@@ -24,9 +24,10 @@ package org.activiti.crystalball.simulator.impl;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
-import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * Start new process event handler 
@@ -37,70 +38,30 @@ public class StartProcessEventHandler implements SimulationEventHandler {
 	private static Logger log = LoggerFactory.getLogger(StartProcessEventHandler.class);
 	
 	/** process to start key */
-	private String processToStartKey;
-	/** period in which new process will start in ms*/
-	private long period;
-	/** event type on which Handler is listening to start new process */
-	private String eventType;
-	
-	/** how many times start the process - -1 for ever*/
-	protected int count = -1;
-	
-	@Override
-	public void init() {
-		// schedule new process instance start now
-		long simulationTime = ClockUtil.getCurrentTime().getTime();
-		scheduleNextProcessStart(simulationTime);
-	}
+	protected String processToStartIdKey;
+  protected String businessKey;
+  protected String variablesKey;
 
-	private void scheduleNextProcessStart(long simulationTime) {
-		if (count != 0 ) {
-			if ( count > 0 ) count--;
-			SimulationEvent completeEvent = new SimulationEvent( simulationTime, eventType, null);
-			// add start process event
-			SimulationRunContext.getEventCalendar().addEvent( completeEvent);
-		}
+  public StartProcessEventHandler(String processToStartIdKey, String businessKey, String variablesKey) {
+    this.processToStartIdKey = processToStartIdKey;
+    this.businessKey = businessKey;
+    this.variablesKey = variablesKey;
+  }
+
+
+  @Override
+	public void init() {
 	}
 
 	@Override
 	public void handle(SimulationEvent event) {
 		// start process now
-		log.debug("Starting new processKey[{}]", processToStartKey);
-		SimulationRunContext.getRuntimeService().startProcessInstanceByKey( processToStartKey);
-		// schedule next process start in + period time
-		scheduleNextProcessStart( event.getSimulationTime() + period);
-	}
+    String processDefinitionId = (String) event.getProperty(processToStartIdKey);
+    String businessKey = (String) event.getProperty(this.businessKey);
+    Map<String, Object> variables = (Map<String, Object>) event.getProperty(variablesKey);
 
-	public String getProcessToStartKey() {
-		return processToStartKey;
-	}
-
-	public void setProcessToStartKey(String processToStartKey) {
-		this.processToStartKey = processToStartKey;
-	}
-
-	public long getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(long period) {
-		this.period = period;
-	}
-
-	public String getEventType() {
-		return eventType;
-	}
-
-	public void setEventType(String event_type) {
-		this.eventType = event_type;
-	}
-
-	public int getCount() {
-		return count;
-	}
-
-	public void setCount(int count) {
-		this.count = count;
+    log.debug("Starting new processDefId[{}] businessKey[{}] with variables[{}]", processDefinitionId, businessKey, variables);
+		SimulationRunContext.getRuntimeService().startProcessInstanceById(processDefinitionId, businessKey, variables);
 	}
 
 }

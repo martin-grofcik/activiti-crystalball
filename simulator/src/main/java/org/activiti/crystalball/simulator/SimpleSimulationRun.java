@@ -28,11 +28,8 @@ import org.activiti.engine.impl.jobexecutor.JobExecutor;
 import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.FactoryBean;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SimpleSimulationRun implements SimulationRun {
 	
@@ -47,6 +44,9 @@ public class SimpleSimulationRun implements SimulationRun {
 	protected FactoryBean<ProcessEngine> processEngineFactory;
 	protected FactoryBean<EventCalendar> eventCalendarFactory;
 
+  /** simulation start date*/
+  protected Date simulationStartDate = new Date(0);
+  protected Date dueDate = null;
 
     private SimpleSimulationRun(Builder builder) {
 		this.eventCalendarFactory = builder.getEventCalendarFactory();
@@ -59,8 +59,8 @@ public class SimpleSimulationRun implements SimulationRun {
         this.customEventHandlerMap = builder.customEventHandlerMap;
 	}
 
-	@Override
-    public void execute(Date simDate, Date dueDate) throws Exception {
+
+  public void execute(boolean closeProcessEngine) throws Exception {
 		
 		// init new process engine
 		ProcessEngine processEngine = processEngineFactory.getObject();
@@ -71,7 +71,7 @@ public class SimpleSimulationRun implements SimulationRun {
 
 		// run simulation
 		// init context and task calendar and simulation time is set to current 
-		ClockUtil.setCurrentTime( simDate);
+		ClockUtil.setCurrentTime(simulationStartDate);
 
 		if (dueDate != null)
 			SimulationRunContext.getEventCalendar().addEvent(new SimulationEvent( dueDate.getTime(), SimulationEvent.TYPE_END_SIMULATION, null));
@@ -92,9 +92,11 @@ public class SimpleSimulationRun implements SimulationRun {
 		}
 
 		// remove simulation from simulation context
+    SimulationRunContext.getEventCalendar().clear();
 		SimulationRunContext.removeEventCalendar();
 		SimulationRunContext.removeProcessEngine();
-		processEngine.close();
+    if (closeProcessEngine)
+		  processEngine.close();
 	}
 
 	private void initHandlers() {
@@ -135,9 +137,14 @@ public class SimpleSimulationRun implements SimulationRun {
 		}
 	}
 
-    public static class Builder {
+  @Override
+  public void execute() throws Exception {
+    execute(true);
+  }
+
+  public static class Builder {
         private Map<String, SimulationEventHandler> customEventHandlerMap;
-        private HashMap<String, SimulationEventHandler> eventHandlerMap;
+        private Map<String, SimulationEventHandler> eventHandlerMap;
         private FactoryBean<ProcessEngine> processEngineFactory;
         private FactoryBean<EventCalendar> eventCalendarFactory;
         private JobExecutor jobExecutor;
@@ -151,11 +158,11 @@ public class SimpleSimulationRun implements SimulationRun {
             return this;
         }
 
-        public HashMap<String, SimulationEventHandler> getEventHandlerMap() {
+        public Map<String, SimulationEventHandler> getEventHandlerMap() {
             return eventHandlerMap;
         }
 
-        public Builder eventHandlerMap(HashMap<String, SimulationEventHandler> eventHandlerMap) {
+        public Builder eventHandlerMap(Map<String, SimulationEventHandler> eventHandlerMap) {
             this.eventHandlerMap = eventHandlerMap;
             return this;
         }
@@ -187,7 +194,7 @@ public class SimpleSimulationRun implements SimulationRun {
             return this;
         }
 
-        public SimulationRun build() {
+        public SimpleSimulationRun build() {
             return new SimpleSimulationRun(this);
         }
     }

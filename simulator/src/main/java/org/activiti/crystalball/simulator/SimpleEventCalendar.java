@@ -24,27 +24,30 @@ package org.activiti.crystalball.simulator;
 import org.activiti.engine.impl.util.ClockUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
 public class SimpleEventCalendar implements EventCalendar {
-	
-	List<SimulationEvent> eventList = new ArrayList<SimulationEvent>();
-	Integer minIndex = null;
+
+  private static final int NULL = -1;
+
+  List<SimulationEvent> eventList = new ArrayList<SimulationEvent>();
+	int minIndex = NULL;
 	Comparator<SimulationEvent> eventComparator;
 	
-	protected SimpleEventCalendar(Comparator<SimulationEvent> eventComparator) {
+	public SimpleEventCalendar(Comparator<SimulationEvent> eventComparator) {
 		this.eventComparator = eventComparator;		
 	}
 	
 	@Override
     public boolean isEmpty() {
-		return minIndex == null;
+		return minIndex == NULL;
 	}
 	
 	@Override
     public SimulationEvent removeFirstEvent() {
-		if (minIndex == null)
+		if (minIndex == NULL)
 			return null;
 		
 		SimulationEvent minEvent = eventList.remove( (int) minIndex );
@@ -53,7 +56,7 @@ public class SimpleEventCalendar implements EventCalendar {
 			throw new RuntimeException("Unable to execute event from the past");
 		
 		if (eventList.isEmpty()) { 
-			minIndex = null;
+			minIndex = NULL;
 		} else {
 			minIndex = 0;
 			SimulationEvent event = eventList.get(0);
@@ -68,23 +71,34 @@ public class SimpleEventCalendar implements EventCalendar {
 	}
 	
 	@Override
-    public void addEvent(SimulationEvent event) {
+  public void addEvent(SimulationEvent event) {
 		if (event != null && isMinimal(event))
 			minIndex = eventList.size();
 		eventList.add(event);			
 	}
 
-	/**
+  @Override
+  public void clear() {
+    eventList.clear();
+    minIndex = NULL;
+  }
+
+  /**
 	 * is event the first event in the calendar?
 	 * @param event
 	 * @return
 	 */
 	private boolean isMinimal(SimulationEvent event) {
-		if (minIndex == null)
+		if (minIndex == NULL)
 			return true;
 		if ( eventComparator.compare( event, eventList.get( minIndex )) < 0)
 			return true;
 		return false;
 	}
 
+  public void addEvents(Collection<SimulationEvent> simulationEvents) {
+    for (SimulationEvent event : simulationEvents) {
+      addEvent(event);
+    }
+  }
 }

@@ -9,4 +9,6 @@ public interface EventCalendar {
     SimulationEvent removeFirstEvent();
 
     void addEvent(SimulationEvent event);
+
+    void clear();
 }

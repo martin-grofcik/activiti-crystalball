@@ -2,9 +2,7 @@ package org.activiti.crystalball.simulator;
 
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.impl.jobexecutor.JobExecutor;
-import org.springframework.beans.factory.FactoryBean;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +18,7 @@ public class SimpleSimulationRunFactory implements FactoryBean<SimulationRun> {
 	}
 	
 	@Override
-	public SimulationRun getObject() throws Exception {
+	public SimulationRun getObject() {
 		return new SimpleSimulationRun.Builder().
             customEventHandlerMap(customEventHandlerMap).
             eventCalendarFactory(eventCalendarFactory).

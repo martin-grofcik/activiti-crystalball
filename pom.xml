@@ -19,7 +19,7 @@
   <properties>
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	<spring.framework.version>3.1.2.RELEASE</spring.framework.version>
-	<activiti.version>5.15.EDW.4</activiti.version>
+	<activiti.version>5.15-SNAPSHOT</activiti.version>
   </properties>
 
   <modules>

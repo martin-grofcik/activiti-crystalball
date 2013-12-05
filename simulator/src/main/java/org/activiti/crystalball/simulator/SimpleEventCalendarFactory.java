@@ -1,7 +1,5 @@
 package org.activiti.crystalball.simulator;
 
-import org.springframework.beans.factory.FactoryBean;
-
 import java.util.Comparator;
 
 public class SimpleEventCalendarFactory implements FactoryBean<SimpleEventCalendar> {
@@ -13,7 +11,7 @@ public class SimpleEventCalendarFactory implements FactoryBean<SimpleEventCalend
 	}
 	
 	@Override
-	public SimpleEventCalendar getObject() throws Exception {
+	public SimpleEventCalendar getObject() {
 		return new SimpleEventCalendar(eventComparator);
 	}
 

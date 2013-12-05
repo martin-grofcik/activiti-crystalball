@@ -39,6 +39,19 @@ public class SimpleEventCalendarTest {
         assertEquals(event2, event);
     }
 
+    @Test
+    public void testClear() throws Exception {
+      SimulationEvent event1 = new SimulationEvent(1, "any type", null);
+      EventCalendar calendar = new SimpleEventCalendar(comparator);
+      ClockUtil.setCurrentTime(new Date(0));
+
+      calendar.addEvent(event1);
+
+      calendar.clear();
+      assertTrue( calendar.isEmpty());
+      assertNull( calendar.removeFirstEvent());
+    }
+
     @Test(expected = RuntimeException.class)
     public void testRunEventFromPast() throws Exception {
         SimulationEvent event1 = new SimulationEvent(1, "any type", null);

@@ -77,7 +77,17 @@
 			<version>1.7.2</version>
 			<!-- scope>test</scope -->
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<directory>target</directory>
@@ -102,75 +112,6 @@
 				<directory>src/test/process</directory>
 			</testResource>
 		</testResources>
-		<plugins>
-			<!-- running engine generator -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<executions>
-                    <execution>
-                        <id>generate-init</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <classpathScope>test</classpathScope>
-                            <cleanupDaemonThreads>true</cleanupDaemonThreads>
-                            <stopUnresponsiveDaemonThreads>true</stopUnresponsiveDaemonThreads>
-                            <mainClass>org.activiti.crystalball.simulator.GenerateProcessEngineStateInit</mainClass>
-                            <arguments>
-                                <argument>${project.build.directory}</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-					<execution>
-						<id>generate-continue</id>
-						<phase>process-test-classes</phase>
-						<goals>
-							<goal>java</goal>
-						</goals>
-						<configuration>
-							<classpathScope>test</classpathScope>
-							<cleanupDaemonThreads>true</cleanupDaemonThreads>
-							<stopUnresponsiveDaemonThreads>true</stopUnresponsiveDaemonThreads>
-							<mainClass>org.activiti.crystalball.simulator.GenerateProcessEngineStateContinue</mainClass>
-							<arguments>
-								<argument>${project.build.directory}</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- test config -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.4.2</version>
-				<configuration>
-					<systemProperties>
-						<property>
-							<name>tempDir</name>
-							<value>${project.build.directory}</value>
-						</property>
-						<property>
-							<name>baseDir</name>
-							<value>${project.basedir}</value>
-						</property>
-						<property>
-							-
-							<name>liveDB</name>
-							-
-							<value>${liveDB}</value>
-							-
-						</property>
-
-					</systemProperties>
-				</configuration>
-			</plugin>
-
-		</plugins>
 	</build>
 
 </project>
