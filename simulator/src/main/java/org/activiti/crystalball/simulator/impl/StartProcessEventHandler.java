@@ -58,6 +58,7 @@ public class StartProcessEventHandler implements SimulationEventHandler {
 		// start process now
     String processDefinitionId = (String) event.getProperty(processToStartIdKey);
     String businessKey = (String) event.getProperty(this.businessKey);
+    @SuppressWarnings("unchecked")
     Map<String, Object> variables = (Map<String, Object>) event.getProperty(variablesKey);
 
     log.debug("Starting new processDefId[{}] businessKey[{}] with variables[{}]", processDefinitionId, businessKey, variables);

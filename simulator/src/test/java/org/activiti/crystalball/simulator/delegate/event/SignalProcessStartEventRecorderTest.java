@@ -6,12 +6,13 @@ import org.activiti.crystalball.simulator.SimulationEventComparator;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
-import org.activiti.engine.RepositoryService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
-import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.impl.util.ClockUtil;
 import org.junit.Test;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -48,7 +49,10 @@ public class SignalProcessStartEventRecorderTest {
     processEngine.getRuntimeService().startProcessInstanceByKey("catchSignal");
 
     assertEquals(1, processEngine.getRuntimeService().createProcessInstanceQuery().count());
-
+    Calendar c = Calendar.getInstance();
+    c.add(Calendar.SECOND,1);
+    Date d = c.getTime();
+    ClockUtil.setCurrentTime( d );
     processEngine.getRuntimeService().startProcessInstanceByKey("throwSignal");
 
     assertEquals(0, processEngine.getRuntimeService().createProcessInstanceQuery().count());
