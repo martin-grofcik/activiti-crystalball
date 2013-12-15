@@ -16,15 +16,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProcessInstanceCreateTransformer implements ActivitiEventToSimulationEventTransformer {
+public class ProcessInstanceCreateTransformer extends AbstractTransformer {
 
   private final String processDefinitionIdKey;
-  private final String simulationEventType;
   private final String businessKey;
   private final String variablesKey;
 
   public ProcessInstanceCreateTransformer(String simulationEventType, String processDefinitionIdKey, String businessKey, String variablesKey) {
-    this.simulationEventType = simulationEventType;
+    super(simulationEventType);
     this.processDefinitionIdKey = processDefinitionIdKey;
     this.businessKey = businessKey;
     this.variablesKey = variablesKey;

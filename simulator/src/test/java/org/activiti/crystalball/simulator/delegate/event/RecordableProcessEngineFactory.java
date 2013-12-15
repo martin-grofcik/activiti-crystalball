@@ -13,6 +13,10 @@ public class RecordableProcessEngineFactory extends DefaultSimulationProcessEngi
 
   private ActivitiEventListener listener;
 
+  public RecordableProcessEngineFactory(ActivitiEventListener listener) {
+    this("", listener);
+  }
+
   public RecordableProcessEngineFactory(String resourceToDeploy, ActivitiEventListener listener) {
     super(resourceToDeploy);
     this.listener = listener;

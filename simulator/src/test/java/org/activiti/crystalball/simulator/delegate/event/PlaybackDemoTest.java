@@ -18,7 +18,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class ProcessStartEventRecorderTest {
+public class PlaybackDemoTest {
   public static final String SIMPLEST_PROCESS = "theSimplestProcess";
   public static final String BUSINESS_KEY = "testBusinessKey";
   public static final String TEST_VALUE = "TestValue";
@@ -26,7 +26,7 @@ public class ProcessStartEventRecorderTest {
 
   protected RecordActivitiEventTestListener listener = new RecordActivitiEventTestListener(ExecutionEntity.class);
 
-  private static final String THE_SIMPLEST_PROCESS = "org/activiti/crystalball/simulator/delegate/event/theSimplestProcess.bpmn20.xml";
+  private static final String THE_SIMPLEST_PROCESS = "org/activiti/crystalball/simulator/delegate/event/PlaybackProcessStartTest.testDemo.bpmn20.xml";
 
   @Test
   public void testProcessInstanceStartEvents() throws Exception {

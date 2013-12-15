@@ -9,12 +9,17 @@ import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 public class DefaultSimulationProcessEngineFactory implements FactoryBean<ProcessEngine> {
   private ProcessEngine processEngine;
 
+  public DefaultSimulationProcessEngineFactory() {
+    this("");
+  }
+
   public DefaultSimulationProcessEngineFactory(String resourceToDeploy) {
     processEngine = ProcessEngines.getDefaultProcessEngine();
-    processEngine.getRepositoryService().
-      createDeployment().
-      addClasspathResource(resourceToDeploy).
-      deploy();
+    if (!resourceToDeploy.isEmpty())
+      processEngine.getRepositoryService().
+        createDeployment().
+        addClasspathResource(resourceToDeploy).
+        deploy();
 
     final ProcessEngineConfigurationImpl processEngineConfiguration = ((ProcessEngineImpl) processEngine).getProcessEngineConfiguration();
     processEngineConfiguration.setHistory("full");
