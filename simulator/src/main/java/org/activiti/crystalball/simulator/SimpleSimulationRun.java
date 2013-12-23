@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class SimpleSimulationRun implements SimulationRun {
+public class SimpleSimulationRun implements SimulationRun, SimulationDebugger {
 	
 	private static Logger log = LoggerFactory.getLogger(SimpleSimulationRun.class.getName());
 	
@@ -48,58 +48,107 @@ public class SimpleSimulationRun implements SimulationRun {
   protected Date simulationStartDate = new Date(0);
   protected Date dueDate = null;
 
-    private SimpleSimulationRun(Builder builder) {
+  protected ProcessEngine processEngine;
+
+  private SimpleSimulationRun(Builder builder) {
 		this.eventCalendarFactory = builder.getEventCalendarFactory();
 		this.processEngineFactory = builder.getProcessEngineFactory();
 		this.eventHandlerMap = new HashMap<String, SimulationEventHandler>();
 		// init internal event handler map.
-		eventHandlerMap.put( SimulationEvent.TYPE_END_SIMULATION, new NoopEventHandler() );
-        if ( builder.getJobExecutor() != null)
-            eventHandlerMap.put(SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, new AcquireJobNotificationEventHandler(builder.getJobExecutor()));
-        this.customEventHandlerMap = builder.customEventHandlerMap;
+		eventHandlerMap.put(SimulationEvent.TYPE_END_SIMULATION, new NoopEventHandler());
+    if ( builder.getJobExecutor() != null)
+      eventHandlerMap.put(SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, new AcquireJobNotificationEventHandler(builder.getJobExecutor()));
+    this.customEventHandlerMap = builder.customEventHandlerMap;
 	}
 
+  @Override
+  public void execute() throws Exception {
+    init();
 
-  public void execute(boolean closeProcessEngine) throws Exception {
-		
-		// init new process engine
-		ProcessEngine processEngine = processEngineFactory.getObject();
-				
-		// add context in which simulation run is executed
-		SimulationRunContext.setEventCalendar(eventCalendarFactory.getObject());
-		SimulationRunContext.setProcessEngine(processEngine);
+    runContinue();
 
-		// run simulation
-		// init context and task calendar and simulation time is set to current 
-		ClockUtil.setCurrentTime(simulationStartDate);
+    close();
+  }
 
-		if (dueDate != null)
-			SimulationRunContext.getEventCalendar().addEvent(new SimulationEvent( dueDate.getTime(), SimulationEvent.TYPE_END_SIMULATION, null));
+  private SimulationEvent removeSimulationEvent() {
+    SimulationEvent event = SimulationRunContext.getEventCalendar().removeFirstEvent();
+    if (event != null)
+      ClockUtil.setCurrentTime(new Date(event.getSimulationTime()));
+    return event;
+  }
 
-		initHandlers();
-		
-		SimulationEvent event = SimulationRunContext.getEventCalendar().removeFirstEvent();
-		if (event != null)
-			ClockUtil.setCurrentTime( new Date(event.getSimulationTime()));
-		
-		while( !simulationEnd( dueDate, event) ) {
-			
-			execute( event);
-			
-			event = SimulationRunContext.getEventCalendar().removeFirstEvent();
-			if (event != null)
-				ClockUtil.setCurrentTime( new Date( event.getSimulationTime()));
-		}
+  @Override
+  public void init() {
+    initSimulationRunContext();
+    initHandlers();
+  }
 
-		// remove simulation from simulation context
+  @Override
+  public void step() {
+    SimulationEvent event = removeSimulationEvent();
+    if (!simulationEnd( event)) {
+      log.debug("executing simulation event {}", event );
+      executeEvent(event);
+      log.debug("simulation event {event} execution done", event);
+    } else {
+      log.info("Simulation run has ended.");
+    }
+  }
+
+  @Override
+  public void runContinue() {
+    SimulationEvent event = removeSimulationEvent();
+
+    while (!simulationEnd(event)) {
+      executeEvent(event);
+      event = removeSimulationEvent();
+    }
+  }
+
+  @Override
+  public void runTo(long simulationTime) {
+    SimulationEvent breakEvent = new SimulationEvent.Builder(simulationTime, SimulationEvent.TYPE_BREAK_SIMULATION).
+                                     priority(SimulationEvent.PRIORITY_SYSTEM).build();
+    EventCalendar calendar = SimulationRunContext.getEventCalendar();
+    calendar.addEvent(breakEvent);
+    runContinue();
+  }
+
+  @Override
+  public void runTo(String simulationEventType) {
+    EventCalendar eventCalendar = SimulationRunContext.getEventCalendar();
+    SimulationEvent event = eventCalendar.peekFirstEvent();
+
+    while (!simulationEventType.equals(event.getType()) && !simulationEnd(event)) {
+      step();
+      event = eventCalendar.peekFirstEvent();
+    }
+  }
+
+  @Override
+  public void close() {// remove simulation from simulation context
     SimulationRunContext.getEventCalendar().clear();
-		SimulationRunContext.removeEventCalendar();
-		SimulationRunContext.removeProcessEngine();
-    if (closeProcessEngine)
-		  processEngine.close();
-	}
+    SimulationRunContext.removeEventCalendar();
+    SimulationRunContext.getProcessEngine().close();
+    SimulationRunContext.removeProcessEngine();
+  }
 
-	private void initHandlers() {
+  private void initSimulationRunContext() {// init new process engine
+    processEngine = processEngineFactory.getObject();
+
+    // add context in which simulation run is executed
+    SimulationRunContext.setEventCalendar(eventCalendarFactory.getObject());
+    SimulationRunContext.setProcessEngine(processEngine);
+
+    // run simulation
+    // init context and task calendar and simulation time is set to current
+    ClockUtil.setCurrentTime(simulationStartDate);
+
+    if (dueDate != null)
+      SimulationRunContext.getEventCalendar().addEvent(new SimulationEvent.Builder( dueDate.getTime(), SimulationEvent.TYPE_END_SIMULATION).build());
+  }
+
+  private void initHandlers() {
 		for( SimulationEventHandler handler : eventHandlerMap.values()) {
 			handler.init();
 		}
@@ -110,13 +159,15 @@ public class SimpleSimulationRun implements SimulationRun {
 		
 	}
 
-	private static boolean simulationEnd(Date dueDate, SimulationEvent event) {
+	private boolean simulationEnd( SimulationEvent event) {
+    if ( event != null && event.getType().equals(SimulationEvent.TYPE_BREAK_SIMULATION))
+      return true;
 		if ( dueDate != null)
 			return event == null || ( ClockUtil.getCurrentTime().after( dueDate ));
 		return  event == null;
 	}
 
-	private void execute(SimulationEvent event) {
+	private void executeEvent(SimulationEvent event) {
 		// set simulation time to the next event for process engine too
 		log.info( "Simulation time:" + ClockUtil.getCurrentTime());
 
@@ -137,14 +188,12 @@ public class SimpleSimulationRun implements SimulationRun {
 		}
 	}
 
-  @Override
-  public void execute() throws Exception {
-    execute(true);
+  public ProcessEngine getProcessEngine() {
+    return processEngine;
   }
 
   public static class Builder {
         private Map<String, SimulationEventHandler> customEventHandlerMap;
-        private Map<String, SimulationEventHandler> eventHandlerMap;
         private FactoryBean<ProcessEngine> processEngineFactory;
         private FactoryBean<EventCalendar> eventCalendarFactory;
         private JobExecutor jobExecutor;
@@ -155,15 +204,6 @@ public class SimpleSimulationRun implements SimulationRun {
 
         public Builder jobExecutor(JobExecutor jobExecutor) {
             this.jobExecutor = jobExecutor;
-            return this;
-        }
-
-        public Map<String, SimulationEventHandler> getEventHandlerMap() {
-            return eventHandlerMap;
-        }
-
-        public Builder eventHandlerMap(Map<String, SimulationEventHandler> eventHandlerMap) {
-            this.eventHandlerMap = eventHandlerMap;
             return this;
         }
 
@@ -183,10 +223,6 @@ public class SimpleSimulationRun implements SimulationRun {
         public Builder eventCalendarFactory(FactoryBean<EventCalendar> eventCalendarFactory) {
             this.eventCalendarFactory = eventCalendarFactory;
             return this;
-        }
-
-        public Map<String, SimulationEventHandler> getCustomEventHandlerMap() {
-            return customEventHandlerMap;
         }
 
         public Builder customEventHandlerMap(Map<String, SimulationEventHandler> customEventHandlerMap) {

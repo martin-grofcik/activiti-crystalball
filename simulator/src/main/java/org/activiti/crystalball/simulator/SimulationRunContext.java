@@ -55,6 +55,10 @@ public abstract class SimulationRunContext {
 	    getStack(processEngineThreadLocal).push(processEngine);
 	}
 
+  public static ProcessEngine getProcessEngine() {
+    return getStack(processEngineThreadLocal).peek();
+  }
+
 	public static void removeProcessEngine() {
 	    getStack(processEngineThreadLocal).pop();
 	}

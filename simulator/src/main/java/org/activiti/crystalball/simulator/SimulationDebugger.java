@@ -15,13 +15,22 @@ public interface SimulationDebugger {
   void step();
 
   /**
-   * run simulation
+   * continue in the simulation run
    */
-  void run();
+  void runContinue();
+
+  /**
+   * execute simulation run till simulationTime
+   */
+  void runTo(long simulationTime);
+
+  /**
+   * execute simulation run till simulation event of the specific type
+   */
+  void runTo(String simulationEventType);
 
   /**
    * close simulation run
    */
   void close();
-
 }

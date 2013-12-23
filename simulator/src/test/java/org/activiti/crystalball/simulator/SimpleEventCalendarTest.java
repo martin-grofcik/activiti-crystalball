@@ -22,8 +22,8 @@ public class SimpleEventCalendarTest {
 
     @Test
     public void testAddEventsAndRemoveFirst() throws Exception {
-        SimulationEvent event1 = new SimulationEvent(1, "any type", null);
-        SimulationEvent event2 = new SimulationEvent(2, "any type", null);
+        SimulationEvent event1 = new SimulationEvent.Builder(1, "any type").build();
+        SimulationEvent event2 = new SimulationEvent.Builder(2, "any type").build();
         EventCalendar calendar = new SimpleEventCalendar(comparator);
         ClockUtil.setCurrentTime(new Date(0));
 
@@ -41,7 +41,7 @@ public class SimpleEventCalendarTest {
 
     @Test
     public void testClear() throws Exception {
-      SimulationEvent event1 = new SimulationEvent(1, "any type", null);
+      SimulationEvent event1 = new SimulationEvent.Builder(1, "any type").build();
       EventCalendar calendar = new SimpleEventCalendar(comparator);
       ClockUtil.setCurrentTime(new Date(0));
 
@@ -54,7 +54,7 @@ public class SimpleEventCalendarTest {
 
     @Test(expected = RuntimeException.class)
     public void testRunEventFromPast() throws Exception {
-        SimulationEvent event1 = new SimulationEvent(1, "any type", null);
+        SimulationEvent event1 = new SimulationEvent.Builder(1, "any type").build();
         EventCalendar calendar = new SimpleEventCalendar(comparator);
 
         calendar.addEvent(event1);

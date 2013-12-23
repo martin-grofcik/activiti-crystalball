@@ -67,7 +67,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 					props.put( "variables", variables);
 					
 					// TODO simulateTaskExecution simulates new task execution - does not take into account work in the progress. It should be changed
-					SimulationEvent completeEvent = new SimulationEvent( simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
+					SimulationEvent completeEvent = new SimulationEvent.Builder( simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE).properties(props).build();
 					// add complete task event
 					SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 				}
@@ -90,7 +90,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 						long userTaskDelta = userTaskExecutor.simulateTaskExecution((TaskEntity) execTask, variables);
 						props.put( "variables", variables);
 
-						SimulationEvent completeEvent = new SimulationEvent( simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
+						SimulationEvent completeEvent = new SimulationEvent.Builder(simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE).properties(props).build();
 						// schedule complete task event
 						SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 					}
@@ -112,7 +112,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 			long userTaskDelta = userTaskExecutor.simulateTaskExecution(task, variables);
 			props.put( "variables", variables);
 	
-			SimulationEvent completeEvent = new SimulationEvent( ClockUtil.getCurrentTime().getTime() + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
+			SimulationEvent completeEvent = new SimulationEvent.Builder( ClockUtil.getCurrentTime().getTime() + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE).properties(props).build();
 			// schedule complete task event
 			SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 			

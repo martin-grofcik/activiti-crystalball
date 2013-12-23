@@ -29,6 +29,7 @@ import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricDetail;
 import org.activiti.engine.history.HistoricVariableUpdate;
 import org.activiti.engine.impl.util.ClockUtil;
+import org.apache.log4j.Priority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,81 +38,26 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * event handler acts as playback - starts defined processes in the given simulation time. 
+ * event handler acts as debugger
  *
- * currently supports only  processes which starts with "startEvent" activity type  
+ * currently supports only  step over the simulation event and list the latest event.
+ *
  */
 public class DebugEventHandler implements SimulationEventHandler {
 
-	public static final String PROCESS_INSTANCE_ID = "_playback.processInstanceId";
-	public static final String HISTORY_SERVICE = "_playback.historyService";
-
-	private static Logger log = LoggerFactory.getLogger(DebugEventHandler.class);
-	
-	/** process to start key - this process will be play backed.*/
-	private String processToStartKey;
-
-	/** event type on which Handler is listening to start new process */
-	private String eventType;
-	
-	/** history from which process starts will be played */
-	private HistoryService historyService;
-
 	@Override
 	public void init() {
-	}
+    long simulationTime = ClockUtil.getCurrentTime().getTime();
+    scheduleBreakPoint(simulationTime, 1);
+  }
 
-	@Override
+  private void scheduleBreakPoint(long simulationTime, int i) {
+
+  }
+
+  @Override
 	public void handle(SimulationEvent event) {
-		// start process now
-		String processInstanceId = (String) event.getProperty(PROCESS_INSTANCE_ID);
-		// get process variables for startEvent
-		HistoricActivityInstance activityInstance = historyService.createHistoricActivityInstanceQuery()
-				.processInstanceId(processInstanceId)
-				.activityType("startEvent")
-				.singleResult();
-		List<HistoricDetail> details = historyService.createHistoricDetailQuery()
-				.processInstanceId( processInstanceId )
-				.activityInstanceId( activityInstance.getId())
-				.variableUpdates()
-				.list();
-		
-		// fulfill variables
-		Map<String, Object> variables = new HashMap<String,Object>();		
-		for ( HistoricDetail detail : details) {
-			variables.put( ((HistoricVariableUpdate) detail).getVariableName(), ((HistoricVariableUpdate) detail).getValue());			
-		}
-		
-		variables.put( PROCESS_INSTANCE_ID, processInstanceId);
-		log.debug("[{}] Starting new processKey[{}] properties[{}]", ClockUtil.getCurrentTime(), processToStartKey, variables);
-
-		SimulationRunContext.getRuntimeService().startProcessInstanceByKey( processToStartKey, variables);
 	}
 
-	public String getProcessToStartKey() {
-		return processToStartKey;
-	}
-
-	public void setProcessToStartKey(String processToStartKey) {
-		this.processToStartKey = processToStartKey;
-	}
-
-	public String getEventType() {
-		return eventType;
-	}
-
-	public void setEventType(String event_type) {
-		this.eventType = event_type;
-	}
-
-
-	public HistoryService getHistoryService() {
-		return historyService;
-	}
-
-
-	public void setHistoryService(HistoryService historyService) {
-		this.historyService = historyService;
-	}
 
 }

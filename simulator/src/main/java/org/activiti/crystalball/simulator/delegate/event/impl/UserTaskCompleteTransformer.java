@@ -24,7 +24,8 @@ public class UserTaskCompleteTransformer extends AbstractTransformer {
 
       Map<String, Object> properties = new HashMap<String, Object>();
       properties.put("task", task.getId());
-      return new SimulationEvent(ClockUtil.getCurrentTime().getTime(), this.simulationEventType, properties);
+      return
+          new SimulationEvent.Builder(ClockUtil.getCurrentTime().getTime(), this.simulationEventType).properties(properties).build();
     };
     return null;
   }

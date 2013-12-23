@@ -4,11 +4,13 @@ package org.activiti.crystalball.simulator;
  * This class...
  */
 public interface EventCalendar {
-    boolean isEmpty();
+  boolean isEmpty();
 
-    SimulationEvent removeFirstEvent();
+  SimulationEvent peekFirstEvent();
 
-    void addEvent(SimulationEvent event);
+  SimulationEvent removeFirstEvent();
 
-    void clear();
+  void addEvent(SimulationEvent event);
+
+  void clear();
 }

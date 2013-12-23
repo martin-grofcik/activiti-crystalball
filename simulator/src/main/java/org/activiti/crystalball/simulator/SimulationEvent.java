@@ -33,26 +33,25 @@ public class SimulationEvent {
 	public static final String TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT = "ACQUIRE_JOB_NOTIFICATION_EVENT";
 	
 	public static final String TYPE_END_SIMULATION = "END_SIMULATION";
-	
-	private final long simulationTime;
+  public static final String TYPE_BREAK_SIMULATION = "BREAK";
+
+  public static final int PRIORITY_SYSTEM = -1;
+
+  private final long simulationTime;
 	private final String type;
 	private final Map<String, Object> properties;
 	private final Object property;
+  private final int priority;
 
-	public SimulationEvent( long simulationTime, String type, Object property) {
-		this.simulationTime = simulationTime;
-		this.type = type;
-		this.properties = null;
-		this.property = property;
-	}
+	protected SimulationEvent(Builder builder) {
+    this.simulationTime = builder.simulationTime;
+    this.type = builder.type;
+    this.properties = builder.properties;
+    this.property = builder.property;
+    this.priority = builder.priority;
 
-	public SimulationEvent( long simulationTime, String type, Map<String, Object> properties) {
-		this.simulationTime = simulationTime;
-		this.type = type;
-		this.properties = properties;
-		property = null;
-	}
-	
+  }
+
 	public Object getProperty() {
 		return property;
 	}
@@ -68,9 +67,48 @@ public class SimulationEvent {
 	public String getType() {
 		return type;
 	}
-	
-	@Override
+
+  public int getPriority() {
+    return priority;
+  }
+
+  @Override
 	public String toString() {
-		return (new Date(simulationTime)).toString() +", "+ type +", " +property + ", " + properties; 
+		return (new Date(simulationTime)).toString() +", "+ type + ", "+priority+", " +property + ", " + properties;
 	}
+
+  public static class Builder {
+    // required
+    private long simulationTime;
+    private String type;
+
+    // optional
+    private Map<String, Object> properties;
+    private Object property;
+    private int priority;
+
+    public Builder(long simulationTime, String type) {
+      this.simulationTime = simulationTime;
+      this.type = type;
+    }
+
+    public Builder properties(Map<String, Object> properties) {
+      this.properties = properties;
+      return this;
+    }
+
+    public Builder property(Object property) {
+      this.property = property;
+      return this;
+    }
+
+    public Builder priority(int priority) {
+      this.priority = priority;
+      return this;
+    }
+
+    public SimulationEvent build() {
+      return new SimulationEvent(this);
+    }
+  }
 }

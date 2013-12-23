@@ -72,7 +72,9 @@ public class SimpleClaimTaskEventHandler implements SimulationEventHandler {
 				long userTaskDelta = userTaskExecutor.simulateTaskExecution((TaskEntity) execTask, variables);
 				props.put( "variables", variables);
 
-				SimulationEvent completeEvent = new SimulationEvent( simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
+				SimulationEvent completeEvent = new SimulationEvent.Builder(simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE).
+          properties(props).
+          build();
 				// schedule complete task event
 				SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 			}
@@ -93,7 +95,9 @@ public class SimpleClaimTaskEventHandler implements SimulationEventHandler {
 		long userTaskDelta = userTaskExecutor.simulateTaskExecution(task, variables);
 		props.put( "variables", variables);
 	
-		SimulationEvent completeEvent = new SimulationEvent( ClockUtil.getCurrentTime().getTime() + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE, props);
+		SimulationEvent completeEvent = new SimulationEvent.Builder(ClockUtil.getCurrentTime().getTime() + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE).
+      properties(props).
+      build();
 		// schedule complete task event
 		SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 			

@@ -37,8 +37,7 @@ public class PlaybackRunTest {
     DefaultSimulationProcessEngineFactory simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory(THE_SIMPLEST_PROCESS);
     builder.processEngineFactory(simulationProcessEngineFactory)
       .eventCalendarFactory(new PlaybackEventCalendarFactory(new SimulationEventComparator(), listener.getSimulationEvents()))
-      .customEventHandlerMap(EventRecorderTestUtils.getHandlers())
-      .closeProcessEngineAfterSimulation( false);
+      .customEventHandlerMap(EventRecorderTestUtils.getHandlers());
     SimpleSimulationRun simRun = builder.build();
 
     simRun.execute();

@@ -43,12 +43,7 @@ import java.util.logging.Logger;
 public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 	
 	private static Logger log = Logger.getLogger(SimulationAcquireJobsRunnable.class.getName());
-	
-	/**
-	 * 
-	 * @param jobExecutor
-	 * @param eventCalendar - calendar into which next AcqureJobs execution is scheduled 
-	 */
+
 	public SimulationAcquireJobsRunnable(JobExecutor jobExecutor) {
 	    super(jobExecutor);
 	}
@@ -123,11 +118,13 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		          synchronized (MONITOR) {
 		            if(!isInterrupted) {
 		              isWaiting.set(true);
-		              
-		              SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent(
-		            		  ClockUtil.getCurrentTime().getTime() + millisToWait,  
-		            		  SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, 
-		            		  this) );
+
+                  SimulationEvent event = new SimulationEvent.Builder(
+                    ClockUtil.getCurrentTime().getTime() + millisToWait,
+                    SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
+                    property(this).
+                    build();
+                  SimulationRunContext.getEventCalendar().addEvent(event);
 		              // do not need to wait. - event scheduling is enough
 		              //MONITOR.wait(millisToWait);
 		            }
@@ -141,10 +138,11 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		        }
 		      } else {
 		    	  // schedule run now
-		    	  SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent(
-	            		  ClockUtil.getCurrentTime().getTime(),  
-	            		  SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, 
-	            		  this) );
+            SimulationEvent event = new SimulationEvent.Builder(
+              ClockUtil.getCurrentTime().getTime(), SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
+              property(this).
+              build();
+            SimulationRunContext.getEventCalendar().addEvent(event);
 		      }
 //		    }
 		    
@@ -175,10 +173,11 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		      synchronized (MONITOR) {
 //		        MONITOR.notifyAll();
 		    	//Notify is not needed - event is enough
-		    	  SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent(
-	            	  ClockUtil.getCurrentTime().getTime(),  
-	            	  SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT, 
-	            	  this) );
+            SimulationEvent event = new SimulationEvent.Builder(
+              ClockUtil.getCurrentTime().getTime(), SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
+              property(this).
+              build();
+            SimulationRunContext.getEventCalendar().addEvent(event);
 		      }
 		    }    
 		  }

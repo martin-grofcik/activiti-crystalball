@@ -48,7 +48,9 @@ public class UserTaskExecutionListener implements TaskListener {
 
 	@Override
 	public void notify(DelegateTask delegateTask) {
-		SimulationEvent e = new SimulationEvent(ClockUtil.getCurrentTime().getTime(), type, delegateTask);
+		SimulationEvent e = new SimulationEvent.Builder(ClockUtil.getCurrentTime().getTime(), type).
+                        property(delegateTask).
+                        build();
 		log.debug("Sim time [{}] adding sim event [{}] to calendar ", ClockUtil.getCurrentTime(), e);
 		SimulationRunContext.getEventCalendar().addEvent(e);
 	}

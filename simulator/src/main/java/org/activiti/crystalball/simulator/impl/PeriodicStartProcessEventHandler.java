@@ -61,7 +61,7 @@ public class PeriodicStartProcessEventHandler extends StartProcessEventHandler {
 	private void scheduleNextProcessStart(long simulationTime) {
 		if (count != 0 ) {
 			if ( count > 0 ) count--;
-			SimulationEvent completeEvent = new SimulationEvent( simulationTime, eventType, null);
+			SimulationEvent completeEvent = new SimulationEvent.Builder(simulationTime, eventType).build();
 			// add start process event
 			SimulationRunContext.getEventCalendar().addEvent( completeEvent);
 		}

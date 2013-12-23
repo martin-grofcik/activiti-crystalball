@@ -43,7 +43,9 @@ public class ProcessInstanceCreateTransformer extends AbstractTransformer {
       simEventProperties.put(businessKey, processInstance.getBusinessKey());
       simEventProperties.put(variablesKey, executionEntity.getVariables());
 
-      return new SimulationEvent(ClockUtil.getCurrentTime().getTime(), simulationEventType, simEventProperties);
+      return new SimulationEvent.Builder(ClockUtil.getCurrentTime().getTime(), simulationEventType).
+                  properties(simEventProperties).
+                  build();
     }
     return null;
   }

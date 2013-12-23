@@ -44,9 +44,17 @@ public class SimpleEventCalendar implements EventCalendar {
     public boolean isEmpty() {
 		return minIndex == NULL;
 	}
-	
-	@Override
-    public SimulationEvent removeFirstEvent() {
+
+  @Override
+  public SimulationEvent peekFirstEvent() {
+    if (minIndex == NULL)
+      return null;
+
+    return eventList.get((int) minIndex);
+  }
+
+  @Override
+  public SimulationEvent removeFirstEvent() {
 		if (minIndex == NULL)
 			return null;
 		
@@ -85,7 +93,7 @@ public class SimpleEventCalendar implements EventCalendar {
 
   /**
 	 * is event the first event in the calendar?
-	 * @param event
+	 * @param event - used in comparison
 	 * @return
 	 */
 	private boolean isMinimal(SimulationEvent event) {

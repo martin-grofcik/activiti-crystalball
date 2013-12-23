@@ -65,7 +65,7 @@ public class PlaybackProcessStartTest extends AbstractPlaybackTest {
   @CheckStatus(methodName = "checkStatus")
   public void testSignals() throws Exception {
     runtimeService.startProcessInstanceByKey("catchSignal");
-    increaseTime();
+    EventRecorderTestUtils.increaseTime();
     runtimeService.startProcessInstanceByKey("throwSignal");
   }
 
@@ -82,7 +82,7 @@ public class PlaybackProcessStartTest extends AbstractPlaybackTest {
   public void testUserTask() throws Exception {
     runtimeService.startProcessInstanceByKey("oneTaskProcess", "oneTaskProcessBusinessKey");
     Task task = taskService.createTaskQuery().taskDefinitionKey("userTask").singleResult();
-    increaseTime();
+    EventRecorderTestUtils.increaseTime();
     taskService.complete(task.getId());
   }
 
