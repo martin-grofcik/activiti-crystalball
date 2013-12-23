@@ -18,7 +18,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class PlaybackDemoTest {
+public class PlaybackRunTest {
   public static final String SIMPLEST_PROCESS = "theSimplestProcess";
   public static final String BUSINESS_KEY = "testBusinessKey";
   public static final String TEST_VALUE = "TestValue";
@@ -37,13 +37,14 @@ public class PlaybackDemoTest {
     DefaultSimulationProcessEngineFactory simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory(THE_SIMPLEST_PROCESS);
     builder.processEngineFactory(simulationProcessEngineFactory)
       .eventCalendarFactory(new PlaybackEventCalendarFactory(new SimulationEventComparator(), listener.getSimulationEvents()))
-      .customEventHandlerMap(EventRecorderTestUtils.getHandlers());
+      .customEventHandlerMap(EventRecorderTestUtils.getHandlers())
+      .closeProcessEngineAfterSimulation( false);
     SimpleSimulationRun simRun = builder.build();
 
-    simRun.execute(EventRecorderTestUtils.DO_NOT_CLOSE_PROCESS_ENGINE);
+    simRun.execute();
 
     checkStatus(simulationProcessEngineFactory.getObject());
-    simulationProcessEngineFactory.getObject().close();
+    simRun.getProcessEngine().close();
     ProcessEngines.destroy();
   }
 
