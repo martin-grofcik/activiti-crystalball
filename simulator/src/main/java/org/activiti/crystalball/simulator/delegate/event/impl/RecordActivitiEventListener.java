@@ -10,25 +10,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.activiti.crystalball.simulator.delegate.event;
+package org.activiti.crystalball.simulator.delegate.event.impl;
 
 import org.activiti.crystalball.simulator.SimulationEvent;
+import org.activiti.crystalball.simulator.delegate.event.ActivitiEventToSimulationEventTransformer;
 import org.activiti.engine.delegate.event.ActivitiEvent;
 import org.activiti.engine.delegate.event.ActivitiEventListener;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-public class RecordActivitiEventTestListener implements ActivitiEventListener {
+public class RecordActivitiEventListener implements ActivitiEventListener {
 
 	private Collection<SimulationEvent> events;
   private List<ActivitiEventToSimulationEventTransformer> transformers;
 	private Class<?> entityClass;
 	
-	public RecordActivitiEventTestListener(Class<?> entityClass) {
+	public RecordActivitiEventListener(Class<?> entityClass, List<ActivitiEventToSimulationEventTransformer> transformers) {
 		this.entityClass = entityClass;
-    transformers = EventRecorderTestUtils.getTransformers();
+    this.transformers = transformers;
     events = new HashSet<SimulationEvent>();
   }
 
@@ -39,15 +41,22 @@ public class RecordActivitiEventTestListener implements ActivitiEventListener {
 
 	@Override
 	public void onEvent(ActivitiEvent event) {
-    transform(event);
+    Collection<SimulationEvent> simulationEvents = transform(event);
+    store(simulationEvents);
 	}
 
-  protected void transform(ActivitiEvent event) {
+  private void store(Collection<SimulationEvent> simulationEvents) {
+    events.addAll(simulationEvents);
+  }
+
+  protected Collection<SimulationEvent> transform(ActivitiEvent event) {
+    List<SimulationEvent> simEvents = new ArrayList<SimulationEvent>();
     for (ActivitiEventToSimulationEventTransformer t : transformers) {
       SimulationEvent simEvent = t.transform(event);
       if (simEvent != null)
-        events.add(simEvent);
+        simEvents.add(simEvent);
     }
+    return simEvents;
   }
 
   @Override

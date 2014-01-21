@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book [
+  <!ENTITY ch01 SYSTEM "chapters/ch01-Introduction.xml">
+]>
+
+<book>
+
+  <bookinfo><title>Activiti 5.15-SNAPSHOT User Guide</title></bookinfo>
+  
+  <toc />
+  
+&ch01;
+
+</book>

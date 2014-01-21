@@ -3,6 +3,7 @@ package org.activiti.crystalball.simulator.delegate.event;
 import org.activiti.crystalball.simulator.PlaybackEventCalendarFactory;
 import org.activiti.crystalball.simulator.SimpleSimulationRun;
 import org.activiti.crystalball.simulator.SimulationEventComparator;
+import org.activiti.crystalball.simulator.delegate.event.impl.RecordActivitiEventListener;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
@@ -24,7 +25,7 @@ public class PlaybackRunTest {
   public static final String TEST_VALUE = "TestValue";
   public static final String TEST_VARIABLE = "testVariable";
 
-  protected RecordActivitiEventTestListener listener = new RecordActivitiEventTestListener(ExecutionEntity.class);
+  protected RecordActivitiEventListener listener = new RecordActivitiEventListener(ExecutionEntity.class, EventRecorderTestUtils.getTransformers());
 
   private static final String THE_SIMPLEST_PROCESS = "org/activiti/crystalball/simulator/delegate/event/PlaybackProcessStartTest.testDemo.bpmn20.xml";
 

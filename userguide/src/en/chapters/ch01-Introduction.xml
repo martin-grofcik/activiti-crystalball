@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "../../../target/docbook-tool-1.0/docbook-xml/docbookx.dtd">
+
+<chapter>
+
+  <title>Simulation with activiti-crystalball</title>
+<section id="crb-introduction">
+  <title>Introduction</title>
+  <section id="crb-overview">
+    <title>Short overview</title>
+    <para>
+      activiti-crystalball (CrystalBall) is simulation engine for Activiti Business Process Management Platform. CrystalBall allows
+      use of simulation for:
+      <itemizedlist>
+        <listitem>
+          <para>decision support - for production workflow (e.g. should we add now more resources to the system to meet
+            due dates?).</para>
+        </listitem>
+        <listitem>
+          <para>optimisation and understanding - testing changes and understanding their impacts.</para>
+        </listitem>
+        <listitem>
+          <para>
+            training - simulation can be used to train staff before roll out.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            ... .
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </section>
+
+  <section id="crb-unique">
+    <title>CrystalBall is unique</title>
+    <para>
+      No need to:
+      <itemizedlist>
+        <listitem>
+          <para>create separate simulation models and engines.</para>
+        </listitem>
+        <listitem>
+          <para>create different reporting for simulation.</para>
+        </listitem>
+        <listitem>
+          <para>feed simulation engine with a lot of data.</para>
+        </listitem>
+      </itemizedlist>
+      CrystalBall simulator is based workflow engine used in the solution. That's why it is easy to copy data and start
+      simulation and be able to replay workflow behavior from the history.
+    </para>
+  </section>
+</section>
+
+<section id="crb-inside">
+<title>CrystalBall inside</title>
+<para>
+  CrystalBall is a <ulink url="http://en.wikipedia.org/wiki/Discrete_event_simulation">discrete event simulator</ulink>.
+  The simplest implementation could be found in the <ulink url="org.activiti.crystalball.simulator.SimpleSimulationRun">
+  SimpleSimulationRun</ulink>.
+  <programlisting id="crb-SimpleSimulationRun">
+    init();
+
+    SimulationEvent event = removeSimulationEvent();
+
+    while (!simulationEnd(event)) {
+      executeEvent(event);
+      event = removeSimulationEvent();
+    }
+
+    close();
+  </programlisting>
+  SimulationRun is able to execute simulation events generated from different sources (see <ulink url="#crb-playback">PlayBack</ulink>).
+</para>
+</section>
+
+    <section id="crb-history-analysis">
+      <title>History analysis</title>
+      <para>
+        One of the usecases where simulation can be used is analysis of the history.
+        The production environment does not give any chance to repeat and debug bugs. That's why it is almost
+        impossible to get process engine into the state which is the same as it was on the production environment
+        on the time when bug occured.
+        The problem is not the hardware but
+        <itemizedlist>
+          <listitem>
+            <para>time - process instance run can take several months.</para>
+          </listitem>
+          <listitem>
+            <para>concurrency - process instance run can interfere with another one and bug can be found only in the
+              case of parallel execution of both of them.
+            </para>
+          </listitem>
+          <listitem>
+            <para>users - a lot of users can participate on the process instance execution. It takes a lot of effort
+              to get process instance to the state where error occurred.
+            </para>
+          </listitem>
+        </itemizedlist>
+        The simulation can address mentioned issues easily. Simulation time is virtual and does not depend on real time.
+        Activiti process engine itself is virtual. There is no need to create virtual process engine which could be
+        used in the simulation experiment. In this case concurrency can be addressed naturally. Users behavior can be
+        logged and replayed from this log or predicted and generated on demand.
+      </para>
+      <para>
+        The best way to analyze history could be to re-live it once more time. The re-living is hardly achievable in real
+        life but it can be achieved by simulation.
+      </para>
+
+      <section id="crb-collectEvents">
+        <title>Events from the history.</title>
+        <para>
+          The most important thing to re-live the history is to collect events which affected world status. Let's say
+          that our process is driven by user events (e.g. claim, complete task...). In such a case we have can use two
+          event sources:
+          <itemizedlist>
+            <listitem>
+              <para>process history - currently supported only in activiti-crystalball.</para>
+            </listitem>
+            <listitem>
+              <para>logged ActivitiEvents. Basically we can add ActivitiEventListener to the engine from which we want
+                to log events. Logged events could be stored and after the time analyzed. The basic implementation
+                could look like <ulink url="org.activiti.crystalball.simulator.delegate.event.impl.RecordActivitiEventListener">
+                  RecordActivitiEventListener</ulink>:
+<programlisting id="crb-RecordActivitiEventListener">
+  @Override
+  public void onEvent(ActivitiEvent event) {
+    Collection&lt;SimulationEvent&gt; simulationEvents = transform(event);
+    store(simulationEvents);
+  }
+</programlisting>
+              </para>
+            </listitem>
+          </itemizedlist>
+          Events are stored. We can continue in re-living the history again.
+        </para>
+      </section>
+
+      <section id="crb-playback">
+        <title>PlayBack</title>
+        <para>
+        The good thing on the playback is that it can be played over and over again till we do not completely
+        understand what has happened. Crystalball simulation is based on real data, real user behavior
+        and it is crystalball's advantage.
+        </para>
+        <para>
+          The best way to understand how playback works is to explain step by step an example based on jUnit test
+          (<ulink url="https://github.com/gro-mar/activiti-crystalball/blob/playback-demo/simulator/src/test/java/org/activiti/crystalball/simulator/delegate/event/PlaybackRunTest.java">
+          org.activiti.crystalball.simulator.delegate.event.PlaybackRunTest</ulink>). The process on which simulation
+          is tested is the simplest one:
+<programlisting id="crb-playbackDeploy">
+  &lt;process id="theSimplestProcess" name="Without task Process"&gt;
+    &lt;documentation&gt;This is a process for testing purposes&lt;/documentation&gt;
+
+    &lt;startEvent id="theStart"/&gt;
+    &lt;sequenceFlow id="flow1" sourceRef="theStart" targetRef="theEnd"/&gt;
+    &lt;endEvent id="theEnd"/&gt;
+
+  &lt;/process&gt;
+</programlisting>
+          This process is deployed and used in real and simulation run.
+          <itemizedlist>
+            <listitem>
+              <para>record events -
+<programlisting id="crb-playbackRecordEvents">
+  // get process engine with record listener to log events
+  ProcessEngine processEngine = (new RecordableProcessEngineFactory(THE_SIMPLEST_PROCESS, listener))
+  .getObject();
+
+  // start process instance with variables
+  Map&lt;String,Object&gt; variables = new HashMap&lt;String, Object&gt;();
+  variables.put(TEST_VARIABLE, TEST_VALUE);
+  processEngine.getRuntimeService().startProcessInstanceByKey(SIMPLEST_PROCESS, BUSINESS_KEY,variables);
+
+  // check process engine status - there should be one process instance in the history
+  checkStatus(processEngine);
+
+  // close and destroy process engine
+  EventRecorderTestUtils.closeProcessEngine(processEngine, listener);
+  ProcessEngines.destroy();
+</programlisting>
+              Code snippet above will record ActivitiEventType.ENTITY_CREATED after startProcessInstanceByKey method
+              invocation.
+              </para>
+            </listitem>
+            <listitem>
+              <para>start simulation run
+<programlisting id="crb-playbackStartSimulationRun">
+  final SimpleSimulationRun.Builder builder = new SimpleSimulationRun.Builder();
+  // init simulation run
+  // get process engine factory - the only difference from RecordableProcessEngineFactory that log listener is not added
+  DefaultSimulationProcessEngineFactory simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory(THE_SIMPLEST_PROCESS);
+  // configure simulation run
+  builder.processEngineFactory(simulationProcessEngineFactory)
+         // set playback event calendar from recorded events
+         .eventCalendarFactory(new PlaybackEventCalendarFactory(new SimulationEventComparator(), listener.getSimulationEvents()))
+         // set handlers for simulation events
+         .customEventHandlerMap(EventRecorderTestUtils.getHandlers());
+  SimpleSimulationRun simRun = builder.build();
+
+  simRun.execute();
+
+  // check the status - the same method which was used in record events method
+  checkStatus(simulationProcessEngineFactory.getObject());
+
+  // close and destroy process engine
+  simRun.getProcessEngine().close();
+  ProcessEngines.destroy();
+</programlisting>
+              Simple right?
+              </para>
+            </listitem>
+          </itemizedlist>
+          More advanced playback examples can be found in <ulink url="https://github.com/gro-mar/activiti-crystalball/blob/playback-demo/simulator/src/test/java/org/activiti/crystalball/simulator/delegate/event/PlaybackProcessStartTest.java">org.activiti.crystalball.simulator.delegate.event.PlaybackProcessStartTest</ulink>
+        </para>
+      </section>
+
+      <section id="crb-debug">
+        <title>Process engine debugger</title>
+        <para>
+          Playback limits us to execute all simulation events (e.g. start process, complete task) in one bunch. Debugger
+          allows us to split execution into smaller steps and observe process engine status between.
+        </para>
+        <para>
+          SimpleSimulationRun implements SimulationDebugger interface. SimulationDebugger allows to execute simulation
+          events step by step, to run simulation to the specified time and many other things.
+<programlisting id="crb-debuggerInterface">
+  /**
+  * Allows to run simulation in debug mode
+  */
+  public interface SimulationDebugger {
+  /**
+  * initialize simulation run
+  */
+  void init();
+
+  /**
+  * step one simulation event forward
+  */
+  void step();
+
+  /**
+  * continue in the simulation run
+  */
+  void runContinue();
+
+  /**
+  * execute simulation run till simulationTime
+  */
+  void runTo(long simulationTime);
+
+  /**
+  * execute simulation run till simulation event of the specific type
+  */
+  void runTo(String simulationEventType);
+
+  /**
+  * close simulation run
+  */
+  void close();
+  }
+</programlisting>
+          To see process engine debugger in action run
+          <ulink url="https://github.com/gro-mar/activiti-crystalball/blob/playback-demo/simulator/src/test/java/org/activiti/crystalball/simulator/SimpleSimulationRunTest.java">SimpleSimulationRunTest</ulink>
+        </para>
+      </section>
+    </section>
+</chapter>
+

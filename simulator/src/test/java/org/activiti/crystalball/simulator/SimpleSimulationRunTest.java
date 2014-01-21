@@ -1,6 +1,8 @@
 package org.activiti.crystalball.simulator;
 
 import org.activiti.crystalball.simulator.delegate.event.*;
+import org.activiti.crystalball.simulator.delegate.event.EventRecorderTestUtils;
+import org.activiti.crystalball.simulator.delegate.event.impl.RecordActivitiEventListener;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -24,11 +26,11 @@ public class SimpleSimulationRunTest {
 
   private static final String USERTASK_PROCESS = "org/activiti/crystalball/simulator/delegate/event/PlaybackProcessStartTest.testUserTask.bpmn20.xml";
 
-  protected RecordActivitiEventTestListener listener;
+  protected RecordActivitiEventListener listener;
 
   @Before
   public void initListener() {
-    listener = new RecordActivitiEventTestListener(ExecutionEntity.class);
+    listener = new RecordActivitiEventListener(ExecutionEntity.class, EventRecorderTestUtils.getTransformers());
   }
 
   @After

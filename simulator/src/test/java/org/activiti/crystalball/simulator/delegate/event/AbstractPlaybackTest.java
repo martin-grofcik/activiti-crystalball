@@ -2,6 +2,7 @@ package org.activiti.crystalball.simulator.delegate.event;
 
 import junit.framework.AssertionFailedError;
 import org.activiti.crystalball.simulator.*;
+import org.activiti.crystalball.simulator.delegate.event.impl.RecordActivitiEventListener;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
@@ -21,7 +22,7 @@ public abstract class AbstractPlaybackTest extends AbstractActivitiTestCase {
 
   private static Logger log = LoggerFactory.getLogger(AbstractPlaybackTest.class);
 
-  protected RecordActivitiEventTestListener listener = new RecordActivitiEventTestListener(ExecutionEntity.class);
+  protected RecordActivitiEventListener listener = new RecordActivitiEventListener(ExecutionEntity.class, EventRecorderTestUtils.getTransformers());
 
   @Override
   protected void initializeProcessEngine() {
