@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package org.activiti.crystalball.simulator.delegate.event;
+package org.activiti.crystalball.simulator.impl.playback;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

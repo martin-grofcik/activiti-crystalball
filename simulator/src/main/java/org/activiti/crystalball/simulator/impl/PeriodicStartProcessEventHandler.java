@@ -22,7 +22,6 @@ package org.activiti.crystalball.simulator.impl;
 
 
 import org.activiti.crystalball.simulator.SimulationEvent;
-import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package org.activiti.crystalball.simulator.impl;
+package org.activiti.crystalball.simulator.impl.playback;
 
 /*
  * #%L
@@ -32,9 +32,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-public class UserTaskCompleteEventHandler implements SimulationEventHandler {
+/**
+ * complete user task handler for playback purposes
+ */
+public class PlaybackUserTaskCompleteEventHandler implements SimulationEventHandler {
 
-	private static Logger log = LoggerFactory.getLogger(UserTaskCompleteEventHandler.class);
+	private static Logger log = LoggerFactory.getLogger(PlaybackUserTaskCompleteEventHandler.class);
 
 	@Override
 	public void handle(SimulationEvent event) {

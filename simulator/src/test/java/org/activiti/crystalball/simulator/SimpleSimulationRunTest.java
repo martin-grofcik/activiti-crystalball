@@ -1,8 +1,14 @@
 package org.activiti.crystalball.simulator;
 
 import org.activiti.crystalball.simulator.delegate.event.*;
-import org.activiti.crystalball.simulator.delegate.event.EventRecorderTestUtils;
+import org.activiti.crystalball.simulator.impl.DefaultSimulationProcessEngineFactory;
+import org.activiti.crystalball.simulator.impl.EventRecorderTestUtils;
+import org.activiti.crystalball.simulator.delegate.event.impl.ProcessInstanceCreateTransformer;
 import org.activiti.crystalball.simulator.delegate.event.impl.RecordActivitiEventListener;
+import org.activiti.crystalball.simulator.delegate.event.impl.UserTaskCompleteTransformer;
+import org.activiti.crystalball.simulator.impl.RecordableProcessEngineFactory;
+import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
+import org.activiti.crystalball.simulator.impl.playback.PlaybackUserTaskCompleteEventHandler;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
@@ -14,23 +20,30 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
 public class SimpleSimulationRunTest {
+  // Process instance start event
+  private static final String PROCESS_INSTANCE_START_EVENT_TYPE = "PROCESS_INSTANCE_START";
+  private static final String PROCESS_DEFINITION_ID_KEY = "processDefinitionId";
+  private static final String VARIABLES_KEY = "variables";
+  // User task completed event
+  private static final String USER_TASK_COMPLETED_EVENT_TYPE = "USER_TASK_COMPLETED";
+
+  private static final String BUSINESS_KEY = "testBusinessKey";
+
   public static final String TEST_VALUE = "TestValue";
   public static final String TEST_VARIABLE = "testVariable";
 
-  private static final String USERTASK_PROCESS = "org/activiti/crystalball/simulator/delegate/event/PlaybackProcessStartTest.testUserTask.bpmn20.xml";
+  private static final String USERTASK_PROCESS = "org/activiti/crystalball/simulator/impl/playback/PlaybackProcessStartTest.testUserTask.bpmn20.xml";
 
   protected RecordActivitiEventListener listener;
 
   @Before
   public void initListener() {
-    listener = new RecordActivitiEventListener(ExecutionEntity.class, EventRecorderTestUtils.getTransformers());
+    listener = new RecordActivitiEventListener(ExecutionEntity.class, getTransformers());
   }
 
   @After
@@ -128,7 +141,7 @@ public class SimpleSimulationRunTest {
     SimulationDebugger simDebugger = createDebugger();
     simDebugger.init();
     try {
-      simDebugger.runTo(EventRecorderTestUtils.USER_TASK_COMPLETED_EVENT_TYPE);
+      simDebugger.runTo(USER_TASK_COMPLETED_EVENT_TYPE);
       step1Check(SimulationRunContext.getRuntimeService(), SimulationRunContext.getTaskService());
       simDebugger.runContinue();
     } finally {
@@ -180,7 +193,7 @@ public class SimpleSimulationRunTest {
     DefaultSimulationProcessEngineFactory simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory(USERTASK_PROCESS);
     builder.processEngineFactory(simulationProcessEngineFactory)
       .eventCalendarFactory(new PlaybackEventCalendarFactory(new SimulationEventComparator(), listener.getSimulationEvents()))
-      .customEventHandlerMap(EventRecorderTestUtils.getHandlers());
+      .customEventHandlerMap(getHandlers());
     return builder.build();
   }
 
@@ -209,5 +222,19 @@ public class SimpleSimulationRunTest {
     checkStatus(processEngine.getHistoryService());
     EventRecorderTestUtils.closeProcessEngine(processEngine, listener);
     ProcessEngines.destroy();
+  }
+
+  private List<ActivitiEventToSimulationEventTransformer> getTransformers() {
+    List<ActivitiEventToSimulationEventTransformer> transformers = new ArrayList<ActivitiEventToSimulationEventTransformer>();
+    transformers.add(new ProcessInstanceCreateTransformer(PROCESS_INSTANCE_START_EVENT_TYPE, PROCESS_DEFINITION_ID_KEY, BUSINESS_KEY, VARIABLES_KEY));
+    transformers.add(new UserTaskCompleteTransformer(USER_TASK_COMPLETED_EVENT_TYPE));
+    return transformers;
+  }
+
+  public static Map<String, SimulationEventHandler> getHandlers() {
+    Map<String, SimulationEventHandler> handlers = new HashMap<String, SimulationEventHandler>();
+    handlers.put(PROCESS_INSTANCE_START_EVENT_TYPE, new StartProcessEventHandler(PROCESS_DEFINITION_ID_KEY, BUSINESS_KEY, VARIABLES_KEY));
+    handlers.put(USER_TASK_COMPLETED_EVENT_TYPE, new PlaybackUserTaskCompleteEventHandler());
+    return handlers;
   }
 }

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
- * Start new process event handler 
+ * Start new process event handler for playback purposes
  *
  */
 public class StartProcessEventHandler implements SimulationEventHandler {

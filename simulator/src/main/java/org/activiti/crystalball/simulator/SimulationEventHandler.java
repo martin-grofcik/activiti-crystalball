@@ -25,7 +25,6 @@ public interface SimulationEventHandler {
 
 	/**
 	 * initialize event handler
-	 * @param context
 	 */
 	void init();
 	
