@@ -78,7 +78,8 @@ public class CompleteEventHandler implements SimulationEventHandler {
 				long userTaskDelta = userTaskExecutor.simulateTaskExecution(execTask, variables);
 				props.put( "variables", variables);
 
-				SimulationEvent completeEvent = new SimulationEvent.Builder(simulationTime + userTaskDelta, SimulationEvent.TYPE_TASK_COMPLETE).
+				SimulationEvent completeEvent = new SimulationEvent.Builder(SimulationEvent.TYPE_TASK_COMPLETE).
+                      simulationTime(simulationTime + userTaskDelta).
                       properties(props).
                       build();
 				//schedule complete task event

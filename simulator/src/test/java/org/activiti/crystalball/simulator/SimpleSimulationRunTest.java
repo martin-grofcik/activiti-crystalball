@@ -1,10 +1,10 @@
 package org.activiti.crystalball.simulator;
 
 import org.activiti.crystalball.simulator.delegate.event.*;
+import org.activiti.crystalball.simulator.delegate.event.impl.InMemoryRecordActivitiEventListener;
 import org.activiti.crystalball.simulator.impl.DefaultSimulationProcessEngineFactory;
 import org.activiti.crystalball.simulator.impl.EventRecorderTestUtils;
 import org.activiti.crystalball.simulator.delegate.event.impl.ProcessInstanceCreateTransformer;
-import org.activiti.crystalball.simulator.delegate.event.impl.RecordActivitiEventListener;
 import org.activiti.crystalball.simulator.delegate.event.impl.UserTaskCompleteTransformer;
 import org.activiti.crystalball.simulator.impl.RecordableProcessEngineFactory;
 import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
@@ -12,7 +12,6 @@ import org.activiti.crystalball.simulator.impl.playback.PlaybackUserTaskComplete
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
-import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.util.ClockUtil;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
@@ -39,11 +38,11 @@ public class SimpleSimulationRunTest {
 
   private static final String USERTASK_PROCESS = "org/activiti/crystalball/simulator/impl/playback/PlaybackProcessStartTest.testUserTask.bpmn20.xml";
 
-  protected RecordActivitiEventListener listener;
+  protected InMemoryRecordActivitiEventListener listener;
 
   @Before
   public void initListener() {
-    listener = new RecordActivitiEventListener(ExecutionEntity.class, getTransformers());
+    listener = new InMemoryRecordActivitiEventListener(getTransformers());
   }
 
   @After
@@ -193,7 +192,7 @@ public class SimpleSimulationRunTest {
     DefaultSimulationProcessEngineFactory simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory(USERTASK_PROCESS);
     builder.processEngineFactory(simulationProcessEngineFactory)
       .eventCalendarFactory(new PlaybackEventCalendarFactory(new SimulationEventComparator(), listener.getSimulationEvents()))
-      .customEventHandlerMap(getHandlers());
+      .eventHandlers(getHandlers());
     return builder.build();
   }
 

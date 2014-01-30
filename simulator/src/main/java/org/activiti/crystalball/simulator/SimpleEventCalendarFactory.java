@@ -2,7 +2,7 @@ package org.activiti.crystalball.simulator;
 
 import java.util.Comparator;
 
-public class SimpleEventCalendarFactory implements FactoryBean<SimpleEventCalendar> {
+public class SimpleEventCalendarFactory implements FactoryBean<EventCalendar> {
 
 	protected Comparator<SimulationEvent> eventComparator;
 	

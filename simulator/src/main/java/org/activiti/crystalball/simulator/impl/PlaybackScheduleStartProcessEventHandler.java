@@ -113,7 +113,8 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 		Map<String,Object> properties = new HashMap<String, Object>();
 		properties.put(PROCESS_INSTANCE_ID, processInstanceId);
 		
-		SimulationEvent completeEvent = new SimulationEvent.Builder( simulationTime, eventTypeToSchedule).
+		SimulationEvent completeEvent = new SimulationEvent.Builder( eventTypeToSchedule).
+      simulationTime(simulationTime).
       properties(properties).
       build();
 		// add start process event
@@ -162,14 +163,18 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 		if ( end.after( c.getTime() )) {
 			end = c.getTime();
 			// add schedule process event after selected process instances
-			SimulationEvent scheduleEvent = new SimulationEvent.Builder( ClockUtil.getCurrentTime().getTime() + delta + 1, eventType).build();
+			SimulationEvent scheduleEvent = new SimulationEvent.Builder( eventType).
+        simulationTime(ClockUtil.getCurrentTime().getTime() + delta + 1).
+        build();
 			SimulationRunContext.getEventCalendar().addEvent( scheduleEvent);
 		} else {
 			long playBackTime = playBackEnd.getTime() - playBackStart.getTime();  
 			long simulationTimeDelta = ClockUtil.getCurrentTime().getTime() - simulationRunStart.getTime();
 			long playbackRepeated = simulationTimeDelta/ playBackTime +1 ;
 			
-			SimulationEvent scheduleEvent = new SimulationEvent.Builder( simulationRunStart.getTime()+ playBackTime * playbackRepeated + 1, eventType).build();
+			SimulationEvent scheduleEvent = new SimulationEvent.Builder( eventType).
+        simulationTime(simulationRunStart.getTime() + playBackTime * playbackRepeated + 1).
+        build();
 			SimulationRunContext.getEventCalendar().addEvent( scheduleEvent);			
 		}
 		

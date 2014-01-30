@@ -22,6 +22,8 @@ package org.activiti.crystalball.simulator;
 
 
 import org.activiti.engine.impl.util.ClockUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +31,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SimpleEventCalendar implements EventCalendar {
+
+  private static Logger log = LoggerFactory.getLogger(SimpleEventCalendar.class.getName());
 
   private static final int NULL = -1;
 
@@ -60,7 +64,7 @@ public class SimpleEventCalendar implements EventCalendar {
 		
 		SimulationEvent minEvent = eventList.remove( (int) minIndex );
 		
-		if (minEvent.getSimulationTime() < ClockUtil.getCurrentTime().getTime())
+		if (minEvent.hasSimulationTime() && minEvent.getSimulationTime() < ClockUtil.getCurrentTime().getTime())
 			throw new RuntimeException("Unable to execute event from the past");
 		
 		if (eventList.isEmpty()) { 
@@ -80,7 +84,8 @@ public class SimpleEventCalendar implements EventCalendar {
 	
 	@Override
   public void addEvent(SimulationEvent event) {
-		if (event != null && isMinimal(event))
+    log.debug("Scheduling new event [{}]",event);
+    if (event != null && isMinimal(event))
 			minIndex = eventList.size();
 		eventList.add(event);			
 	}

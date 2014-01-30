@@ -52,8 +52,8 @@ public class AcquireJobNotificationEventHandler implements
         log.info(jobExecutor.getName() + " starting to acquire jobs");
         jobExecutor.start();
 
-    SimulationEvent event = new SimulationEvent.Builder(
-      ClockUtil.getCurrentTime().getTime(), SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
+    SimulationEvent event = new SimulationEvent.Builder(SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
+      simulationTime(ClockUtil.getCurrentTime().getTime()).
       property(((SimulationDefaultJobExecutor) jobExecutor).getAcquireJobsRunnable()).
       build();
     SimulationRunContext.getEventCalendar().addEvent(event);

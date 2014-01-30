@@ -41,7 +41,7 @@ public class PlaybackUserTaskCompleteEventHandler implements SimulationEventHand
 
 	@Override
 	public void handle(SimulationEvent event) {
-		String taskId = (String) event.getProperty("task");
+		String taskId = (String) event.getProperty("taskId");
 		Task task = SimulationRunContext.getTaskService().createTaskQuery().taskId( taskId ).singleResult();		
 		String assignee = task.getAssignee();
 		
@@ -49,7 +49,7 @@ public class PlaybackUserTaskCompleteEventHandler implements SimulationEventHand
 		Map<String, Object> variables = (Map<String, Object>) event.getProperty("variables");		
 
 		SimulationRunContext.getTaskService().complete( taskId, variables );
-		log.debug( SimpleDateFormat.getTimeInstance().format( new Date(event.getSimulationTime())) +": completed {}, {}, {}, {}", task, task.getName(), assignee, variables);
+		log.debug( "completed {}, {}, {}, {}", task, task.getName(), assignee, variables);
 	}
 
 	@Override

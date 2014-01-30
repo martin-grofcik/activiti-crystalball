@@ -119,9 +119,8 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		            if(!isInterrupted) {
 		              isWaiting.set(true);
 
-                  SimulationEvent event = new SimulationEvent.Builder(
-                    ClockUtil.getCurrentTime().getTime() + millisToWait,
-                    SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
+                  SimulationEvent event = new SimulationEvent.Builder(SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
+                    simulationTime(ClockUtil.getCurrentTime().getTime() + millisToWait).
                     property(this).
                     build();
                   SimulationRunContext.getEventCalendar().addEvent(event);
@@ -138,8 +137,8 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		        }
 		      } else {
 		    	  // schedule run now
-            SimulationEvent event = new SimulationEvent.Builder(
-              ClockUtil.getCurrentTime().getTime(), SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
+            SimulationEvent event = new SimulationEvent.Builder(SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
+              simulationTime(ClockUtil.getCurrentTime().getTime()).
               property(this).
               build();
             SimulationRunContext.getEventCalendar().addEvent(event);
@@ -173,8 +172,8 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		      synchronized (MONITOR) {
 //		        MONITOR.notifyAll();
 		    	//Notify is not needed - event is enough
-            SimulationEvent event = new SimulationEvent.Builder(
-              ClockUtil.getCurrentTime().getTime(), SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
+            SimulationEvent event = new SimulationEvent.Builder(SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
+              simulationTime(ClockUtil.getCurrentTime().getTime()).
               property(this).
               build();
             SimulationRunContext.getEventCalendar().addEvent(event);

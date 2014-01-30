@@ -51,7 +51,9 @@ public class LogTimeEventHandler implements SimulationEventHandler {
 	@Override
 	public void init() {
 		simulationStart = System.currentTimeMillis();
-		SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent.Builder( ClockUtil.getCurrentTime().getTime(), type).build());
+		SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent.Builder( type).
+      simulationTime(ClockUtil.getCurrentTime().getTime()).
+      build());
 	}
 
 	@Override
@@ -62,7 +64,9 @@ public class LogTimeEventHandler implements SimulationEventHandler {
 		Calendar c = Calendar.getInstance();
 		c.setTime(simulationTime);
 		c.add( Calendar.MINUTE, logDelta);
-		SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent.Builder( c.getTimeInMillis(), type).build());
+		SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent.Builder( type).
+      simulationTime(c.getTimeInMillis()).
+      build());
 	}
 
 }

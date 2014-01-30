@@ -122,7 +122,7 @@
             <listitem>
               <para>logged ActivitiEvents. Basically we can add ActivitiEventListener to the engine from which we want
                 to log events. Logged events could be stored and after the time analyzed. The basic implementation
-                could look like <ulink url="org.activiti.crystalball.simulator.delegate.event.impl.RecordActivitiEventListener">
+                could look like <ulink url="org.activiti.crystalball.simulator.delegate.event.impl.InMemoryRecordActivitiEventListener">
                   RecordActivitiEventListener</ulink>:
 <programlisting id="crb-RecordActivitiEventListener">
   @Override

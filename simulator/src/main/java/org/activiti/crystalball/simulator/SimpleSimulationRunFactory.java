@@ -20,7 +20,7 @@ public class SimpleSimulationRunFactory implements FactoryBean<SimulationRun> {
 	@Override
 	public SimulationRun getObject() {
 		return new SimpleSimulationRun.Builder().
-            customEventHandlerMap(customEventHandlerMap).
+      eventHandlers(customEventHandlerMap).
             eventCalendarFactory(eventCalendarFactory).
             processEngineFactory(processEngineFactory).
             eventCalendarFactory(eventCalendarFactory).

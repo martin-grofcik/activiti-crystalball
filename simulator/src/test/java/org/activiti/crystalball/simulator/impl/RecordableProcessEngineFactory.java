@@ -1,5 +1,6 @@
 package org.activiti.crystalball.simulator.impl;
 
+import org.activiti.crystalball.simulator.delegate.event.impl.AbstractRecordActivitiEventListener;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.delegate.event.ActivitiEventListener;
 import org.activiti.engine.impl.ProcessEngineImpl;
@@ -10,13 +11,13 @@ import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
  */
 public class RecordableProcessEngineFactory extends DefaultSimulationProcessEngineFactory {
 
-  private ActivitiEventListener listener;
+  private AbstractRecordActivitiEventListener listener;
 
-  public RecordableProcessEngineFactory(ActivitiEventListener listener) {
+  public RecordableProcessEngineFactory(AbstractRecordActivitiEventListener listener) {
     this("", listener);
   }
 
-  public RecordableProcessEngineFactory(String resourceToDeploy, ActivitiEventListener listener) {
+  public RecordableProcessEngineFactory(String resourceToDeploy, AbstractRecordActivitiEventListener listener) {
     super(resourceToDeploy);
     this.listener = listener;
   }

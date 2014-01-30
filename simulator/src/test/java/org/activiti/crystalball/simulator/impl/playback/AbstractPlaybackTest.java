@@ -3,16 +3,15 @@ package org.activiti.crystalball.simulator.impl.playback;
 import junit.framework.AssertionFailedError;
 import org.activiti.crystalball.simulator.*;
 import org.activiti.crystalball.simulator.delegate.event.ActivitiEventToSimulationEventTransformer;
+import org.activiti.crystalball.simulator.delegate.event.impl.InMemoryRecordActivitiEventListener;
 import org.activiti.crystalball.simulator.impl.DefaultSimulationProcessEngineFactory;
 import org.activiti.crystalball.simulator.impl.EventRecorderTestUtils;
 import org.activiti.crystalball.simulator.impl.RecordableProcessEngineFactory;
 import org.activiti.crystalball.simulator.delegate.event.impl.ProcessInstanceCreateTransformer;
-import org.activiti.crystalball.simulator.delegate.event.impl.RecordActivitiEventListener;
 import org.activiti.crystalball.simulator.delegate.event.impl.UserTaskCompleteTransformer;
 import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
-import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.test.AbstractActivitiTestCase;
 import org.activiti.engine.impl.test.TestHelper;
 import org.activiti.engine.impl.util.ClockUtil;
@@ -41,7 +40,7 @@ public abstract class AbstractPlaybackTest extends AbstractActivitiTestCase {
 
   private static Logger log = LoggerFactory.getLogger(AbstractPlaybackTest.class);
 
-  protected RecordActivitiEventListener listener = new RecordActivitiEventListener(ExecutionEntity.class, getTransformers());
+  protected InMemoryRecordActivitiEventListener listener = new InMemoryRecordActivitiEventListener(getTransformers());
 
   @Override
   protected void initializeProcessEngine() {
@@ -74,13 +73,13 @@ public abstract class AbstractPlaybackTest extends AbstractActivitiTestCase {
       final SimpleSimulationRun.Builder builder = new SimpleSimulationRun.Builder();
       builder.processEngineFactory(simulationProcessEngineFactory)
         .eventCalendarFactory(new PlaybackEventCalendarFactory(new SimulationEventComparator(), listener.getSimulationEvents()))
-        .customEventHandlerMap(getHandlers());
+        .eventHandlers(getHandlers());
       simDebugger = builder.build();
 
       simDebugger.init();
       this.processEngine = SimulationRunContext.getProcessEngine();
       initializeServices();
-      deploymentId = TestHelper.annotationDeploymentSetUp(processEngine, getClass(), getName());
+      deploymentIdFromDeploymentAnnotation = TestHelper.annotationDeploymentSetUp(processEngine, getClass(), getName());
 
       simDebugger.runContinue();
 
@@ -101,7 +100,7 @@ public abstract class AbstractPlaybackTest extends AbstractActivitiTestCase {
 
     } finally {
       if (simDebugger != null) {
-        TestHelper.annotationDeploymentTearDown(processEngine, deploymentId, getClass(), getName());
+        TestHelper.annotationDeploymentTearDown(processEngine, deploymentIdFromDeploymentAnnotation, getClass(), getName());
         simDebugger.close();
         assertAndEnsureCleanDb();
       }
@@ -149,7 +148,7 @@ public abstract class AbstractPlaybackTest extends AbstractActivitiTestCase {
 
     try {
 
-      deploymentId = TestHelper.annotationDeploymentSetUp(processEngine, getClass(), getName());
+      deploymentIdFromDeploymentAnnotation = TestHelper.annotationDeploymentSetUp(processEngine, getClass(), getName());
 
       //super.runBare();
       Throwable exception = null;
@@ -183,7 +182,7 @@ public abstract class AbstractPlaybackTest extends AbstractActivitiTestCase {
       throw e;
 
     } finally {
-      TestHelper.annotationDeploymentTearDown(processEngine, deploymentId, getClass(), getName());
+      TestHelper.annotationDeploymentTearDown(processEngine, deploymentIdFromDeploymentAnnotation, getClass(), getName());
       assertAndEnsureCleanDb();
       log.info("dropping and recreating db");
 

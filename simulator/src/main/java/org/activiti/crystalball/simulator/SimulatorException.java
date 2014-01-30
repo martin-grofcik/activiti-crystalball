@@ -32,4 +32,8 @@ public class SimulatorException extends RuntimeException {
 		super(msg);
 	}
 
+  public SimulatorException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
+
 }

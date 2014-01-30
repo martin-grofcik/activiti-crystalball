@@ -1,28 +1,32 @@
 package org.activiti.crystalball.simulator.impl.replay;
 
 import org.activiti.crystalball.simulator.*;
+import org.activiti.crystalball.simulator.delegate.UserTaskExecutionListener;
 import org.activiti.crystalball.simulator.delegate.event.ActivitiEventToSimulationEventTransformer;
+import org.activiti.crystalball.simulator.delegate.event.impl.InMemoryRecordActivitiEventListener;
 import org.activiti.crystalball.simulator.delegate.event.impl.ProcessInstanceCreateTransformer;
-import org.activiti.crystalball.simulator.delegate.event.impl.RecordActivitiEventListener;
 import org.activiti.crystalball.simulator.delegate.event.impl.UserTaskCompleteTransformer;
-import org.activiti.crystalball.simulator.impl.*;
+import org.activiti.crystalball.simulator.impl.EventRecorderTestUtils;
+import org.activiti.crystalball.simulator.impl.ReplayProcessEngineFactory;
+import org.activiti.crystalball.simulator.impl.StartReplayProcessEventHandler;
+import org.activiti.crystalball.simulator.impl.bpmn.parser.handler.AddListenerUserTaskParseHandler;
 import org.activiti.crystalball.simulator.impl.playback.PlaybackUserTaskCompleteEventHandler;
-import org.activiti.engine.*;
-import org.activiti.engine.history.HistoricProcessInstance;
-import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
-import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngines;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.delegate.TaskListener;
+import org.activiti.engine.delegate.event.ActivitiEventListener;
+import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.parse.BpmnParseHandler;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class ReplayRunTest {
 
@@ -38,14 +42,13 @@ public class ReplayRunTest {
   private static final String TEST_VALUE = "TestValue";
   private static final String TEST_VARIABLE = "testVariable";
 
-  protected RecordActivitiEventListener listener = new RecordActivitiEventListener(ExecutionEntity.class, getTransformers());
+  protected static InMemoryRecordActivitiEventListener listener = new InMemoryRecordActivitiEventListener(getTransformers());
 
   private static final String THE_USERTASK_PROCESS = "org/activiti/crystalball/simulator/impl/playback/PlaybackProcessStartTest.testUserTask.bpmn20.xml";
 
-  @Test @Ignore("replay test implementation is in progress")
+  @Test
   public void testProcessInstanceStartEvents() throws Exception {
-    FactoryBean<ProcessEngine> singletonProcessEngineFactory = new SingletonFactoryBean<ProcessEngine>(new RecordableProcessEngineFactory(THE_USERTASK_PROCESS, listener));
-    ProcessEngine processEngine = singletonProcessEngineFactory.getObject();
+    ProcessEngine processEngine = initProcessEngine();
 
     TaskService taskService = processEngine.getTaskService();
     RuntimeService runtimeService = processEngine.getRuntimeService();
@@ -55,36 +58,64 @@ public class ReplayRunTest {
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(USERTASK_PROCESS, BUSINESS_KEY, variables);
 
     Task task = taskService.createTaskQuery().taskDefinitionKey("userTask").singleResult();
-    EventRecorderTestUtils.increaseTime();
+    TimeUnit.MILLISECONDS.sleep(50);
     taskService.complete(task.getId());
 
+    final ReplaySimulationRun simRun = new ReplaySimulationRun(processEngine, getReplayHandlers(processInstance.getId()));
 
-    final SimpleSimulationRun.Builder builder = new SimpleSimulationRun.Builder();
-    // init simulation run
-    builder.processEngineFactory(singletonProcessEngineFactory)
-      .eventCalendarFactory(new PlaybackEventCalendarFactory(new SimulationEventComparator(), listener.getSimulationEvents()))
-      .customEventHandlerMap(getHandlers());
-    SimpleSimulationRun simRun = builder.build();
+    simRun.init();
 
-    simRun.execute();
+    // original process is finished - there should not be any running process instance/task
+    assertEquals(0, runtimeService.createProcessInstanceQuery().processDefinitionKey(USERTASK_PROCESS).count());
+    assertEquals(0, taskService.createTaskQuery().taskDefinitionKey("userTask").count());
 
-    simRun.getProcessEngine().close();
+    simRun.step();
+
+    // replay process was started
+    assertEquals(1, runtimeService.createProcessInstanceQuery().processDefinitionKey(USERTASK_PROCESS).count());
+    // there should be one task
+    assertEquals(1, taskService.createTaskQuery().taskDefinitionKey("userTask").count());
+
+    simRun.step();
+
+    // userTask was completed - replay process was finished
+    assertEquals(0, runtimeService.createProcessInstanceQuery().processDefinitionKey(USERTASK_PROCESS).count());
+    assertEquals(0, taskService.createTaskQuery().taskDefinitionKey("userTask").count());
+
+    simRun.close();
+    processEngine.close();
     ProcessEngines.destroy();
   }
 
-  private void recordEvents() {
+  private ProcessEngine initProcessEngine() {ProcessEngineConfigurationImpl configuration = getProcessEngineConfiguration();
+    ProcessEngine processEngine = configuration.buildProcessEngine();
+
+    processEngine.getRepositoryService().
+        createDeployment().
+        addClasspathResource(THE_USERTASK_PROCESS).
+        deploy();
+    return processEngine;
   }
 
-  private List<ActivitiEventToSimulationEventTransformer> getTransformers() {
+  private ProcessEngineConfigurationImpl getProcessEngineConfiguration() {
+    ProcessEngineConfigurationImpl configuration = new org.activiti.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration();
+    configuration.setHistory("full");
+    configuration.setJobExecutorActivate(false);
+    configuration.setCustomDefaultBpmnParseHandlers(Arrays.<BpmnParseHandler>asList(new AddListenerUserTaskParseHandler(TaskListener.EVENTNAME_CREATE, new UserTaskExecutionListener(USER_TASK_COMPLETED_EVENT_TYPE, USER_TASK_COMPLETED_EVENT_TYPE, listener.getSimulationEvents()))));
+    configuration.setEventListeners(Arrays.<ActivitiEventListener>asList(listener));
+    return configuration;
+  }
+
+  private static List<ActivitiEventToSimulationEventTransformer> getTransformers() {
     List<ActivitiEventToSimulationEventTransformer> transformers = new ArrayList<ActivitiEventToSimulationEventTransformer>();
     transformers.add(new ProcessInstanceCreateTransformer(PROCESS_INSTANCE_START_EVENT_TYPE, PROCESS_DEFINITION_ID_KEY, BUSINESS_KEY, VARIABLES_KEY));
     transformers.add(new UserTaskCompleteTransformer(USER_TASK_COMPLETED_EVENT_TYPE));
     return transformers;
   }
 
-  public static Map<String, SimulationEventHandler> getHandlers() {
+  public static Map<String, SimulationEventHandler> getReplayHandlers(String processInstanceId) {
     Map<String, SimulationEventHandler> handlers = new HashMap<String, SimulationEventHandler>();
-    handlers.put(PROCESS_INSTANCE_START_EVENT_TYPE, new StartProcessEventHandler(PROCESS_DEFINITION_ID_KEY, BUSINESS_KEY, VARIABLES_KEY));
+    handlers.put(PROCESS_INSTANCE_START_EVENT_TYPE, new StartReplayProcessEventHandler(processInstanceId, PROCESS_INSTANCE_START_EVENT_TYPE, PROCESS_INSTANCE_START_EVENT_TYPE, listener.getSimulationEvents(), PROCESS_DEFINITION_ID_KEY, BUSINESS_KEY, VARIABLES_KEY));
     handlers.put(USER_TASK_COMPLETED_EVENT_TYPE, new PlaybackUserTaskCompleteEventHandler());
     return handlers;
   }

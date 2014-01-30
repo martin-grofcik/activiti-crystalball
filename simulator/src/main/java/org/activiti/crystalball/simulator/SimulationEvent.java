@@ -74,8 +74,17 @@ public class SimulationEvent {
 
   @Override
 	public String toString() {
-		return (new Date(simulationTime)).toString() +", "+ type + ", "+priority+", " +property + ", " + properties;
+    String date = hasSimulationTime() ? (new Date(simulationTime)).toString() + ", " : "now ";
+		return  date + type + ", "+priority+", " +property + ", " + properties;
 	}
+
+  public Map<String, Object> getProperties() {
+    return properties;
+  }
+
+  public boolean hasSimulationTime() {
+    return this.simulationTime != Long.MIN_VALUE;
+  }
 
   public static class Builder {
     // required
@@ -87,11 +96,15 @@ public class SimulationEvent {
     private Object property;
     private int priority;
 
-    public Builder(long simulationTime, String type) {
-      this.simulationTime = simulationTime;
+    public Builder(String type) {
       this.type = type;
+      this.simulationTime = Long.MIN_VALUE;
     }
 
+    public Builder simulationTime(long simulationTime) {
+      this.simulationTime=simulationTime;
+      return this;
+    }
     public Builder properties(Map<String, Object> properties) {
       this.properties = properties;
       return this;

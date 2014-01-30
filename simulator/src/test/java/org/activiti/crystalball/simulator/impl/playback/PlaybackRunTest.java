@@ -1,15 +1,12 @@
 package org.activiti.crystalball.simulator.impl.playback;
 
-import org.activiti.crystalball.simulator.PlaybackEventCalendarFactory;
-import org.activiti.crystalball.simulator.SimpleSimulationRun;
-import org.activiti.crystalball.simulator.SimulationEventComparator;
-import org.activiti.crystalball.simulator.SimulationEventHandler;
+import org.activiti.crystalball.simulator.*;
 import org.activiti.crystalball.simulator.delegate.event.ActivitiEventToSimulationEventTransformer;
 import org.activiti.crystalball.simulator.impl.DefaultSimulationProcessEngineFactory;
 import org.activiti.crystalball.simulator.impl.EventRecorderTestUtils;
 import org.activiti.crystalball.simulator.impl.RecordableProcessEngineFactory;
 import org.activiti.crystalball.simulator.delegate.event.impl.ProcessInstanceCreateTransformer;
-import org.activiti.crystalball.simulator.delegate.event.impl.RecordActivitiEventListener;
+import org.activiti.crystalball.simulator.delegate.event.impl.InMemoryRecordActivitiEventListener;
 import org.activiti.crystalball.simulator.delegate.event.impl.UserTaskCompleteTransformer;
 import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
 import org.activiti.engine.HistoryService;
@@ -17,7 +14,6 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.history.HistoricProcessInstance;
-import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.junit.Test;
 
@@ -43,7 +39,7 @@ public class PlaybackRunTest {
   private static final String TEST_VALUE = "TestValue";
   private static final String TEST_VARIABLE = "testVariable";
 
-  protected RecordActivitiEventListener listener = new RecordActivitiEventListener(ExecutionEntity.class, getTransformers());
+  protected InMemoryRecordActivitiEventListener listener = new InMemoryRecordActivitiEventListener(getTransformers());
 
   private static final String THE_SIMPLEST_PROCESS = "org/activiti/crystalball/simulator/impl/playback/PlaybackProcessStartTest.testDemo.bpmn20.xml";
 
@@ -56,13 +52,12 @@ public class PlaybackRunTest {
     DefaultSimulationProcessEngineFactory simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory(THE_SIMPLEST_PROCESS);
     builder.processEngineFactory(simulationProcessEngineFactory)
       .eventCalendarFactory(new PlaybackEventCalendarFactory(new SimulationEventComparator(), listener.getSimulationEvents()))
-      .customEventHandlerMap(getHandlers());
+      .eventHandlers(getHandlers());
     SimpleSimulationRun simRun = builder.build();
 
     simRun.execute();
 
     checkStatus(simulationProcessEngineFactory.getObject());
-    simRun.getProcessEngine().close();
     ProcessEngines.destroy();
   }
 

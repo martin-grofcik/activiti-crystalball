@@ -68,7 +68,7 @@
 			<list>
                 <bean class="org.activiti.crystalball.simulator.impl.bpmn.parser.handler.SimulatorScriptTaskParseHandler"/>
                 <bean class="org.activiti.crystalball.simulator.impl.bpmn.parser.handler.SimulatorServiceTaskParseHandler"/>
-                <bean class="org.activiti.crystalball.simulator.impl.bpmn.parser.handler.SimulatorUserTaskParseHandler"/>
+                <bean class="org.activiti.crystalball.simulator.impl.bpmn.parser.handler.AddListenerUserTaskParseHandler"/>
 			</list>
 		</property>
 		
