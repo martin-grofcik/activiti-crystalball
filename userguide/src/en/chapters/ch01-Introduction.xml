@@ -221,7 +221,7 @@
         <title>Process engine debugger</title>
         <para>
           Playback limits us to execute all simulation events (e.g. start process, complete task) in one bunch. Debugger
-          allows us to split execution into smaller steps and observe process engine status between.
+          allows us to split execution into smaller steps and observe process engine status between the steps.
         </para>
         <para>
           SimpleSimulationRun implements SimulationDebugger interface. SimulationDebugger allows to execute simulation
@@ -264,6 +264,103 @@
 </programlisting>
           To see process engine debugger in action run
           <ulink url="https://github.com/gro-mar/activiti-crystalball/blob/playback-demo/simulator/src/test/java/org/activiti/crystalball/simulator/SimpleSimulationRunTest.java">SimpleSimulationRunTest</ulink>
+        </para>
+      </section>
+      <section id="crb-replay">
+        <title>Replay</title>
+        <para>
+          Playback needs to create another process engine instance. Playback does not affect "real" environment, on
+          the other side it needs simulation experiment configuration. Replay works on the "real" process engine. Replay
+          executes simulation event on the running process engine. The consequence is that replay lives in real time.
+          Real time means that simulation events are scheduled to be executed immediately.
+        </para>
+        <para>
+          Example bellow shows how to replay one process instance. The same technique can be applied in playback to for
+          playing only one process instance. <ulink url="https://github.com/gro-mar/activiti-crystalball/blob/playback-demo/simulator/src/test/java/org/activiti/crystalball/simulator/impl/replay/ReplayRunTest.java?source=cc">ReplayRunTest</ulink>
+          The first part of the test initialize process engine, starts one process instance and completes process
+          instance's task.
+<programlisting id="crb-replayTest-init">
+  ProcessEngine processEngine = initProcessEngine();
+
+  TaskService taskService = processEngine.getTaskService();
+  RuntimeService runtimeService = processEngine.getRuntimeService();
+
+  Map&lt;String, Object&gt; variables = new HashMap&lt;String, Object&gt;();
+  variables.put(TEST_VARIABLE, TEST_VALUE);
+  ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(USERTASK_PROCESS, BUSINESS_KEY,
+  variables);
+
+  Task task = taskService.createTaskQuery().taskDefinitionKey("userTask").singleResult();
+  TimeUnit.MILLISECONDS.sleep(50);
+  taskService.complete(task.getId());
+</programlisting>
+          Used process engine is basic InMemoryStandaloneProcessEngine with
+          <itemizedlist>
+            <listitem>
+              <para>
+              InMemoryRecordActivitiEventListener
+              (already used in playback) to record Activiti events and transform them to simulation events.
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+              UserTaskExecutionListener - when new user task is created and new task is form replay process
+              instance, schedule task complete event to the event calendar.
+              </para>
+            </listitem>
+          </itemizedlist>
+          Next test part starts simulation debugger on the same process engine as original process.
+          Replay event handlers replaces StartProcessEventHandler with StartReplayProcessEventHandler.
+          StartReplayProcessEventHandler takes process instance Id to replay and in the init phase schedule process
+          instance start. StartProcessEventHandler in the handle phase starts new process instance with one reserved
+          variable. Variable name is "_replay.processInstanceId". The variable is used to store id of the process which
+          is replayed. ReplaySimulationRun in comparison with SimpleSimulationRun does not:
+          <itemizedlist>
+            <listitem>
+              <para>create and close process
+                engine instance.</para>
+            </listitem>
+            <listitem>
+              <para>change simulation time. (real time can not be changed)</para>
+            </listitem>
+          </itemizedlist>
+<programlisting id="crb-replayTest-simDebug">
+  final SimulationDebugger simRun = new ReplaySimulationRun(processEngine,
+  getReplayHandlers(processInstance.getId()));
+</programlisting>
+          And now replay process instance can start. At the beginning there are no process instances running. There is
+          one process instance finished in the history. After the init there is one simulation event in the event calendar
+          - to start process instance which replays already finished process instance.
+<programlisting id="crb-replayTest-simStart">
+  simRun.init();
+
+  // original process is finished - there should not be any running process instance/task
+  assertEquals(0, runtimeService.createProcessInstanceQuery().processDefinitionKey(USERTASK_PROCESS).count());
+  assertEquals(0, taskService.createTaskQuery().taskDefinitionKey("userTask").count());
+
+  simRun.step();
+
+  // replay process was started
+  assertEquals(1, runtimeService.createProcessInstanceQuery().processDefinitionKey(USERTASK_PROCESS).count());
+  // there should be one task
+  assertEquals(1, taskService.createTaskQuery().taskDefinitionKey("userTask").count());
+</programlisting>
+          When the task was created UserTaskExecutionListener created new simulation event to complete user task.
+<programlisting id="crb-replayTest-simStep">
+  simRun.step();
+
+  // userTask was completed - replay process was finished
+  assertEquals(0, runtimeService.createProcessInstanceQuery().processDefinitionKey(USERTASK_PROCESS).count());
+  assertEquals(0, taskService.createTaskQuery().taskDefinitionKey("userTask").count());
+
+</programlisting>
+          Simulation is finished and we can continue in another process instance start, or any other events.
+          For now we can close simRun and process engine.
+<programlisting id="crb-replayTest-simClose">
+  simRun.close();
+  processEngine.close();
+  ProcessEngines.destroy();
+</programlisting>
         </para>
       </section>
     </section>

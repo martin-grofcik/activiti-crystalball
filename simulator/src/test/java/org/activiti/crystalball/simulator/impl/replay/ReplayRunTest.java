@@ -61,7 +61,7 @@ public class ReplayRunTest {
     TimeUnit.MILLISECONDS.sleep(50);
     taskService.complete(task.getId());
 
-    final ReplaySimulationRun simRun = new ReplaySimulationRun(processEngine, getReplayHandlers(processInstance.getId()));
+    final SimulationDebugger simRun = new ReplaySimulationRun(processEngine, getReplayHandlers(processInstance.getId()));
 
     simRun.init();
 
@@ -87,7 +87,8 @@ public class ReplayRunTest {
     ProcessEngines.destroy();
   }
 
-  private ProcessEngine initProcessEngine() {ProcessEngineConfigurationImpl configuration = getProcessEngineConfiguration();
+  private ProcessEngine initProcessEngine() {
+    ProcessEngineConfigurationImpl configuration = getProcessEngineConfiguration();
     ProcessEngine processEngine = configuration.buildProcessEngine();
 
     processEngine.getRepositoryService().
