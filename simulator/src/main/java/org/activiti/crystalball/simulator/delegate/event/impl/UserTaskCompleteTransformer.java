@@ -4,8 +4,7 @@ import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.engine.delegate.event.ActivitiEntityEvent;
 import org.activiti.engine.delegate.event.ActivitiEvent;
 import org.activiti.engine.delegate.event.ActivitiEventType;
-import org.activiti.engine.impl.util.ClockUtil;
-import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.task.Task;
 
 import java.util.HashMap;
@@ -33,10 +32,10 @@ public class UserTaskCompleteTransformer extends AbstractTransformer {
       properties.put(TASK_VARIABLES, task.getProcessVariables());
       return
           new SimulationEvent.Builder(this.simulationEventType).
-            simulationTime(ClockUtil.getCurrentTime().getTime()).
+            simulationTime(Context.getProcessEngineConfiguration().getClock().getCurrentTime().getTime()).
             properties(properties).
             build();
-    };
+    }
     return null;
   }
 }

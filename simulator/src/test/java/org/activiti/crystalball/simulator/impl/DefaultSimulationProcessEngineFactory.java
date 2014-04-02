@@ -1,32 +1,33 @@
 package org.activiti.crystalball.simulator.impl;
 
 import org.activiti.crystalball.simulator.FactoryBean;
-import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.impl.ProcessEngineImpl;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.runtime.Clock;
 
-public class DefaultSimulationProcessEngineFactory implements FactoryBean<ProcessEngine> {
-  private ProcessEngine processEngine;
+public class DefaultSimulationProcessEngineFactory implements FactoryBean<ProcessEngineImpl> {
+  private ProcessEngineImpl processEngine;
 
-  public DefaultSimulationProcessEngineFactory() {
-    this("");
+  public DefaultSimulationProcessEngineFactory(Clock clock) {
+    this("", clock);
   }
 
-  public DefaultSimulationProcessEngineFactory(String resourceToDeploy) {
-    processEngine = ProcessEngines.getDefaultProcessEngine();
+  public DefaultSimulationProcessEngineFactory(String resourceToDeploy, Clock clock) {
+    processEngine = (ProcessEngineImpl) ProcessEngines.getDefaultProcessEngine();
     if (!resourceToDeploy.isEmpty())
       processEngine.getRepositoryService().
         createDeployment().
         addClasspathResource(resourceToDeploy).
         deploy();
 
-    final ProcessEngineConfigurationImpl processEngineConfiguration = ((ProcessEngineImpl) processEngine).getProcessEngineConfiguration();
+    final ProcessEngineConfigurationImpl processEngineConfiguration = processEngine.getProcessEngineConfiguration();
     processEngineConfiguration.setHistory("full");
+    processEngineConfiguration.setClock(clock);
   }
 
   @Override
-  public ProcessEngine getObject() {
+  public ProcessEngineImpl getObject() {
     return processEngine;
   }
 

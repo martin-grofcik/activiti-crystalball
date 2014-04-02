@@ -4,17 +4,20 @@ import junit.framework.AssertionFailedError;
 import org.activiti.crystalball.simulator.*;
 import org.activiti.crystalball.simulator.delegate.event.ActivitiEventToSimulationEventTransformer;
 import org.activiti.crystalball.simulator.delegate.event.impl.InMemoryRecordActivitiEventListener;
+import org.activiti.crystalball.simulator.delegate.event.impl.ProcessInstanceCreateTransformer;
+import org.activiti.crystalball.simulator.delegate.event.impl.UserTaskCompleteTransformer;
 import org.activiti.crystalball.simulator.impl.DefaultSimulationProcessEngineFactory;
 import org.activiti.crystalball.simulator.impl.EventRecorderTestUtils;
 import org.activiti.crystalball.simulator.impl.RecordableProcessEngineFactory;
-import org.activiti.crystalball.simulator.delegate.event.impl.ProcessInstanceCreateTransformer;
-import org.activiti.crystalball.simulator.delegate.event.impl.UserTaskCompleteTransformer;
 import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
-import org.activiti.engine.ProcessEngine;
+import org.activiti.crystalball.simulator.impl.clock.DefaultClockFactory;
+import org.activiti.crystalball.simulator.impl.clock.ThreadLocalClock;
 import org.activiti.engine.ProcessEngines;
+import org.activiti.engine.impl.ProcessEngineImpl;
 import org.activiti.engine.impl.test.AbstractActivitiTestCase;
 import org.activiti.engine.impl.test.TestHelper;
-import org.activiti.engine.impl.util.ClockUtil;
+import org.activiti.engine.impl.util.DefaultClockImpl;
+import org.activiti.engine.runtime.Clock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,9 +45,11 @@ public abstract class AbstractPlaybackTest extends AbstractActivitiTestCase {
 
   protected InMemoryRecordActivitiEventListener listener = new InMemoryRecordActivitiEventListener(getTransformers());
 
+
   @Override
   protected void initializeProcessEngine() {
-    this.processEngine = (new RecordableProcessEngineFactory(listener)).getObject();
+    Clock clock = new DefaultClockImpl();
+    this.processEngine = (new RecordableProcessEngineFactory(clock, listener)).getObject();
   }
 
   @Override
@@ -68,11 +73,12 @@ public abstract class AbstractPlaybackTest extends AbstractActivitiTestCase {
     try {
       // init simulation run
 
-      FactoryBean<ProcessEngine> simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory();
+      Clock clock = new ThreadLocalClock(new DefaultClockFactory());
+      FactoryBean<ProcessEngineImpl> simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory(clock);
 
       final SimpleSimulationRun.Builder builder = new SimpleSimulationRun.Builder();
       builder.processEngineFactory(simulationProcessEngineFactory)
-        .eventCalendarFactory(new PlaybackEventCalendarFactory(new SimulationEventComparator(), listener.getSimulationEvents()))
+        .eventCalendarFactory(new PlaybackEventCalendarFactory(clock, new SimulationEventComparator(), listener.getSimulationEvents()))
         .eventHandlers(getHandlers());
       simDebugger = builder.build();
 
@@ -104,7 +110,7 @@ public abstract class AbstractPlaybackTest extends AbstractActivitiTestCase {
         simDebugger.close();
         assertAndEnsureCleanDb();
       }
-      ClockUtil.reset();
+      this.processEngineConfiguration.getClock().reset();
 
       // Can't do this in the teardown, as the teardown will be called as part of the super.runBare
       closeDownProcessEngine();
@@ -186,7 +192,7 @@ public abstract class AbstractPlaybackTest extends AbstractActivitiTestCase {
       assertAndEnsureCleanDb();
       log.info("dropping and recreating db");
 
-      ClockUtil.reset();
+      this.processEngineConfiguration.getClock().reset();
 
       // Can't do this in the teardown, as the teardown will be called as part of the super.runBare
       EventRecorderTestUtils.closeProcessEngine(processEngine, listener);

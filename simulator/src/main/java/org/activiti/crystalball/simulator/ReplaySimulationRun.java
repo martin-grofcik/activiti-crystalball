@@ -1,7 +1,6 @@
 package org.activiti.crystalball.simulator;
 
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.impl.util.ClockUtil;
+import org.activiti.engine.impl.ProcessEngineImpl;
 
 import java.util.Map;
 
@@ -13,11 +12,11 @@ public class ReplaySimulationRun extends AbstractSimulationRun {
 
   private final EventCalendar eventCalendar;
 
-  public ReplaySimulationRun(ProcessEngine processEngine, Map<String, SimulationEventHandler> customEventHandlerMap) {
-    this(processEngine, new SimpleEventCalendar(new SimulationEventComparator()), customEventHandlerMap);
+  public ReplaySimulationRun(ProcessEngineImpl processEngine, Map<String, SimulationEventHandler> customEventHandlerMap) {
+    this(processEngine, new SimpleEventCalendar(processEngine.getProcessEngineConfiguration().getClock(), new SimulationEventComparator()), customEventHandlerMap);
   }
 
-  public ReplaySimulationRun(ProcessEngine processEngine, EventCalendar eventCalendar, Map<String, SimulationEventHandler> customEventHandlerMap) {
+  public ReplaySimulationRun(ProcessEngineImpl processEngine, EventCalendar eventCalendar, Map<String, SimulationEventHandler> customEventHandlerMap) {
     super(customEventHandlerMap);
     this.processEngine = processEngine;
     this.eventCalendar = eventCalendar;

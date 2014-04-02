@@ -5,7 +5,6 @@ import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.SimulatorException;
 import org.activiti.crystalball.simulator.delegate.event.impl.ProcessInstanceCreateTransformer;
-import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

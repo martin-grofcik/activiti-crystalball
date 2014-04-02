@@ -1,7 +1,6 @@
 package org.activiti.crystalball.simulator;
 
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.impl.util.ClockUtil;
+import org.activiti.engine.impl.ProcessEngineImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +8,7 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * This class...
+ * This class implements all methods for SSimulation run
  */
 public abstract class AbstractSimulationRun implements SimulationRun, SimulationDebugger {
 
@@ -19,7 +18,7 @@ public abstract class AbstractSimulationRun implements SimulationRun, Simulation
    * Map for eventType -> event handlers to execute events on simulation engine
    */
   protected Map<String, SimulationEventHandler> eventHandlerMap;
-  protected ProcessEngine processEngine;
+  protected ProcessEngineImpl processEngine;
 
   public AbstractSimulationRun(Map<String, SimulationEventHandler> eventHandlers) {
     this.eventHandlerMap = eventHandlers;
@@ -37,7 +36,7 @@ public abstract class AbstractSimulationRun implements SimulationRun, Simulation
   protected SimulationEvent removeSimulationEvent() {
     SimulationEvent event = SimulationRunContext.getEventCalendar().removeFirstEvent();
     if (event != null && event.hasSimulationTime())
-      ClockUtil.setCurrentTime(new Date(event.getSimulationTime()));
+      this.processEngine.getProcessEngineConfiguration().getClock().setCurrentTime(new Date(event.getSimulationTime()));
     return event;
   }
 
@@ -108,7 +107,7 @@ public abstract class AbstractSimulationRun implements SimulationRun, Simulation
 
   protected void executeEvent(SimulationEvent event) {
     // set simulation time to the next event for process engine too
-    log.info( "Simulation time:" + ClockUtil.getCurrentTime());
+    log.info("Simulation time:" + this.processEngine.getProcessEngineConfiguration().getClock().getCurrentTime());
 
     SimulationEventHandler handler = eventHandlerMap.get( event.getType() );
     if ( handler != null) {

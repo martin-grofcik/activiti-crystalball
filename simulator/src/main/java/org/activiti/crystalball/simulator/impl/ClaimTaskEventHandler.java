@@ -29,7 +29,6 @@ import org.activiti.engine.IdentityService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
-import org.activiti.engine.impl.util.ClockUtil;
 import org.activiti.engine.task.IdentityLink;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
@@ -55,7 +54,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 	@Override
 	public void init() {
 		List<User> users = identityService.createUserQuery().list();
-		long simulationTime = ClockUtil.getCurrentTime().getTime();
+		long simulationTime = SimulationRunContext.getClock().getCurrentTime().getTime();
 		for (User user : users) {
 			if ( !isUserFree( user.getId() )) {
 				for ( Task execTask : taskService.createTaskQuery().taskAssignee( user.getId() ).list()) {
@@ -117,7 +116,7 @@ public class ClaimTaskEventHandler implements SimulationEventHandler {
 			props.put( "variables", variables);
 	
 			SimulationEvent completeEvent = new SimulationEvent.Builder( SimulationEvent.TYPE_TASK_COMPLETE).properties(props).
-        simulationTime(ClockUtil.getCurrentTime().getTime() + userTaskDelta).
+        simulationTime(SimulationRunContext.getClock().getCurrentTime().getTime() + userTaskDelta).
         build();
 			// schedule complete task event
 			SimulationRunContext.getEventCalendar().addEvent( completeEvent);

@@ -28,6 +28,7 @@ public class PlaybackProcessStartTest extends AbstractPlaybackTest {
     processEngine.getRuntimeService().startProcessInstanceByKey(SIMPLEST_PROCESS, BUSINESS_KEY, variables);
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public void demoCheckStatus() {
     final HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().
       finished().
@@ -52,6 +53,7 @@ public class PlaybackProcessStartTest extends AbstractPlaybackTest {
     runtimeService.startProcessInstanceByMessage("startProcessMessage");
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public void messageProcessStartCheckStatus() {
     final HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().
       finished().
@@ -64,10 +66,11 @@ public class PlaybackProcessStartTest extends AbstractPlaybackTest {
   @CheckStatus(methodName = "checkStatus")
   public void testSignals() throws Exception {
     runtimeService.startProcessInstanceByKey("catchSignal");
-    EventRecorderTestUtils.increaseTime();
+    EventRecorderTestUtils.increaseTime(this.processEngineConfiguration.getClock());
     runtimeService.startProcessInstanceByKey("throwSignal");
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public void checkStatus() {
     final List<HistoricProcessInstance> historicProcessInstances = historyService.createHistoricProcessInstanceQuery().
                                                             finished().
@@ -81,10 +84,11 @@ public class PlaybackProcessStartTest extends AbstractPlaybackTest {
   public void testUserTask() throws Exception {
     runtimeService.startProcessInstanceByKey("oneTaskProcess", "oneTaskProcessBusinessKey");
     Task task = taskService.createTaskQuery().taskDefinitionKey("userTask").singleResult();
-    EventRecorderTestUtils.increaseTime();
+    EventRecorderTestUtils.increaseTime(processEngineConfiguration.getClock());
     taskService.complete(task.getId());
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public void userTaskCheckStatus() {
     final HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().
       finished().

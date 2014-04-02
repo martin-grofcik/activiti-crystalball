@@ -27,7 +27,6 @@ import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
-import org.activiti.engine.impl.util.ClockUtil;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +55,7 @@ public class SimpleClaimTaskEventHandler implements SimulationEventHandler {
 	@Override
 	public void init() {
 		TaskService taskService = SimulationRunContext.getTaskService();
-		long simulationTime = ClockUtil.getCurrentTime().getTime();
+		long simulationTime = SimulationRunContext.getClock().getCurrentTime().getTime();
 		
 		for ( Task execTask : taskService.createTaskQuery().list()) {
 			if (execTask != null ) {
@@ -97,7 +96,7 @@ public class SimpleClaimTaskEventHandler implements SimulationEventHandler {
 		props.put( "variables", variables);
 	
 		SimulationEvent completeEvent = new SimulationEvent.Builder(SimulationEvent.TYPE_TASK_COMPLETE).
-      simulationTime(ClockUtil.getCurrentTime().getTime() + userTaskDelta).
+      simulationTime(SimulationRunContext.getClock().getCurrentTime().getTime() + userTaskDelta).
       properties(props).
       build();
 		// schedule complete task event
@@ -107,11 +106,13 @@ public class SimpleClaimTaskEventHandler implements SimulationEventHandler {
 
 	}
 
-	public UserTaskExecutor getUserTaskExecutor() {
+	@SuppressWarnings("UnusedDeclaration")
+  public UserTaskExecutor getUserTaskExecutor() {
 		return userTaskExecutor;
 	}
 
-	public void setUserTaskExecutor(UserTaskExecutor userTaskExecutor) {
+	@SuppressWarnings("UnusedDeclaration")
+  public void setUserTaskExecutor(UserTaskExecutor userTaskExecutor) {
 		this.userTaskExecutor = userTaskExecutor;
 	}
 

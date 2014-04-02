@@ -9,12 +9,16 @@ import org.activiti.crystalball.simulator.delegate.event.impl.ProcessInstanceCre
 import org.activiti.crystalball.simulator.delegate.event.impl.InMemoryRecordActivitiEventListener;
 import org.activiti.crystalball.simulator.delegate.event.impl.UserTaskCompleteTransformer;
 import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
+import org.activiti.crystalball.simulator.impl.clock.DefaultClockFactory;
+import org.activiti.crystalball.simulator.impl.clock.ThreadLocalClock;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.impl.util.DefaultClockImpl;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.Clock;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -49,9 +53,10 @@ public class PlaybackRunTest {
 
     final SimpleSimulationRun.Builder builder = new SimpleSimulationRun.Builder();
     // init simulation run
-    DefaultSimulationProcessEngineFactory simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory(THE_SIMPLEST_PROCESS);
+    Clock clock = new ThreadLocalClock(new DefaultClockFactory());
+    DefaultSimulationProcessEngineFactory simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory(THE_SIMPLEST_PROCESS, clock);
     builder.processEngineFactory(simulationProcessEngineFactory)
-      .eventCalendarFactory(new PlaybackEventCalendarFactory(new SimulationEventComparator(), listener.getSimulationEvents()))
+      .eventCalendarFactory(new PlaybackEventCalendarFactory(clock, new SimulationEventComparator(), listener.getSimulationEvents()))
       .eventHandlers(getHandlers());
     SimpleSimulationRun simRun = builder.build();
 
@@ -62,7 +67,8 @@ public class PlaybackRunTest {
   }
 
   private void recordEvents() {
-    ProcessEngine processEngine = (new RecordableProcessEngineFactory(THE_SIMPLEST_PROCESS, listener))
+    Clock clock = new DefaultClockImpl();
+    ProcessEngine processEngine = (new RecordableProcessEngineFactory(THE_SIMPLEST_PROCESS, clock, listener))
                                   .getObject();
     Map<String,Object> variables = new HashMap<String, Object>();
     variables.put(TEST_VARIABLE, TEST_VALUE);

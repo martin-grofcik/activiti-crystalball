@@ -1,6 +1,6 @@
 package org.activiti.crystalball.simulator;
 
-import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.impl.ProcessEngineImpl;
 import org.activiti.engine.impl.jobexecutor.JobExecutor;
 
 import java.util.HashMap;
@@ -10,7 +10,7 @@ public class SimpleSimulationRunFactory implements FactoryBean<SimulationRun> {
 
     protected Map<String, SimulationEventHandler> customEventHandlerMap;
     protected HashMap<String, SimulationEventHandler> eventHandlerMap;
-    protected FactoryBean<ProcessEngine> processEngineFactory;
+    protected FactoryBean<ProcessEngineImpl> processEngineFactory;
     protected FactoryBean<EventCalendar> eventCalendarFactory;
     private JobExecutor jobExecutor;
 
@@ -42,11 +42,12 @@ public class SimpleSimulationRunFactory implements FactoryBean<SimulationRun> {
         this.customEventHandlerMap = customEventHandlerMap;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public void setEventHandlerMap(HashMap<String, SimulationEventHandler> eventHandlerMap) {
         this.eventHandlerMap = eventHandlerMap;
     }
 
-    public void setProcessEngineFactory(FactoryBean<ProcessEngine> processEngineFactory) {
+    public void setProcessEngineFactory(FactoryBean<ProcessEngineImpl> processEngineFactory) {
         this.processEngineFactory = processEngineFactory;
     }
 
@@ -54,6 +55,7 @@ public class SimpleSimulationRunFactory implements FactoryBean<SimulationRun> {
         this.eventCalendarFactory = eventCalendarFactory;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public void setJobExecutor(JobExecutor jobExecutor) {
         this.jobExecutor = jobExecutor;
     }

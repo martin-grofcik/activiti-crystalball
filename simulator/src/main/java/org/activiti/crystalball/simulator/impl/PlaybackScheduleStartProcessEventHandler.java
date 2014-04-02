@@ -26,7 +26,6 @@ import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricProcessInstance;
-import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +73,7 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 	@Override
 	public void init() {
 		// initialise simulation start
-		simulationRunStart = ClockUtil.getCurrentTime();
+		simulationRunStart = SimulationRunContext.getClock().getCurrentTime();
 		
 		// determine when to start new process
 		List<HistoricProcessInstance> processInstances = getPlaybackProcessInstances( playBackStart);
@@ -91,12 +90,12 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 	/**
 	 * provide simulation time delta at which process instance has to be started
 	 * @param startTime - time when new process instance was started
-	 * @return
+	 * @return simulation  time delta
 	 */
 	private long getSimulationTimeDelta(Date startTime) {
 		long timeDelta = startTime.getTime() - playBackStart.getTime();
 		long playBackTime = playBackEnd.getTime() - playBackStart.getTime();  
-		long simulationTimeDelta = ClockUtil.getCurrentTime().getTime() - simulationRunStart.getTime();
+		long simulationTimeDelta = SimulationRunContext.getClock().getCurrentTime().getTime() - simulationRunStart.getTime();
 		long playbackRepeated = 0;
 		if ( repeatPlayback )
 			playbackRepeated =  simulationTimeDelta/ playBackTime;
@@ -106,8 +105,8 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 
 	/**
 	 * schedule next process start - take history and choose next process from play back interval
-	 * @param simulationTime
-	 * @param processInstanceId 
+	 * @param simulationTime sim time
+	 * @param processInstanceId procInstId
 	 */
 	private void scheduleNextProcessStart(long simulationTime, String processInstanceId) {
 		Map<String,Object> properties = new HashMap<String, Object>();
@@ -130,7 +129,7 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 		
 		// transform simulation time to the playback interval
 		long playBackTime = playBackEnd.getTime() - playBackStart.getTime();  
-		long simulationTimeDelta = ClockUtil.getCurrentTime().getTime() - simulationRunStart.getTime();
+		long simulationTimeDelta = SimulationRunContext.getClock().getCurrentTime().getTime() - simulationRunStart.getTime();
 		long playbackRepeated = simulationTimeDelta/ playBackTime;
 		// only for performance reasons
 		if (!repeatPlayback && playbackRepeated > 0)
@@ -151,8 +150,8 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 	/**
 	 * get process instances to schedule their start an schedule new schedule simulation event
 	 * 
-	 * @param playBackPosition
-	 * @return
+	 * @param playBackPosition where we are in the playback
+	 * @return ...
 	 */
 	protected List<HistoricProcessInstance> getPlaybackProcessInstances( Date playBackPosition) {
 		// set end time for the query
@@ -164,12 +163,12 @@ public class PlaybackScheduleStartProcessEventHandler implements SimulationEvent
 			end = c.getTime();
 			// add schedule process event after selected process instances
 			SimulationEvent scheduleEvent = new SimulationEvent.Builder( eventType).
-        simulationTime(ClockUtil.getCurrentTime().getTime() + delta + 1).
+        simulationTime(SimulationRunContext.getClock().getCurrentTime().getTime() + delta + 1).
         build();
 			SimulationRunContext.getEventCalendar().addEvent( scheduleEvent);
 		} else {
 			long playBackTime = playBackEnd.getTime() - playBackStart.getTime();  
-			long simulationTimeDelta = ClockUtil.getCurrentTime().getTime() - simulationRunStart.getTime();
+			long simulationTimeDelta = SimulationRunContext.getClock().getCurrentTime().getTime() - simulationRunStart.getTime();
 			long playbackRepeated = simulationTimeDelta/ playBackTime +1 ;
 			
 			SimulationEvent scheduleEvent = new SimulationEvent.Builder( eventType).

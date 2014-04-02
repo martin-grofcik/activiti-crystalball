@@ -21,7 +21,7 @@ package org.activiti.crystalball.simulator;
  */
 
 
-import org.activiti.engine.impl.util.ClockUtil;
+import org.activiti.engine.runtime.ClockReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +36,15 @@ public class SimpleEventCalendar implements EventCalendar {
 
   private static final int NULL = -1;
 
-  List<SimulationEvent> eventList = new ArrayList<SimulationEvent>();
-	int minIndex = NULL;
-	Comparator<SimulationEvent> eventComparator;
-	
-	public SimpleEventCalendar(Comparator<SimulationEvent> eventComparator) {
-		this.eventComparator = eventComparator;		
+  protected List<SimulationEvent> eventList = new ArrayList<SimulationEvent>();
+	protected int minIndex = NULL;
+	protected Comparator<SimulationEvent> eventComparator;
+  protected final ClockReader clockReader;
+
+
+	public SimpleEventCalendar(ClockReader clockReader, Comparator<SimulationEvent> eventComparator) {
+    this.clockReader = clockReader;
+    this.eventComparator = eventComparator;
 	}
 	
 	@Override
@@ -54,7 +57,7 @@ public class SimpleEventCalendar implements EventCalendar {
     if (minIndex == NULL)
       return null;
 
-    return eventList.get((int) minIndex);
+    return eventList.get( minIndex);
   }
 
   @Override
@@ -62,9 +65,9 @@ public class SimpleEventCalendar implements EventCalendar {
 		if (minIndex == NULL)
 			return null;
 		
-		SimulationEvent minEvent = eventList.remove( (int) minIndex );
-		
-		if (minEvent.hasSimulationTime() && minEvent.getSimulationTime() < ClockUtil.getCurrentTime().getTime())
+		SimulationEvent minEvent = eventList.remove( minIndex );
+
+		if (minEvent.hasSimulationTime() && minEvent.getSimulationTime() < this.clockReader.getCurrentTime().getTime())
 			throw new RuntimeException("Unable to execute event from the past");
 		
 		if (eventList.isEmpty()) { 
@@ -99,15 +102,11 @@ public class SimpleEventCalendar implements EventCalendar {
   /**
 	 * is event the first event in the calendar?
 	 * @param event - used in comparison
-	 * @return
+	 * @return is minimal event decision
 	 */
 	private boolean isMinimal(SimulationEvent event) {
-		if (minIndex == NULL)
-			return true;
-		if ( eventComparator.compare( event, eventList.get( minIndex )) < 0)
-			return true;
-		return false;
-	}
+    return minIndex == NULL || eventComparator.compare(event, eventList.get(minIndex)) < 0;
+  }
 
   public void addEvents(Collection<SimulationEvent> simulationEvents) {
     for (SimulationEvent event : simulationEvents) {

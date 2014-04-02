@@ -1,6 +1,8 @@
 package org.activiti.crystalball.simulator;
 
-import org.activiti.engine.impl.util.ClockUtil;
+import org.activiti.engine.impl.util.DefaultClockImpl;
+import org.activiti.engine.runtime.Clock;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Comparator;
@@ -10,57 +12,60 @@ import static org.junit.Assert.*;
 
 
 public class SimpleEventCalendarTest {
-    protected Comparator<SimulationEvent> comparator = new SimulationEventComparator();
+  protected Comparator<SimulationEvent> comparator = new SimulationEventComparator();
+  protected Clock clock = new DefaultClockImpl();
 
-    @Test
-    public void testIsEmpty() throws Exception {
-        EventCalendar calendar = new SimpleEventCalendar(comparator);
-        assertTrue(calendar.isEmpty());
-        SimulationEvent event = calendar.removeFirstEvent();
-        assertNull(event);
-    }
+  @Before
+  public void setUp() {
+    this.clock.setCurrentTime(new Date(0));
+  }
 
-    @Test
-    public void testAddEventsAndRemoveFirst() throws Exception {
-        SimulationEvent event1 = new SimulationEvent.Builder("any type").simulationTime(1).build();
-        SimulationEvent event2 = new SimulationEvent.Builder("any type").simulationTime(2).build();
-        EventCalendar calendar = new SimpleEventCalendar(comparator);
-        ClockUtil.setCurrentTime(new Date(0));
+  @Test
+  public void testIsEmpty() throws Exception {
+    EventCalendar calendar = new SimpleEventCalendar(clock, comparator);
+    assertTrue(calendar.isEmpty());
+    SimulationEvent event = calendar.removeFirstEvent();
+    assertNull(event);
+  }
 
-        calendar.addEvent(event1);
-        calendar.addEvent( event2);
-        calendar.addEvent( event1);
+  @Test
+  public void testAddEventsAndRemoveFirst() throws Exception {
+    SimulationEvent event1 = new SimulationEvent.Builder("any type").simulationTime(1).build();
+    SimulationEvent event2 = new SimulationEvent.Builder("any type").simulationTime(2).build();
+    EventCalendar calendar = new SimpleEventCalendar(clock, comparator);
 
-        SimulationEvent event = calendar.removeFirstEvent();
-        assertEquals(event1, event);
-        event = calendar.removeFirstEvent();
-        assertEquals(event1, event);
-        event = calendar.removeFirstEvent();
-        assertEquals(event2, event);
-    }
+    calendar.addEvent(event1);
+    calendar.addEvent(event2);
+    calendar.addEvent(event1);
 
-    @Test
-    public void testClear() throws Exception {
-      SimulationEvent event1 = new SimulationEvent.Builder("any type").simulationTime(1).build();
-      EventCalendar calendar = new SimpleEventCalendar(comparator);
-      ClockUtil.setCurrentTime(new Date(0));
+    SimulationEvent event = calendar.removeFirstEvent();
+    assertEquals(event1, event);
+    event = calendar.removeFirstEvent();
+    assertEquals(event1, event);
+    event = calendar.removeFirstEvent();
+    assertEquals(event2, event);
+  }
 
-      calendar.addEvent(event1);
+  @Test
+  public void testClear() throws Exception {
+    SimulationEvent event1 = new SimulationEvent.Builder("any type").simulationTime(1).build();
+    EventCalendar calendar = new SimpleEventCalendar(clock, comparator);
 
-      calendar.clear();
-      assertTrue( calendar.isEmpty());
-      assertNull( calendar.removeFirstEvent());
-    }
+    calendar.addEvent(event1);
 
-    @Test(expected = RuntimeException.class)
-    public void testRunEventFromPast() throws Exception {
-        SimulationEvent event1 = new SimulationEvent.Builder("any type").simulationTime(1).build();
-        EventCalendar calendar = new SimpleEventCalendar(comparator);
+    calendar.clear();
+    assertTrue(calendar.isEmpty());
+    assertNull(calendar.removeFirstEvent());
+  }
 
-        calendar.addEvent(event1);
-        ClockUtil.setCurrentTime(new Date(2));
+  @Test(expected = RuntimeException.class)
+  public void testRunEventFromPast() throws Exception {
+    SimulationEvent event1 = new SimulationEvent.Builder("any type").simulationTime(1).build();
+    EventCalendar calendar = new SimpleEventCalendar(clock, comparator);
 
-        calendar.removeFirstEvent();
-        fail("RuntimeException expected");
-    }
+    calendar.addEvent(event1);
+    this.clock.setCurrentTime(new Date(2));
+    calendar.removeFirstEvent();
+    fail("RuntimeException expected");
+  }
 }

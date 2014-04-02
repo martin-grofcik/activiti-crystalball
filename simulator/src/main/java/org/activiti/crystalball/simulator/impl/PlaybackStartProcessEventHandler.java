@@ -28,7 +28,6 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricDetail;
 import org.activiti.engine.history.HistoricVariableUpdate;
-import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +43,6 @@ import java.util.Map;
 public class PlaybackStartProcessEventHandler implements SimulationEventHandler {
 
 	public static final String PROCESS_INSTANCE_ID = "_playback.processInstanceId";
-	public static final String HISTORY_SERVICE = "_playback.historyService";
 
 	private static Logger log = LoggerFactory.getLogger(PlaybackStartProcessEventHandler.class);
 	
@@ -83,12 +81,13 @@ public class PlaybackStartProcessEventHandler implements SimulationEventHandler 
 		}
 		
 		variables.put( PROCESS_INSTANCE_ID, processInstanceId);
-		log.debug("[{}] Starting new processKey[{}] properties[{}]", ClockUtil.getCurrentTime(), processToStartKey, variables);
+		log.debug("[{}] Starting new processKey[{}] properties[{}]", SimulationRunContext.getClock().getCurrentTime(), processToStartKey, variables);
 
 		SimulationRunContext.getRuntimeService().startProcessInstanceByKey( processToStartKey, variables);
 	}
 
-	public String getProcessToStartKey() {
+	@SuppressWarnings("UnusedDeclaration")
+  public String getProcessToStartKey() {
 		return processToStartKey;
 	}
 
@@ -96,7 +95,8 @@ public class PlaybackStartProcessEventHandler implements SimulationEventHandler 
 		this.processToStartKey = processToStartKey;
 	}
 
-	public String getEventType() {
+	@SuppressWarnings("UnusedDeclaration")
+  public String getEventType() {
 		return eventType;
 	}
 

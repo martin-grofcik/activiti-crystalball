@@ -27,7 +27,6 @@ import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.processengine.jobexecutor.SimulationDefaultJobExecutor;
 import org.activiti.engine.impl.jobexecutor.JobExecutor;
 import org.activiti.engine.impl.jobexecutor.SimulationAcquireJobsRunnable;
-import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +52,7 @@ public class AcquireJobNotificationEventHandler implements
         jobExecutor.start();
 
     SimulationEvent event = new SimulationEvent.Builder(SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
-      simulationTime(ClockUtil.getCurrentTime().getTime()).
+      simulationTime(SimulationRunContext.getClock().getCurrentTime().getTime()).
       property(((SimulationDefaultJobExecutor) jobExecutor).getAcquireJobsRunnable()).
       build();
     SimulationRunContext.getEventCalendar().addEvent(event);

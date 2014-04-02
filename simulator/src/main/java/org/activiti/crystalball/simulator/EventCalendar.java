@@ -1,7 +1,7 @@
 package org.activiti.crystalball.simulator;
 
 /**
- * This class...
+ * This class provides access to simulation events
  */
 public interface EventCalendar {
   boolean isEmpty();

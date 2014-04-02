@@ -1,10 +1,9 @@
 package org.activiti.crystalball.simulator.impl;
 
 import org.activiti.crystalball.simulator.delegate.event.impl.AbstractRecordActivitiEventListener;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.delegate.event.ActivitiEventListener;
 import org.activiti.engine.impl.ProcessEngineImpl;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.runtime.Clock;
 
 /**
  * This class...
@@ -13,21 +12,21 @@ public class RecordableProcessEngineFactory extends DefaultSimulationProcessEngi
 
   private AbstractRecordActivitiEventListener listener;
 
-  public RecordableProcessEngineFactory(AbstractRecordActivitiEventListener listener) {
-    this("", listener);
+  public RecordableProcessEngineFactory(Clock clock, AbstractRecordActivitiEventListener listener) {
+    this("", clock, listener);
   }
 
-  public RecordableProcessEngineFactory(String resourceToDeploy, AbstractRecordActivitiEventListener listener) {
-    super(resourceToDeploy);
+  public RecordableProcessEngineFactory(String resourceToDeploy, Clock clock, AbstractRecordActivitiEventListener listener) {
+    super(resourceToDeploy, clock);
     this.listener = listener;
   }
 
   @Override
-  public ProcessEngine getObject() {
-    ProcessEngine processEngine = super.getObject();
+  public ProcessEngineImpl getObject() {
+    ProcessEngineImpl processEngine = super.getObject();
 
     //add eventListener
-    final ProcessEngineConfigurationImpl processEngineConfiguration = ((ProcessEngineImpl) processEngine).getProcessEngineConfiguration();
+    final ProcessEngineConfigurationImpl processEngineConfiguration = processEngine.getProcessEngineConfiguration();
     processEngineConfiguration.getEventDispatcher().addEventListener(listener);
 
     return processEngine;

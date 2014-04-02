@@ -27,7 +27,6 @@ import org.activiti.crystalball.simulator.delegate.event.impl.UserTaskCompleteTr
 import org.activiti.crystalball.simulator.impl.StartReplayProcessEventHandler;
 import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.TaskListener;
-import org.activiti.engine.impl.util.ClockUtil;
 
 import java.util.Collection;
 import java.util.HashMap;

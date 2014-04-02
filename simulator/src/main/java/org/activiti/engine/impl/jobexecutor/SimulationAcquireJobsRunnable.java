@@ -27,7 +27,6 @@ import org.activiti.engine.ActivitiOptimisticLockingException;
 import org.activiti.engine.impl.Page;
 import org.activiti.engine.impl.interceptor.CommandExecutor;
 import org.activiti.engine.impl.persistence.entity.TimerEntity;
-import org.activiti.engine.impl.util.ClockUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -75,11 +74,11 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		          isJobAdded = false;
 		          
 		          // check if the next timer should fire before the normal sleep time is over
-		          Date duedate = new Date(ClockUtil.getCurrentTime().getTime() + millisToWait);
+		          Date duedate = new Date(SimulationRunContext.getClock().getCurrentTime().getTime() + millisToWait);
 		          List<TimerEntity> nextTimers = commandExecutor.execute(new GetUnlockedTimersByDuedateCmd(duedate, new Page(0, 1)));
 		          
 		          if (!nextTimers.isEmpty()) {
-		          long millisTillNextTimer = nextTimers.get(0).getDuedate().getTime() - ClockUtil.getCurrentTime().getTime();
+		          long millisTillNextTimer = nextTimers.get(0).getDuedate().getTime() - SimulationRunContext.getClock().getCurrentTime().getTime();
 		            if (millisTillNextTimer < millisToWait && millisTillNextTimer != 0) {
 		              millisToWait = millisTillNextTimer;
 		            }
@@ -120,7 +119,7 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		              isWaiting.set(true);
 
                   SimulationEvent event = new SimulationEvent.Builder(SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
-                    simulationTime(ClockUtil.getCurrentTime().getTime() + millisToWait).
+                    simulationTime(SimulationRunContext.getClock().getCurrentTime().getTime() + millisToWait).
                     property(this).
                     build();
                   SimulationRunContext.getEventCalendar().addEvent(event);
@@ -138,7 +137,7 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 		      } else {
 		    	  // schedule run now
             SimulationEvent event = new SimulationEvent.Builder(SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
-              simulationTime(ClockUtil.getCurrentTime().getTime()).
+              simulationTime(SimulationRunContext.getClock().getCurrentTime().getTime()).
               property(this).
               build();
             SimulationRunContext.getEventCalendar().addEvent(event);
@@ -173,7 +172,7 @@ public class SimulationAcquireJobsRunnable extends AcquireJobsRunnable {
 //		        MONITOR.notifyAll();
 		    	//Notify is not needed - event is enough
             SimulationEvent event = new SimulationEvent.Builder(SimulationEvent.TYPE_ACQUIRE_JOB_NOTIFICATION_EVENT).
-              simulationTime(ClockUtil.getCurrentTime().getTime()).
+              simulationTime(SimulationRunContext.getClock().getCurrentTime().getTime()).
               property(this).
               build();
             SimulationRunContext.getEventCalendar().addEvent(event);

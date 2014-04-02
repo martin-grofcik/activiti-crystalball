@@ -23,15 +23,15 @@ package org.activiti.crystalball.simulator;
 
 import org.activiti.crystalball.simulator.impl.AcquireJobNotificationEventHandler;
 import org.activiti.crystalball.simulator.impl.NoopEventHandler;
-import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.impl.ProcessEngineImpl;
 import org.activiti.engine.impl.jobexecutor.JobExecutor;
-import org.activiti.engine.impl.util.ClockUtil;
 
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
 
 public class SimpleSimulationRun extends AbstractSimulationRun {
 
-  protected FactoryBean<ProcessEngine> processEngineFactory;
+  protected FactoryBean<ProcessEngineImpl> processEngineFactory;
 	protected FactoryBean<EventCalendar> eventCalendarFactory;
 
   /** simulation start date*/
@@ -67,7 +67,7 @@ public class SimpleSimulationRun extends AbstractSimulationRun {
 
     // run simulation
     // init context and task calendar and simulation time is set to current
-    ClockUtil.setCurrentTime(simulationStartDate);
+    SimulationRunContext.getClock().setCurrentTime(simulationStartDate);
 
     if (dueDate != null)
       SimulationRunContext.getEventCalendar().addEvent(new SimulationEvent.Builder( SimulationEvent.TYPE_END_SIMULATION).
@@ -80,13 +80,13 @@ public class SimpleSimulationRun extends AbstractSimulationRun {
     if ( event != null && event.getType().equals(SimulationEvent.TYPE_BREAK_SIMULATION))
       return true;
 		if ( dueDate != null)
-			return event == null || ( ClockUtil.getCurrentTime().after( dueDate ));
+			return event == null || (SimulationRunContext.getClock().getCurrentTime().after( dueDate ));
 		return  event == null;
 	}
 
   public static class Builder {
         private Map<String, SimulationEventHandler> eventHandlers;
-        private FactoryBean<ProcessEngine> processEngineFactory;
+        private FactoryBean<ProcessEngineImpl> processEngineFactory;
         private FactoryBean<EventCalendar> eventCalendarFactory;
         private JobExecutor jobExecutor;
 
@@ -99,11 +99,11 @@ public class SimpleSimulationRun extends AbstractSimulationRun {
             return this;
         }
 
-        public FactoryBean<ProcessEngine> getProcessEngineFactory() {
+        public FactoryBean<ProcessEngineImpl> getProcessEngineFactory() {
             return processEngineFactory;
         }
 
-        public Builder processEngineFactory(FactoryBean<ProcessEngine> processEngineFactory) {
+        public Builder processEngineFactory(FactoryBean<ProcessEngineImpl> processEngineFactory) {
             this.processEngineFactory = processEngineFactory;
             return this;
         }

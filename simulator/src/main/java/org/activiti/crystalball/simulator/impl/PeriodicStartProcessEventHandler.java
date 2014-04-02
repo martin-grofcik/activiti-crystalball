@@ -23,17 +23,13 @@ package org.activiti.crystalball.simulator.impl;
 
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationRunContext;
-import org.activiti.engine.impl.util.ClockUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Start new process event handler 
  *
  */
+@SuppressWarnings("unused")
 public class PeriodicStartProcessEventHandler extends StartProcessEventHandler {
-
-	private static Logger log = LoggerFactory.getLogger(PeriodicStartProcessEventHandler.class);
 
   /**
    * event type on which Handler is listening to start new process
@@ -53,7 +49,7 @@ public class PeriodicStartProcessEventHandler extends StartProcessEventHandler {
 	public void init() {
     super.init();
 		// schedule new process instance start now
-		long simulationTime = ClockUtil.getCurrentTime().getTime();
+		long simulationTime = SimulationRunContext.getClock().getCurrentTime().getTime();
 		scheduleNextProcessStart(simulationTime);
 	}
 

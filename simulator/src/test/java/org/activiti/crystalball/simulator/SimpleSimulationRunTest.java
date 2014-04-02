@@ -1,18 +1,21 @@
 package org.activiti.crystalball.simulator;
 
-import org.activiti.crystalball.simulator.delegate.event.*;
+import org.activiti.crystalball.simulator.delegate.event.ActivitiEventToSimulationEventTransformer;
 import org.activiti.crystalball.simulator.delegate.event.impl.InMemoryRecordActivitiEventListener;
-import org.activiti.crystalball.simulator.impl.DefaultSimulationProcessEngineFactory;
-import org.activiti.crystalball.simulator.impl.EventRecorderTestUtils;
 import org.activiti.crystalball.simulator.delegate.event.impl.ProcessInstanceCreateTransformer;
 import org.activiti.crystalball.simulator.delegate.event.impl.UserTaskCompleteTransformer;
+import org.activiti.crystalball.simulator.impl.DefaultSimulationProcessEngineFactory;
+import org.activiti.crystalball.simulator.impl.EventRecorderTestUtils;
 import org.activiti.crystalball.simulator.impl.RecordableProcessEngineFactory;
 import org.activiti.crystalball.simulator.impl.StartProcessEventHandler;
+import org.activiti.crystalball.simulator.impl.clock.DefaultClockFactory;
+import org.activiti.crystalball.simulator.impl.clock.ThreadLocalClock;
 import org.activiti.crystalball.simulator.impl.playback.PlaybackUserTaskCompleteEventHandler;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
-import org.activiti.engine.impl.util.ClockUtil;
+import org.activiti.engine.impl.util.DefaultClockImpl;
+import org.activiti.engine.runtime.Clock;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.junit.After;
@@ -189,9 +192,10 @@ public class SimpleSimulationRunTest {
   private SimulationDebugger createDebugger() {
     final SimpleSimulationRun.Builder builder = new SimpleSimulationRun.Builder();
     // init simulation run
-    DefaultSimulationProcessEngineFactory simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory(USERTASK_PROCESS);
+    Clock clock = new ThreadLocalClock(new DefaultClockFactory());
+    DefaultSimulationProcessEngineFactory simulationProcessEngineFactory = new DefaultSimulationProcessEngineFactory(USERTASK_PROCESS, clock);
     builder.processEngineFactory(simulationProcessEngineFactory)
-      .eventCalendarFactory(new PlaybackEventCalendarFactory(new SimulationEventComparator(), listener.getSimulationEvents()))
+      .eventCalendarFactory(new PlaybackEventCalendarFactory(clock, new SimulationEventComparator(), listener.getSimulationEvents()))
       .eventHandlers(getHandlers());
     return builder.build();
   }
@@ -207,15 +211,16 @@ public class SimpleSimulationRunTest {
   }
 
   private void recordEvents() {
-    ClockUtil.setCurrentTime(new Date(0));
-    ProcessEngine processEngine = (new RecordableProcessEngineFactory(USERTASK_PROCESS, listener))
+    Clock clock = new DefaultClockImpl();
+    clock.setCurrentTime(new Date(0));
+    ProcessEngine processEngine = (new RecordableProcessEngineFactory(USERTASK_PROCESS, clock, listener))
       .getObject();
     TaskService taskService = processEngine.getTaskService();
 
     Map<String, Object> variables = new HashMap<String, Object>();
     variables.put(TEST_VARIABLE, TEST_VALUE);
     processEngine.getRuntimeService().startProcessInstanceByKey("oneTaskProcess", "oneTaskProcessBusinessKey", variables);
-    EventRecorderTestUtils.increaseTime();
+    EventRecorderTestUtils.increaseTime(clock);
     Task task = taskService.createTaskQuery().taskDefinitionKey("userTask").singleResult();
     taskService.complete(task.getId());
     checkStatus(processEngine.getHistoryService());

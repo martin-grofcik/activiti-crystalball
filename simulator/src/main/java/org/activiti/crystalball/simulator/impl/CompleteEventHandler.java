@@ -27,7 +27,6 @@ import org.activiti.crystalball.simulator.SimulationRunContext;
 import org.activiti.crystalball.simulator.executor.UserTaskExecutor;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
-import org.activiti.engine.impl.util.ClockUtil;
 import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class CompleteEventHandler implements SimulationEventHandler {
 	@Override
 	public void handle(SimulationEvent event) {
 		TaskService taskService = SimulationRunContext.getTaskService();
-		long simulationTime = ClockUtil.getCurrentTime().getTime();
+		long simulationTime = SimulationRunContext.getClock().getCurrentTime().getTime();
 		
 		String taskId = (String) event.getProperty("task");
 		Task task = SimulationRunContext.getTaskService().createTaskQuery().taskId( taskId ).singleResult();		
@@ -94,10 +93,6 @@ public class CompleteEventHandler implements SimulationEventHandler {
 		
 	}
 	
-	public UserTaskExecutor getUserTaskExecutor() {
-		return userTaskExecutor;
-	}
-
 	public void setUserTaskExecutor(UserTaskExecutor userTaskExecutor) {
 		this.userTaskExecutor = userTaskExecutor;
 	}

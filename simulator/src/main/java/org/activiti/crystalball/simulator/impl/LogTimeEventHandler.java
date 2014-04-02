@@ -24,7 +24,6 @@ package org.activiti.crystalball.simulator.impl;
 import org.activiti.crystalball.simulator.SimulationEvent;
 import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.SimulationRunContext;
-import org.activiti.engine.impl.util.ClockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +50,8 @@ public class LogTimeEventHandler implements SimulationEventHandler {
 	@Override
 	public void init() {
 		simulationStart = System.currentTimeMillis();
-		SimulationRunContext.getEventCalendar().addEvent( new SimulationEvent.Builder( type).
-      simulationTime(ClockUtil.getCurrentTime().getTime()).
+		SimulationRunContext.getEventCalendar().addEvent(new SimulationEvent.Builder(type).
+      simulationTime(SimulationRunContext.getClock().getCurrentTime().getTime()).
       build());
 	}
 

@@ -1,19 +1,14 @@
 package org.activiti.crystalball.simulator.delegate.event.impl;
 
 import org.activiti.crystalball.simulator.SimulationEvent;
-import org.activiti.crystalball.simulator.delegate.event.ActivitiEventToSimulationEventTransformer;
-import org.activiti.crystalball.simulator.delegate.event.RecordedActivitiEvent;
 import org.activiti.engine.delegate.event.ActivitiEntityEvent;
 import org.activiti.engine.delegate.event.ActivitiEvent;
 import org.activiti.engine.delegate.event.ActivitiEventType;
-import org.activiti.engine.delegate.event.ActivitiVariableEvent;
+import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
-import org.activiti.engine.impl.persistence.entity.VariableInstanceEntity;
-import org.activiti.engine.impl.util.ClockUtil;
 import org.activiti.engine.runtime.ProcessInstance;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ProcessInstanceCreateTransformer extends AbstractTransformer {
@@ -34,7 +29,8 @@ public class ProcessInstanceCreateTransformer extends AbstractTransformer {
   public SimulationEvent transform(ActivitiEvent event) {
     if (ActivitiEventType.ENTITY_CREATED.equals(event.getType()) &&
       (event instanceof ActivitiEntityEvent) &&
-      ((ActivitiEntityEvent) event).getEntity() instanceof ProcessInstance) {
+      ((ActivitiEntityEvent) event).getEntity() instanceof ProcessInstance &&
+      ((ExecutionEntity) ((ActivitiEntityEvent) event).getEntity()).isProcessInstanceType()) {
 
       ProcessInstance processInstance = (ProcessInstance) ((ActivitiEntityEvent) event).getEntity();
       ExecutionEntity executionEntity = (ExecutionEntity) ((ActivitiEntityEvent) event).getEntity();
@@ -46,7 +42,7 @@ public class ProcessInstanceCreateTransformer extends AbstractTransformer {
       simEventProperties.put(PROCESS_INSTANCE_ID, executionEntity.getProcessInstanceId());
 
       return new SimulationEvent.Builder(simulationEventType).
-                  simulationTime(ClockUtil.getCurrentTime().getTime()).
+                  simulationTime(Context.getProcessEngineConfiguration().getClock().getCurrentTime().getTime()).
                   properties(simEventProperties).
                   build();
     }

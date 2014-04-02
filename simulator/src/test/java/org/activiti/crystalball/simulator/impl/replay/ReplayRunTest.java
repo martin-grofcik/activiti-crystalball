@@ -1,22 +1,22 @@
 package org.activiti.crystalball.simulator.impl.replay;
 
-import org.activiti.crystalball.simulator.*;
+import org.activiti.crystalball.simulator.ReplaySimulationRun;
+import org.activiti.crystalball.simulator.SimulationDebugger;
+import org.activiti.crystalball.simulator.SimulationEventHandler;
 import org.activiti.crystalball.simulator.delegate.UserTaskExecutionListener;
 import org.activiti.crystalball.simulator.delegate.event.ActivitiEventToSimulationEventTransformer;
 import org.activiti.crystalball.simulator.delegate.event.impl.InMemoryRecordActivitiEventListener;
 import org.activiti.crystalball.simulator.delegate.event.impl.ProcessInstanceCreateTransformer;
 import org.activiti.crystalball.simulator.delegate.event.impl.UserTaskCompleteTransformer;
-import org.activiti.crystalball.simulator.impl.EventRecorderTestUtils;
-import org.activiti.crystalball.simulator.impl.ReplayProcessEngineFactory;
 import org.activiti.crystalball.simulator.impl.StartReplayProcessEventHandler;
 import org.activiti.crystalball.simulator.impl.bpmn.parser.handler.AddListenerUserTaskParseHandler;
 import org.activiti.crystalball.simulator.impl.playback.PlaybackUserTaskCompleteEventHandler;
-import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.delegate.TaskListener;
 import org.activiti.engine.delegate.event.ActivitiEventListener;
+import org.activiti.engine.impl.ProcessEngineImpl;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.parse.BpmnParseHandler;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -48,7 +48,7 @@ public class ReplayRunTest {
 
   @Test
   public void testProcessInstanceStartEvents() throws Exception {
-    ProcessEngine processEngine = initProcessEngine();
+    ProcessEngineImpl processEngine = initProcessEngine();
 
     TaskService taskService = processEngine.getTaskService();
     RuntimeService runtimeService = processEngine.getRuntimeService();
@@ -87,9 +87,9 @@ public class ReplayRunTest {
     ProcessEngines.destroy();
   }
 
-  private ProcessEngine initProcessEngine() {
+  private ProcessEngineImpl initProcessEngine() {
     ProcessEngineConfigurationImpl configuration = getProcessEngineConfiguration();
-    ProcessEngine processEngine = configuration.buildProcessEngine();
+    ProcessEngineImpl processEngine = (ProcessEngineImpl) configuration.buildProcessEngine();
 
     processEngine.getRepositoryService().
         createDeployment().
